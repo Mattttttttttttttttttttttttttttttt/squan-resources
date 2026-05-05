@@ -37,104 +37,23 @@ function getPathSegments(path) {
     return path.split('/').filter(Boolean);
 }
 
-// Get child folders/keys from a node object (exclude _ metadata keys)
 function getNodeChildren(node) {
     return Object.keys(node).filter(k => !k.startsWith('_'));
 }
 
-// ─── Embed URL helpers ────────────────────────────────────────────────────────
-
-function getEmbedUrl(url, type) {
-    if (!url) return null;
-
-    if (type === 'video') {
-        // YouTube
-        const ytStd = url.match(/youtube\.com\/watch\?v=([^&\s]+)/);
-        if (ytStd) return `https://www.youtube.com/embed/${ytStd[1]}`;
-        const ytShort = url.match(/youtu\.be\/([^?&\s]+)/);
-        if (ytShort) return `https://www.youtube.com/embed/${ytShort[1]}`;
-        // Return as-is for other video URLs
-        return url;
-    }
-
-    if (type === 'doc/sheet') {
-        // Google Docs: convert /edit or /view to /pub?embedded=true
-        const docMatch = url.match(/(https:\/\/docs\.google\.com\/document\/d\/[^/]+)/);
-        if (docMatch) return `${docMatch[1]}/pub?embedded=true`;
-        // Google Sheets: convert /edit to /pubhtml?embedded=true
-        const sheetMatch = url.match(/(https:\/\/docs\.google\.com\/spreadsheets\/d\/[^/]+)/);
-        if (sheetMatch) return `${sheetMatch[1]}/pubhtml?embedded=true&widget=true`;
-        // Already a publish URL — use as is
-        return url;
-    }
-
-    return null; // trainers don't get iframed
-}
-
-// ─── Breadcrumb ───────────────────────────────────────────────────────────────
-
-function renderBreadcrumb(path) {
-    const el = document.getElementById('breadcrumb');
-    const segments = getPathSegments(path);
-
-    if (segments.length === 0) {
-        el.innerHTML = '<span class="bc-item bc-link" data-path="/">home</span>';
-        return;
-    }
-
-    const parts = [
-        `<span class="bc-item bc-link" data-path="/">home</span>`
-    ];
-
-    let built = '';
+// Returns true if any ancestor node along this path has _gridLayout: true.
+// Also true if the leaf array itself has a _gridLayout property set.
+function isGridLayout(path) {
+    const segments = path.split('/').filter(Boolean);
+    let node = RESOURCES;
     for (const seg of segments) {
-        built += '/' + seg;
-        const p = built;
-        parts.push(`<span class="bc-sep">›</span><span class="bc-item bc-link" data-path="${p}">${seg}</span>`);
+        if (node.gridLayout) return true;
+        if (node && typeof node === 'object' && !Array.isArray(node) && seg in node) {
+            node = node[seg];
+        }
     }
-
-    el.innerHTML = parts.join('');
-
-    el.querySelectorAll('.bc-link').forEach(el => {
-        el.addEventListener('click', () => navigate(el.dataset.path));
-    });
-}
-
-// ─── Node page (folder view) ──────────────────────────────────────────────────
-
-function renderNode(node, path) {
-    const area = document.getElementById('content-area');
-    const children = getNodeChildren(node);
-
-    const cards = children.map(key => {
-        const child = node[key];
-        const label = Array.isArray(child) ? key : (child._label || key);
-        const desc = Array.isArray(child) ? `${child.length} resource${child.length !== 1 ? 's' : ''}` : (child._description || '');
-        const isLeaf = Array.isArray(child);
-        const childPath = path === '/' ? `/${key}` : `${path}/${key}`;
-        const count = isLeaf ? child.length : countLeafResources(child);
-
-        return `
-      <div class="folder-card" data-path="${childPath}" role="button" tabindex="0">
-        <div class="folder-card-body">
-          <div class="folder-card-title">${label}</div>
-          <div class="folder-card-desc">${desc}</div>
-        </div>
-        <div class="folder-card-meta">
-          <span class="folder-count">${count} resource${count !== 1 ? 's' : ''}</span>
-          <span class="folder-arrow">→</span>
-        </div>
-      </div>
-    `;
-    }).join('');
-
-    area.innerHTML = `<div class="folder-grid">${cards}</div>`;
-
-    area.querySelectorAll('.folder-card').forEach(card => {
-        const handler = () => navigate(card.dataset.path);
-        card.addEventListener('click', handler);
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') handler(); });
-    });
+    // Check the final node too (in case it's the leaf or a node itself)
+    return !!(node && node.gridLayout);
 }
 
 function countLeafResources(node) {
@@ -146,60 +65,219 @@ function countLeafResources(node) {
     return count;
 }
 
-// ─── Leaf page (resource view) ────────────────────────────────────────────────
+// ─── Embed / visual helpers ───────────────────────────────────────────────────
 
-const TYPE_LABELS = {
-    'doc/sheet': 'Doc / Sheet',
-    'video': 'Video',
-    'trainer': 'Trainer'
-};
-
-function resourceCard(resource, index) {
-    const typeClass = resource.type.replace('/', '-');
-    const typeLabel = TYPE_LABELS[resource.type] || resource.type;
-
-    return `
-    <div class="resource-card" data-index="${index}" tabindex="0">
-      <div class="resource-card-top">
-        <a class="resource-title" href="${resource.url}" target="_blank" rel="noopener">${resource.title}</a>
-        <div class="resource-desc">${resource.description}</div>
-      </div>
-      <div class="resource-card-foot">
-        <span class="type-badge type-${typeClass}">${typeLabel}</span>
-      </div>
-    </div>
-  `;
+// Returns an iframe embed URL for video/doc/sheet types. Null otherwise.
+function getEmbedUrl(url, type) {
+    if (!url) return null;
+    if (type === 'video') {
+        const ytStd = url.match(/youtube\.com\/watch\?v=([^&\s]+)/);
+        if (ytStd) return `https://www.youtube.com/embed/${ytStd[1]}`;
+        const ytShort = url.match(/youtu\.be\/([^?&\s]+)/);
+        if (ytShort) return `https://www.youtube.com/embed/${ytShort[1]}`;
+        return url;
+    }
+    if (type === 'doc/sheet') {
+        const docMatch = url.match(/(https:\/\/docs\.google\.com\/document\/d\/[^/]+)/);
+        if (docMatch) return `${docMatch[1]}/pub?embedded=true`;
+        const sheetMatch = url.match(/(https:\/\/docs\.google\.com\/spreadsheets\/d\/[^/]+)/);
+        if (sheetMatch) return `${sheetMatch[1]}/pubhtml?embedded=true&widget=true`;
+        return url;
+    }
+    return null;
 }
 
-function renderLeaf(resources) {
+// Returns the HTML for the visual section of a modal (iframe or image).
+// Returns empty string for trainers or types with no visual.
+function getVisualHtml(resource) {
+    const { type, url, title } = resource;
+
+    if (type === 'image') {
+        // The url IS the image
+        return `<div class="modal-visual-wrap modal-img-wrap">
+      <img src="${url}" alt="${escHtml(title)}" onerror="this.parentElement.classList.add('visual-hidden')" />
+    </div>`;
+    }
+
+    if (type === 'website') {
+        // Screenshot lives at ./img/{title}.png
+        const imgPath = `./img/${encodeURIComponent(title)}.png`;
+        return `<div class="modal-visual-wrap modal-img-wrap">
+      <img src="${imgPath}" alt="${escHtml(title)} screenshot" onerror="this.parentElement.classList.add('visual-hidden')" />
+    </div>`;
+    }
+
+    const embedUrl = getEmbedUrl(url, type);
+    if (embedUrl) {
+        return `<div class="modal-visual-wrap modal-iframe-wrap">
+      <iframe src="${embedUrl}" allowfullscreen loading="lazy" frameborder="0"></iframe>
+    </div>`;
+    }
+
+    return ''; // trainer or unknown — no visual
+}
+
+function escHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ─── Type metadata ────────────────────────────────────────────────────────────
+
+const TYPE_META = {
+    'doc/sheet': { label: 'Doc / Sheet', cls: 'type-doc-sheet' },
+    'video': { label: 'Video', cls: 'type-video' },
+    'trainer': { label: 'Trainer', cls: 'type-trainer' },
+    'image': { label: 'Image', cls: 'type-image' },
+    'website': { label: 'Website', cls: 'type-website' },
+};
+
+function typeMeta(type) {
+    return TYPE_META[type] || { label: type, cls: 'type-unknown' };
+}
+
+// ─── Breadcrumb ───────────────────────────────────────────────────────────────
+
+function renderBreadcrumb(path) {
+    const el = document.getElementById('breadcrumb');
+    const segments = getPathSegments(path);
+
+    const parts = [`<span class="bc-item bc-link" data-path="/">home</span>`];
+    let built = '';
+    for (const seg of segments) {
+        built += '/' + seg;
+        const p = built;
+        parts.push(`<span class="bc-sep">›</span><span class="bc-item bc-link" data-path="${p}">${escHtml(seg)}</span>`);
+    }
+
+    el.innerHTML = parts.join('');
+    el.querySelectorAll('.bc-link').forEach(item => {
+        item.addEventListener('click', () => navigate(item.dataset.path));
+    });
+}
+
+// ─── Node page (folder view) ──────────────────────────────────────────────────
+
+function renderNode(node, path) {
     const area = document.getElementById('content-area');
-    const learnItems = resources.filter(r => r.section === 'learn');
-    const trainItems = resources.filter(r => r.section === 'train');
-    // Items without a section default to learn
-    const noSection = resources.filter(r => !r.section);
-    const allLearn = [...learnItems, ...noSection];
+    const children = getNodeChildren(node);
 
-    area.innerHTML = `
-    <div class="resource-split">
-      <div class="resource-col">
-        <h2 class="col-heading">Learn</h2>
-        <div class="resource-list" id="learn-list">
-          ${allLearn.length ? allLearn.map((r, i) => resourceCard(r, resources.indexOf(r))).join('') : '<p class="empty-col">No resources yet.</p>'}
-        </div>
-      </div>
-      <div class="resource-col">
-        <h2 class="col-heading">Train</h2>
-        <div class="resource-list" id="train-list">
-          ${trainItems.length ? trainItems.map((r, i) => resourceCard(r, resources.indexOf(r))).join('') : '<p class="empty-col">No resources yet.</p>'}
-        </div>
-      </div>
-    </div>
-  `;
+    const cards = children.map(key => {
+        const child = node[key];
+        const label = Array.isArray(child) ? key : (child.label || key);
+        const desc = Array.isArray(child) ? '' : (child.description || '');
+        const childPath = path === '/' ? `/${key}` : `${path}/${key}`;
+        const count = countLeafResources(child);
 
-    // Attach click handlers — card click (not title) opens modal
+        return `
+      <div class="folder-card" data-path="${childPath}" role="button" tabindex="0">
+        <div class="folder-card-body">
+          <div class="folder-card-title">${escHtml(label)}</div>
+          ${desc ? `<div class="folder-card-desc">${escHtml(desc)}</div>` : ''}
+        </div>
+        <div class="folder-card-meta">
+          <span class="folder-count">${count} resource${count !== 1 ? 's' : ''}</span>
+          <span class="folder-arrow">→</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    area.innerHTML = `<div class="folder-grid">${cards}</div>`;
+
+    area.querySelectorAll('.folder-card').forEach(card => {
+        const go = () => navigate(card.dataset.path);
+        card.addEventListener('click', go);
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') go(); });
+    });
+}
+
+// ─── Resource card HTML ───────────────────────────────────────────────────────
+
+function resourceCardHtml(resource, globalIndex) {
+    const { label, cls } = typeMeta(resource.type);
+    const featuredAttr = resource.featured ? ' data-featured="true"' : '';
+    return `
+    <div class="resource-card${resource.featured ? ' resource-card--featured' : ''}" data-index="${globalIndex}" tabindex="0"${featuredAttr}>
+        <div class="resource-card-top">
+            <a class="resource-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
+            <div class="resource-desc">${escHtml(resource.description)}</div>
+        </div>
+        <div class="resource-card-foot">
+            <span class="type-badge ${cls}">${label}</span>
+        </div>
+    </div>`;
+}
+
+// ─── Leaf page ────────────────────────────────────────────────────────────────
+
+// Detects whether we're in a mobile viewport (matches the CSS breakpoint).
+function isMobile() {
+    return window.matchMedia('(max-width: 700px)').matches;
+}
+
+function renderLeaf(resources, gridLayout) {
+    const area = document.getElementById('content-area');
+
+    if (gridLayout) {
+        // ── Misc-style unified grid ───────────────────────────────────────────
+        const cards = resources.map((r, i) => resourceCardHtml(r, i)).join('');
+        area.innerHTML = `<div class="resource-grid">${cards}</div>`;
+    } else {
+        // ── Learn / Train split ───────────────────────────────────────────────
+        const learnItems = resources.filter(r => !r.section || r.section === 'learn');
+        const trainItems = resources.filter(r => r.section === 'train');
+
+        area.innerHTML = `
+      <!-- Tab bar: only visible on mobile via CSS -->
+      <div class="mobile-tab-bar">
+        <button class="mobile-tab active-learn" id="tab-learn">Learn</button>
+        <button class="mobile-tab" id="tab-train">Train</button>
+      </div>
+      <div class="resource-split">
+        <div class="resource-col tab-active" id="col-learn">
+          <h2 class="col-heading ${learnItems.length ? 'col-learn' : 'col-empty'}">Learn</h2>
+          <div class="resource-list">
+            ${learnItems.length
+                ? learnItems.map(r => resourceCardHtml(r, resources.indexOf(r))).join('')
+                : '<p class="empty-col">No resources yet.</p>'}
+          </div>
+        </div>
+        <div class="split-divider"></div>
+        <div class="resource-col tab-active" id="col-train">
+          <h2 class="col-heading ${trainItems.length ? 'col-train' : 'col-empty'}">Train</h2>
+          <div class="resource-list">
+            ${trainItems.length
+                ? trainItems.map(r => resourceCardHtml(r, resources.indexOf(r))).join('')
+                : '<p class="empty-col">No resources yet.</p>'}
+          </div>
+        </div>
+      </div>`;
+
+        // Wire up mobile tabs
+        const tabLearn = area.querySelector('#tab-learn');
+        const tabTrain = area.querySelector('#tab-train');
+        const colLearn = area.querySelector('#col-learn');
+        const colTrain = area.querySelector('#col-train');
+
+        function activateTab(which) {
+            // Tab button styles
+            tabLearn.className = 'mobile-tab' + (which === 'learn' ? ' active-learn' : '');
+            tabTrain.className = 'mobile-tab' + (which === 'train' ? ' active-train' : '');
+            // Column visibility (CSS controls whether .tab-active matters via media query)
+            colLearn.classList.toggle('tab-active', which === 'learn');
+            colTrain.classList.toggle('tab-active', which === 'train');
+        }
+
+        tabLearn.addEventListener('click', () => activateTab('learn'));
+        tabTrain.addEventListener('click', () => activateTab('train'));
+
+        // Default: learn active
+        activateTab('learn');
+    }
+
+    // Attach click handlers
     area.querySelectorAll('.resource-card').forEach(card => {
         card.addEventListener('click', e => {
-            if (e.target.closest('.resource-title')) return; // let link through
+            if (e.target.closest('.resource-title')) return;
             const idx = parseInt(card.dataset.index, 10);
             openModal(resources[idx]);
         });
@@ -217,51 +295,39 @@ function renderLeaf(resources) {
 function openModal(resource) {
     const backdrop = document.getElementById('modal-backdrop');
     const inner = document.getElementById('modal-inner');
-    const typeClass = resource.type.replace('/', '-');
-    const typeLabel = TYPE_LABELS[resource.type] || resource.type;
-    const embedUrl = getEmbedUrl(resource.url, resource.type);
-    const hasEmbed = !!embedUrl;
-
-    const iframeHtml = hasEmbed
-        ? `<div class="modal-iframe-wrap">
-        <iframe src="${embedUrl}" allowfullscreen loading="lazy" frameborder="0"></iframe>
-       </div>`
-        : '';
+    const { label, cls } = typeMeta(resource.type);
+    const visualHtml = getVisualHtml(resource);
+    const hasVisual = visualHtml !== '';
 
     inner.innerHTML = `
     <div class="modal-header">
-      <a class="modal-title" href="${resource.url}" target="_blank" rel="noopener">${resource.title}</a>
-      <span class="type-badge type-${typeClass}">${typeLabel}</span>
+      <a class="modal-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
+      <span class="type-badge ${cls}">${label}</span>
     </div>
     <div class="modal-sep"></div>
-    <div class="modal-body ${hasEmbed ? 'has-embed' : ''}">
-      ${hasEmbed ? `<div class="modal-iframe-mobile">${iframeHtml}</div>` : ''}
-      <div class="modal-desc">${resource.description}</div>
-      ${hasEmbed ? `<div class="modal-iframe-desktop">${iframeHtml}</div>` : ''}
+    <div class="modal-body${hasVisual ? ' has-visual' : ''}">
+      ${hasVisual ? `<div class="modal-visual-mobile">${visualHtml}</div>` : ''}
+      <div class="modal-desc">${escHtml(resource.description)}</div>
+      ${hasVisual ? `<div class="modal-visual-desktop">${visualHtml}</div>` : ''}
     </div>
-    <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">
-      Open ↗
-    </a>
-  `;
+    <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">Open ↗</a>`;
 
     backdrop.classList.add('active');
     document.body.classList.add('modal-open');
 }
 
 function closeModal() {
-    const backdrop = document.getElementById('modal-backdrop');
-    backdrop.classList.remove('active');
+    document.getElementById('modal-backdrop').classList.remove('active');
     document.body.classList.remove('modal-open');
-    // Clear iframe to stop playback
-    const iframes = backdrop.querySelectorAll('iframe');
-    iframes.forEach(f => { f.src = f.src; });
+    // Stop iframe / image loading
+    document.querySelectorAll('#modal-inner iframe').forEach(f => { f.src = f.src; });
 }
 
 // ─── Not found ────────────────────────────────────────────────────────────────
 
 function renderNotFound() {
-    const area = document.getElementById('content-area');
-    area.innerHTML = `<div class="not-found"><p>This path doesn't exist.</p><button onclick="navigate('/')">Go home</button></div>`;
+    document.getElementById('content-area').innerHTML =
+        `<div class="not-found"><p>This path doesn't exist.</p><button onclick="navigate('/')">Go home</button></div>`;
 }
 
 // ─── Root render ──────────────────────────────────────────────────────────────
@@ -269,14 +335,12 @@ function renderNotFound() {
 function render(path) {
     const node = getNode(path);
     renderBreadcrumb(path);
-
-    const area = document.getElementById('content-area');
-    area.innerHTML = '';
+    document.getElementById('content-area').innerHTML = '';
 
     if (node === null) {
         renderNotFound();
     } else if (Array.isArray(node)) {
-        renderLeaf(node);
+        renderLeaf(node, isGridLayout(path));
     } else {
         renderNode(node, path);
     }
@@ -285,25 +349,17 @@ function render(path) {
 // ─── Event listeners ─────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Title click → home
     document.getElementById('main-title').addEventListener('click', () => navigate('/'));
+    document.getElementById('main-title').addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') navigate('/');
+    });
 
-    // Modal close button
     document.getElementById('modal-close').addEventListener('click', closeModal);
-
-    // Click backdrop to close
     document.getElementById('modal-backdrop').addEventListener('click', e => {
         if (e.target === document.getElementById('modal-backdrop')) closeModal();
     });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    // Escape to close
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeModal();
-    });
-
-    // Handle browser back/forward
     window.addEventListener('popstate', () => render(getCurrentPath()));
-
-    // Initial render
     render(getCurrentPath());
 });

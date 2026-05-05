@@ -1,14 +1,27 @@
 // resources.js
 // Source of truth for all Square-1 resources and folder structure.
-// Nodes are objects (with _label and _description metadata keys prefixed with _).
-// Leaves are arrays of resource objects.
+//
+// NODE  = object  (has label, description metadata; optionally gridLayout: true)
+// LEAF  = array   (list of resource objects)
+//
 // Resource object shape:
-//   { title, url, type ("doc/sheet" | "video" | "trainer"), description, section ("learn" | "train") }
+//   {
+//     title:       string,
+//     url:         string,
+//     type:        "doc/sheet" | "video" | "trainer" | "image" | "website",
+//     description: string,
+//     section:     "learn" | "train"   (ignored for gridLayout nodes)
+//   }
+//
+// gridLayout: true on a NODE means all descendent leaf pages render as a
+// single unified grid instead of the two-column Learn / Train split.
+// Intended for the Misc section.
 
 const RESOURCES = {
+
   "Cubeshape": {
-    _label: "Cubeshape",
-    _description: "Make the puzzle into a cube shape. The first step of Square-1.",
+    label: "Cubeshape",
+    description: "Make the puzzle into a cube shape. The first step of Square-1.",
     "2H": [
       {
         title: "SquanGo CSP",
@@ -58,8 +71,8 @@ const RESOURCES = {
   },
 
   "CP": {
-    _label: "Corner Permutation",
-    _description: "Permute the corners of Square-1 after cubeshape is achieved.",
+    label: "Corner Permutation",
+    description: "Permute the corners of Square-1 after cubeshape is achieved.",
     "2H": [
       {
         title: "CP Algorithm Doc",
@@ -89,14 +102,15 @@ const RESOURCES = {
         url: "https://docs.google.com/spreadsheets/d/example-oh-cp/edit",
         type: "doc/sheet",
         description: "OH-optimized CP alg set with grip-change notes and fingertrick suggestions.",
-        section: "learn"
+        section: "learn",
+        featured: true
       }
     ]
   },
 
   "EP": {
-    _label: "Edge Permutation",
-    _description: "Permute the edges of Square-1. The final step before the solve is complete.",
+    label: "Edge Permutation",
+    description: "Permute the edges of Square-1. The final step before the solve is complete.",
     "EPLL": [
       {
         title: "EPLL Algorithm Sheet",
@@ -132,8 +146,8 @@ const RESOURCES = {
   },
 
   "VDB": {
-    _label: "VDB",
-    _description: "The Vandenberghe-De Bruijn system — a highly efficient modern method for Square-1.",
+    label: "VDB",
+    description: "The Vandenberghe-De Bruijn system — a highly efficient modern method for Square-1.",
     "Overview": [
       {
         title: "VDB Introduction — Video",
@@ -224,34 +238,62 @@ const RESOURCES = {
     }
   ],
 
-  "Misc": [
-    {
-      title: "Square-1 Wiki",
-      url: "https://www.speedsolving.com/wiki/index.php/Square-1",
-      type: "doc/sheet",
-      description: "The Speedsolving Wiki's Square-1 article — notation, history, and links to method pages.",
-      section: "learn"
-    },
-    {
-      title: "Notation Guide",
-      url: "https://docs.google.com/document/d/example-notation/edit",
-      type: "doc/sheet",
-      description: "Complete Square-1 notation reference, including WCA-standard moves, slice notation, and how to read algorithms.",
-      section: "learn"
-    },
-    {
-      title: "Finger Tricks and Flow — Video",
-      url: "https://www.youtube.com/watch?v=example7",
-      type: "video",
-      description: "Tips on improving execution speed through better finger technique, lookahead, and algorithm flow for Square-1.",
-      section: "learn"
-    },
-    {
-      title: "CSTimer Square-1 Scrambler",
-      url: "https://cstimer.net",
-      type: "trainer",
-      description: "The standard timing tool with a Square-1 scramble option built in.",
-      section: "train"
-    }
-  ]
+  // ── Misc ─────────────────────────────────────────────────────────────────
+  // gridLayout: true → all leaves under this node render as a unified grid,
+  // no Learn / Train split.
+  "Misc": {
+    label: "Misc",
+    description: "Tools, references, and community resources that don't fit elsewhere.",
+    gridLayout: true,
+
+    "References": [
+      {
+        title: "Square-1 Wiki",
+        url: "https://www.speedsolving.com/wiki/index.php/Square-1",
+        type: "website",
+        description: "The Speedsolving Wiki's Square-1 article — notation, history, and links to method pages."
+      },
+      {
+        title: "Notation Guide",
+        url: "https://docs.google.com/document/d/example-notation/edit",
+        type: "doc/sheet",
+        description: "Complete Square-1 notation reference, including WCA-standard moves, slice notation, and how to read algorithms."
+      },
+      {
+        title: "Squan-1 Cheat Sheet",
+        url: "https://example.com/cheatsheet.png",
+        type: "image",
+        description: "A concise one-page visual cheat sheet covering cubeshape, CP, and EPLL with diagrams."
+      }
+    ],
+    "Tools": [
+      {
+        title: "CSTimer",
+        url: "https://cstimer.net",
+        type: "website",
+        description: "The standard timing tool with a Square-1 scramble option built in."
+      },
+      {
+        title: "SquanGo CSP",
+        url: "https://squango.net/csp",
+        type: "website",
+        description: "The cubeshape trainer and reference used throughout this site."
+      }
+    ],
+    "Community": [
+      {
+        title: "Speedsolving Square-1 Forum",
+        url: "https://www.speedsolving.com/forums/categories/square-1.html",
+        type: "website",
+        description: "The main forum thread for Square-1 discussion, alg sharing, and community help."
+      },
+      {
+        title: "Finger Tricks and Flow — Video",
+        url: "https://www.youtube.com/watch?v=example7",
+        type: "video",
+        description: "Tips on improving execution speed through better finger technique, lookahead, and algorithm flow for Square-1.",
+        section: "learn"
+      }
+    ]
+  }
 };
