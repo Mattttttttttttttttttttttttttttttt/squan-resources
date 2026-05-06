@@ -4,12 +4,12 @@
 
 function getCurrentPath() {
     const params = new URLSearchParams(window.location.search);
-    return params.get('path') || '/';
+    return params.get('path') || '';
 }
 
 function navigate(path) {
     const url = new URL(window.location.href);
-    if (!path || path === '/') {
+    if (!path) {
         url.searchParams.delete('path');
     } else {
         url.searchParams.set('path', path);
@@ -20,47 +20,55 @@ function navigate(path) {
 
 // ─── Data traversal ───────────────────────────────────────────────────────────
 
+// Case-insensitive child key lookup (excludes string/boolean metadata values)
+function findKey(node, seg) {
+    if (!node || typeof node !== 'object' || Array.isArray(node)) return undefined;
+    // exact match, value must be object/array (not string/boolean metadata)
+    if (seg in node && node[seg] !== null && typeof node[seg] === 'object') return seg;
+    const lower = seg.toLowerCase();
+    return Object.keys(node).find(k =>
+        node[k] !== null && typeof node[k] === 'object' && k.toLowerCase() === lower
+    );
+}
+
 function getNode(path) {
-    const segments = path.split('/').filter(Boolean);
+    if (!path) return RESOURCES;
     let node = RESOURCES;
-    for (const seg of segments) {
-        if (node && typeof node === 'object' && !Array.isArray(node) && seg in node) {
-            node = node[seg];
-        } else {
-            return null;
-        }
+    for (const seg of path.split('~')) {
+        const key = findKey(node, seg);
+        if (key === undefined) return null;
+        node = node[key];
     }
     return node;
 }
 
 function getPathSegments(path) {
-    return path.split('/').filter(Boolean);
+    return path ? path.split('~') : [];
 }
 
+// Children are keys whose values are objects or arrays (not string/boolean metadata)
 function getNodeChildren(node) {
-    return Object.keys(node).filter(k => !k.startsWith('_'));
+    return Object.keys(node).filter(k => node[k] !== null && typeof node[k] === 'object');
 }
 
-// Returns true if any ancestor node along this path has _gridLayout: true.
-// Also true if the leaf array itself has a _gridLayout property set.
+// Returns true if any ancestor (or the node itself) has gridLayout: true
 function isGridLayout(path) {
-    const segments = path.split('/').filter(Boolean);
+    if (!path) return !!(RESOURCES.gridLayout);
     let node = RESOURCES;
-    for (const seg of segments) {
+    for (const seg of path.split('~')) {
         if (node.gridLayout) return true;
-        if (node && typeof node === 'object' && !Array.isArray(node) && seg in node) {
-            node = node[seg];
-        }
+        const key = findKey(node, seg);
+        if (key === undefined) return false;
+        node = node[key];
     }
-    // Check the final node too (in case it's the leaf or a node itself)
     return !!(node && node.gridLayout);
 }
 
 function countLeafResources(node) {
     if (Array.isArray(node)) return node.length;
     let count = 0;
-    for (const key of Object.keys(node)) {
-        if (!key.startsWith('_')) count += countLeafResources(node[key]);
+    for (const key of getNodeChildren(node)) {
+        count += countLeafResources(node[key]);
     }
     return count;
 }
@@ -89,32 +97,45 @@ function getEmbedUrl(url, type) {
 
 // Returns the HTML for the visual section of a modal (iframe or image).
 // Returns empty string for trainers or types with no visual.
+// All visuals start at opacity 0 (via CSS) and reveal themselves on successful load.
 function getVisualHtml(resource) {
     const { type, url, title } = resource;
 
     if (type === 'image') {
-        // The url IS the image
         return `<div class="modal-visual-wrap modal-img-wrap">
-      <img src="${url}" alt="${escHtml(title)}" onerror="this.parentElement.classList.add('visual-hidden')" />
+      <img src="${url}" alt="${escHtml(title)}"
+        onload="this.closest('.modal-visual-wrap').classList.add('visual-loaded')"
+        onerror="onVisualError(this)" />
     </div>`;
     }
 
     if (type === 'website') {
-        // Screenshot lives at ./img/{title}.png
         const imgPath = `./img/${encodeURIComponent(title)}.png`;
         return `<div class="modal-visual-wrap modal-img-wrap">
-      <img src="${imgPath}" alt="${escHtml(title)} screenshot" onerror="this.parentElement.classList.add('visual-hidden')" />
+      <img src="${imgPath}" alt="${escHtml(title)} screenshot"
+        onload="this.closest('.modal-visual-wrap').classList.add('visual-loaded')"
+        onerror="onVisualError(this)" />
     </div>`;
     }
 
     const embedUrl = getEmbedUrl(url, type);
     if (embedUrl) {
         return `<div class="modal-visual-wrap modal-iframe-wrap">
-      <iframe src="${embedUrl}" allowfullscreen loading="lazy" frameborder="0"></iframe>
+      <iframe src="${embedUrl}" allowfullscreen loading="lazy" frameborder="0"
+        onload="this.closest('.modal-visual-wrap').classList.add('visual-loaded')"></iframe>
     </div>`;
     }
 
     return ''; // trainer or unknown — no visual
+}
+
+// Called when an image visual fails to load — collapses the modal layout
+function onVisualError(imgEl) {
+    const body = imgEl.closest('.modal-body');
+    if (body) {
+        body.classList.remove('has-visual');
+        body.querySelectorAll('.modal-visual-mobile, .modal-visual-desktop').forEach(el => el.remove());
+    }
 }
 
 function escHtml(str) {
@@ -141,12 +162,16 @@ function renderBreadcrumb(path) {
     const el = document.getElementById('breadcrumb');
     const segments = getPathSegments(path);
 
-    const parts = [`<span class="bc-item bc-link" data-path="/">home</span>`];
-    let built = '';
+    const parts = [`<span class="bc-item bc-link" data-path="">home</span>`];
+    let node = RESOURCES;
+    const builtSegs = [];
     for (const seg of segments) {
-        built += '/' + seg;
-        const p = built;
-        parts.push(`<span class="bc-sep">›</span><span class="bc-item bc-link" data-path="${p}">${escHtml(seg)}</span>`);
+        const key = findKey(node, seg);
+        if (!key) break;
+        builtSegs.push(key);
+        const p = builtSegs.join('~');
+        parts.push(`<span class="bc-sep">›</span><span class="bc-item bc-link" data-path="${p}">${escHtml(key)}</span>`);
+        node = node[key];
     }
 
     el.innerHTML = parts.join('');
@@ -165,7 +190,7 @@ function renderNode(node, path) {
         const child = node[key];
         const label = Array.isArray(child) ? key : (child.label || key);
         const desc = Array.isArray(child) ? '' : (child.description || '');
-        const childPath = path === '/' ? `/${key}` : `${path}/${key}`;
+        const childPath = path ? `${path}~${key}` : key;
         const count = countLeafResources(child);
 
         return `
@@ -192,11 +217,12 @@ function renderNode(node, path) {
 
 // ─── Resource card HTML ───────────────────────────────────────────────────────
 
-function resourceCardHtml(resource, globalIndex) {
+function resourceCardHtml(resource, globalIndex, col) {
     const { label, cls } = typeMeta(resource.type);
     const featuredAttr = resource.featured ? ' data-featured="true"' : '';
+    const colAttr = col ? ` data-col="${col}"` : '';
     return `
-    <div class="resource-card${resource.featured ? ' resource-card--featured' : ''}" data-index="${globalIndex}" tabindex="0"${featuredAttr}>
+    <div class="resource-card${resource.featured ? ' resource-card--featured' : ''}" data-index="${globalIndex}" tabindex="0"${featuredAttr}${colAttr}>
         <div class="resource-card-top">
             <a class="resource-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
             <div class="resource-desc">${escHtml(resource.description)}</div>
@@ -209,11 +235,6 @@ function resourceCardHtml(resource, globalIndex) {
 
 // ─── Leaf page ────────────────────────────────────────────────────────────────
 
-// Detects whether we're in a mobile viewport (matches the CSS breakpoint).
-function isMobile() {
-    return window.matchMedia('(max-width: 700px)').matches;
-}
-
 function renderLeaf(resources, gridLayout) {
     const area = document.getElementById('content-area');
 
@@ -222,59 +243,56 @@ function renderLeaf(resources, gridLayout) {
         const cards = resources.map((r, i) => resourceCardHtml(r, i)).join('');
         area.innerHTML = `<div class="resource-grid">${cards}</div>`;
     } else {
-        // ── Learn / Train split ───────────────────────────────────────────────
+        // ── Learn / Train interleaved flat grid ───────────────────────────────
+        // Interleaving lets CSS grid equalize row heights across both columns
         const learnItems = resources.filter(r => !r.section || r.section === 'learn');
         const trainItems = resources.filter(r => r.section === 'train');
+        const rows = Math.max(learnItems.length, trainItems.length);
+
+        let interleaved = '';
+        for (let i = 0; i < rows; i++) {
+            if (learnItems[i]) {
+                interleaved += resourceCardHtml(learnItems[i], resources.indexOf(learnItems[i]), 'learn');
+            } else {
+                interleaved += `<div class="resource-card-placeholder" data-col="learn"></div>`;
+            }
+            if (trainItems[i]) {
+                interleaved += resourceCardHtml(trainItems[i], resources.indexOf(trainItems[i]), 'train');
+            } else {
+                interleaved += `<div class="resource-card-placeholder" data-col="train"></div>`;
+            }
+        }
+
+        const learnHeadCls = learnItems.length ? 'col-learn' : 'col-empty';
+        const trainHeadCls = trainItems.length ? 'col-train' : 'col-empty';
 
         area.innerHTML = `
-      <!-- Tab bar: only visible on mobile via CSS -->
       <div class="mobile-tab-bar">
-        <button class="mobile-tab active-learn" id="tab-learn">Learn</button>
+        <button class="mobile-tab" id="tab-learn">Learn</button>
         <button class="mobile-tab" id="tab-train">Train</button>
       </div>
-      <div class="resource-split">
-        <div class="resource-col tab-active" id="col-learn">
-          <h2 class="col-heading ${learnItems.length ? 'col-learn' : 'col-empty'}">Learn</h2>
-          <div class="resource-list">
-            ${learnItems.length
-                ? learnItems.map(r => resourceCardHtml(r, resources.indexOf(r))).join('')
-                : '<p class="empty-col">No resources yet.</p>'}
-          </div>
-        </div>
-        <div class="split-divider"></div>
-        <div class="resource-col tab-active" id="col-train">
-          <h2 class="col-heading ${trainItems.length ? 'col-train' : 'col-empty'}">Train</h2>
-          <div class="resource-list">
-            ${trainItems.length
-                ? trainItems.map(r => resourceCardHtml(r, resources.indexOf(r))).join('')
-                : '<p class="empty-col">No resources yet.</p>'}
-          </div>
-        </div>
+      <div class="resource-flat-grid" id="resource-flat-grid">
+        <h2 class="col-heading ${learnHeadCls}" data-col="learn">Learn</h2>
+        <h2 class="col-heading ${trainHeadCls}" data-col="train">Train</h2>
+        ${interleaved}
       </div>`;
 
-        // Wire up mobile tabs
+        const grid = area.querySelector('#resource-flat-grid');
         const tabLearn = area.querySelector('#tab-learn');
         const tabTrain = area.querySelector('#tab-train');
-        const colLearn = area.querySelector('#col-learn');
-        const colTrain = area.querySelector('#col-train');
 
         function activateTab(which) {
-            // Tab button styles
+            grid.dataset.active = which;
             tabLearn.className = 'mobile-tab' + (which === 'learn' ? ' active-learn' : '');
             tabTrain.className = 'mobile-tab' + (which === 'train' ? ' active-train' : '');
-            // Column visibility (CSS controls whether .tab-active matters via media query)
-            colLearn.classList.toggle('tab-active', which === 'learn');
-            colTrain.classList.toggle('tab-active', which === 'train');
         }
 
         tabLearn.addEventListener('click', () => activateTab('learn'));
         tabTrain.addEventListener('click', () => activateTab('train'));
-
-        // Default: learn active
         activateTab('learn');
     }
 
-    // Attach click handlers
+    // Card click → modal
     area.querySelectorAll('.resource-card').forEach(card => {
         card.addEventListener('click', e => {
             if (e.target.closest('.resource-title')) return;
@@ -323,23 +341,19 @@ function closeModal() {
     document.querySelectorAll('#modal-inner iframe').forEach(f => { f.src = f.src; });
 }
 
-// ─── Not found ────────────────────────────────────────────────────────────────
-
-function renderNotFound() {
-    document.getElementById('content-area').innerHTML =
-        `<div class="not-found"><p>This path doesn't exist.</p><button onclick="navigate('/')">Go home</button></div>`;
-}
-
 // ─── Root render ──────────────────────────────────────────────────────────────
 
 function render(path) {
     const node = getNode(path);
+    if (node === null) {
+        navigate('');
+        return;
+    }
+
     renderBreadcrumb(path);
     document.getElementById('content-area').innerHTML = '';
 
-    if (node === null) {
-        renderNotFound();
-    } else if (Array.isArray(node)) {
+    if (Array.isArray(node)) {
         renderLeaf(node, isGridLayout(path));
     } else {
         renderNode(node, path);
@@ -349,9 +363,9 @@ function render(path) {
 // ─── Event listeners ─────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('main-title').addEventListener('click', () => navigate('/'));
+    document.getElementById('main-title').addEventListener('click', () => navigate(''));
     document.getElementById('main-title').addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') navigate('/');
+        if (e.key === 'Enter' || e.key === ' ') navigate('');
     });
 
     document.getElementById('modal-close').addEventListener('click', closeModal);

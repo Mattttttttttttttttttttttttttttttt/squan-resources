@@ -49,7 +49,6 @@
     --radius-xl: 20px;
 
     --font-body: 'Outfit', system-ui, sans-serif;
-    --font-brand: 'Unbounded', sans-serif;
 
     --topbar-h: 56px;
     --max-w: 1200px;
@@ -131,9 +130,9 @@ main,
 
 /* SquanGo brand — matched exactly to source */
 .squango {
-    font-family: var(--font-brand);
+    font-family: var(--font-body);
     font-size: 1.3rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1;
     flex-shrink: 0;
@@ -305,28 +304,30 @@ main {
     transform: translateX(4px);
 }
 
-/* ── Resource Split (Leaf pages — Learn / Train) ──────────────────────────── */
-.resource-split {
+/* ── Resource flat grid (Leaf pages — Learn / Train) ─────────────────────── */
+/* Both columns share one grid so row heights equalize naturally */
+.resource-flat-grid {
     display: grid;
-    grid-template-columns: 1fr 1px 1fr;
-    gap: 0 28px;
-    align-items: start;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 28px;
+    align-items: stretch;
+    position: relative;
 }
 
-/* The vertical divider between columns */
-.split-divider {
+/* Center divider via pseudo-element */
+.resource-flat-grid::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    transform: translateX(-14px);
     background: var(--border);
-    align-self: stretch;
-    min-height: 100%;
+    pointer-events: none;
 }
 
-.resource-col {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-/* Column headings — bigger, color-coded */
+/* Column headings */
 .col-heading {
     font-size: 0.9rem;
     font-weight: 700;
@@ -351,11 +352,16 @@ main {
     border-bottom-color: var(--border);
 }
 
-/* grid-auto-rows: 1fr makes every card in a column the same height */
-.resource-list {
-    display: grid;
-    grid-auto-rows: 1fr;
-    gap: 13px;
+/* Cards fill their full row height so cross-column pairs match */
+.resource-flat-grid .resource-card {
+    height: 100%;
+}
+
+/* Invisible balance placeholder — takes space, shows nothing */
+.resource-card-placeholder {
+    visibility: hidden;
+    pointer-events: none;
+    height: 100%;
 }
 
 .empty-col {
@@ -618,19 +624,20 @@ main {
     grid-row: 1;
 }
 
-/* Shared visual wrapper */
+/* Shared visual wrapper — hidden by default, revealed on load */
 .modal-visual-wrap {
     width: 100%;
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid var(--border);
     background: transparent;
-    transition: opacity 0.2s;
+    opacity: 0;
+    /* small delay so fade-in lands in sync with the modal open animation (0.24s) */
+    transition: opacity 0.18s ease 0.1s;
 }
 
-.modal-visual-wrap.visual-hidden {
-    opacity: 0;
-    pointer-events: none;
+.modal-visual-wrap.visual-loaded {
+    opacity: 1;
 }
 
 /* iframe-specific */
@@ -813,28 +820,28 @@ main {
         background: var(--col-train);
     }
 
-    /* ── Hide the desktop split, show a single column ── */
-    .resource-split {
+    /* ── Flat grid collapses to single column; tabs control visibility ── */
+    .resource-flat-grid {
         grid-template-columns: 1fr;
-        gap: 0;
+        gap: 12px;
     }
 
-    .split-divider {
+    .resource-flat-grid::after {
         display: none;
     }
 
-    /* Both columns visible by default on desktop; on mobile controlled by JS */
-    .resource-col {
+    .resource-flat-grid[data-active="learn"] [data-col="train"] {
         display: none;
     }
 
-    .resource-col.tab-active {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
+    .resource-flat-grid[data-active="train"] [data-col="learn"] {
+        display: none;
     }
 
-    /* The col-heading is replaced by tabs on mobile; hide it */
+    .resource-card-placeholder {
+        display: none;
+    }
+
     .col-heading {
         display: none;
     }
