@@ -1,0 +1,441 @@
+/* roadmap.css — Roadmap-specific styles */
+/* Inherits variables and topbar from ../styles.css */
+
+/* ── Override main layout for centered roadmap ───────────────────────────── */
+main.roadmap-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 52px 24px 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ── Title ────────────────────────────────────────────────────────────────── */
+.roadmap-title {
+    text-align: center;
+    cursor: default;
+}
+
+.roadmap-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.18s;
+}
+.roadmap-title-link:hover {
+    opacity: 0.75;
+}
+
+.roadmap-subtitle {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 8px;
+    margin-bottom: 36px;
+}
+
+/* ── Tab switcher ─────────────────────────────────────────────────────────── */
+.tab-switcher {
+    display: flex;
+    gap: 0;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    margin-bottom: 56px;
+    align-self: center;
+}
+
+.tab-btn {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 8px 22px;
+    border-radius: calc(var(--radius-md) - 2px);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
+.tab-btn--active {
+    background: var(--surface-hover);
+    color: var(--accent);
+    box-shadow: 0 0 0 1px var(--border);
+}
+
+/* ── Timeline ─────────────────────────────────────────────────────────────── */
+.roadmap-timeline {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Continuous vertical line running through all rows */
+.roadmap-timeline::before {
+    content: '';
+    position: absolute;
+    left: 112px; /* aligns with dot center */
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border) 5%, var(--border) 95%, transparent);
+    pointer-events: none;
+}
+
+.timeline-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 20px;
+    margin-bottom: 20px;
+    align-items: start;
+}
+
+.timeline-row--last {
+    margin-bottom: 0;
+}
+
+/* ── Left column: timestamp + dot ─────────────────────────────────────────── */
+.timeline-left {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 18px; /* aligns with card top */
+    position: relative;
+}
+
+.timeline-timestamp {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: right;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    flex-shrink: 0;
+    max-width: 84px;
+}
+
+.timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    border: 2px solid var(--bg);
+    outline: 1.5px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 3px;
+    transition: background 0.2s, outline-color 0.2s;
+}
+
+/* Dot lights up when its row's card is hovered */
+.timeline-row:has(.step-card:hover) .timeline-dot,
+.timeline-row:has(.step-card.popup-open) .timeline-dot {
+    background: var(--accent);
+    outline-color: var(--accent);
+}
+
+/* ── Right column: step cards ─────────────────────────────────────────────── */
+.timeline-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timeline-steps--parallel {
+    flex-direction: row;
+    gap: 12px;
+}
+
+/* ── Step card ────────────────────────────────────────────────────────────── */
+.step-card {
+    position: relative;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    outline: none;
+    flex: 1;
+    /* overflow visible so popup can escape card bounds */
+    overflow: visible;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.step-card:hover,
+.step-card:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(72, 202, 228, 0.10);
+}
+
+.step-card.popup-open {
+    border-color: var(--accent);
+}
+
+.step-card-inner {
+    padding: 18px 20px 14px;
+    transition: transform 0.22s cubic-bezier(0.34, 1, 0.64, 1);
+}
+
+.step-card:hover .step-card-inner,
+.step-card.popup-open .step-card-inner {
+    /* subtle leftward nudge to hint at popup appearing */
+    transform: translateX(-5px);
+}
+
+.step-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+}
+
+.step-card-desc {
+    font-size: 0.865rem;
+    color: var(--text-muted);
+    line-height: 1.56;
+}
+
+/* Hint text at bottom of card */
+.step-card-hint {
+    margin-top: 10px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+}
+
+.step-hint-desktop { display: inline; }
+.step-hint-mobile  { display: none; }
+
+/* ── Featured popup card ──────────────────────────────────────────────────── */
+/* Desktop: appears on hover, anchored to top-right of card */
+.featured-popup {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 10px);
+    width: 240px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.04);
+    z-index: 50;
+
+    /* Hidden by default */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+/* Show on card hover (desktop) — stays visible because popup is child of card */
+.step-card:hover .featured-popup,
+.step-card:focus-visible .featured-popup {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+}
+
+.fp-heading {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.fp-resource-row,
+.fp-empty-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.fp-resource-row:last-child,
+.fp-empty-section:last-child {
+    margin-bottom: 0;
+}
+
+.fp-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.fp-learn { color: var(--col-learn); }
+.fp-train { color: var(--col-train); }
+.fp-empty { color: var(--text-dim); }
+
+.fp-resource-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+.fp-resource-link:hover { opacity: 0.75; }
+
+.fp-resource-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    flex: 1;
+}
+
+.fp-empty-note {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* ── Mobile popup (shown inline below card on tap) ────────────────────────── */
+/* On mobile the popup becomes a drawer below the card */
+
+/* Reused type badges from main styles */
+.type-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* Ensure we inherit type colors from styles.css */
+.type-doc-sheet { color: var(--type-doc);     background: var(--type-doc-bg); }
+.type-video     { color: var(--type-video);   background: var(--type-video-bg); }
+.type-trainer   { color: var(--type-trainer); background: var(--type-trainer-bg); }
+.type-image     { color: var(--type-image);   background: var(--type-image-bg); }
+.type-website   { color: var(--type-website); background: var(--type-website-bg); }
+
+/* ── Content fade-in ──────────────────────────────────────────────────────── */
+.roadmap-timeline {
+    animation: fadeIn 0.22s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mobile ───────────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+    main.roadmap-main {
+        padding: 36px 16px 80px;
+        align-items: stretch;
+    }
+
+    .roadmap-title {
+        font-size: 2rem;
+    }
+
+    /* Collapse timeline columns — timestamp above card */
+    .roadmap-timeline::before {
+        left: 8px;
+        top: 20px;
+    }
+
+    .timeline-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+        margin-bottom: 24px;
+    }
+
+    .timeline-left {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 8px;
+        padding-top: 0;
+        margin-bottom: 8px;
+        padding-left: 2px;
+    }
+
+    .timeline-dot {
+        order: -1;
+        margin-top: 0;
+    }
+
+    .timeline-timestamp {
+        text-align: left;
+        max-width: none;
+        font-size: 0.78rem;
+    }
+
+    /* Parallel steps stack on mobile */
+    .timeline-steps--parallel {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Card inner: no nudge on mobile (we're using tap) */
+    .step-card:hover .step-card-inner,
+    .step-card.popup-open .step-card-inner {
+        transform: none;
+    }
+
+    /* Swap hint text */
+    .step-hint-desktop { display: none; }
+    .step-hint-mobile  { display: inline; }
+
+    /* Featured popup becomes a drawer below the card on mobile */
+    .featured-popup {
+        position: static;
+        width: 100%;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 16px;
+        pointer-events: none;
+        transform: none;
+        border: none;
+        border-top: 1px solid var(--border-subtle);
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        box-shadow: none;
+        background: var(--surface);
+        transition: opacity 0.2s ease, max-height 0.25s ease, padding 0.2s ease;
+    }
+
+    /* Shown when card has popup-open class */
+    .step-card.popup-open .featured-popup {
+        opacity: 1;
+        max-height: 300px;
+        padding: 14px 16px 16px;
+        pointer-events: all;
+    }
+
+    /* Don't show popup on hover on mobile */
+    .step-card:hover .featured-popup:not(.step-card.popup-open .featured-popup) {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-switcher {
+        width: 100%;
+    }
+    .tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 9px 12px;
+    }
+}

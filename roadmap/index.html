@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0c0e12" />
+  <meta name="description" content="Square-1 progression roadmap." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <title>Roadmap — Squan Resources</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Shared site styles for topbar, variables, base reset -->
+  <link rel="stylesheet" href="../styles.css" />
+  <!-- Roadmap-specific styles -->
+  <link rel="stylesheet" href="roadmap.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <a href=".." class="squango" aria-label="SquanGo home">
+      <span class="squango-sq">Squan</span><span class="squango-go">Go</span>
+    </a>
+    <div class="nav-divider" aria-hidden="true"></div>
+    <a href=".." class="topbar-link">resources</a>
+  </header>
+
+  <main class="roadmap-main">
+    <h1 class="main-title roadmap-title" id="main-title">
+      <a href=".." class="roadmap-title-link">Squan Resources</a>
+    </h1>
+    <p class="roadmap-subtitle">Progression Roadmap</p>
+
+    <!-- Tab switcher — populated by JS -->
+    <div class="tab-switcher" id="tab-switcher" role="tablist" aria-label="Select method"></div>
+
+    <!-- Roadmap steps — populated by JS -->
+    <div class="roadmap-container" id="roadmap-container" role="main"></div>
+  </main>
+
+  <!-- Load resources for featured-resource lookup -->
+  <script src="../resources.js"></script>
+  <script src="roadmap.js"></script>
+  <script src="roadmap-app.js"></script>
+</body>
+</html>
