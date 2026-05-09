@@ -142,6 +142,14 @@ function escHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// Formats a credit string: italicizes the part before the first colon.
+function formatCredit(credit) {
+    if (!credit) return '';
+    const colon = credit.indexOf(':');
+    if (colon === -1) return escHtml(credit);
+    return `<em>${escHtml(credit.slice(0, colon))}</em>${escHtml(credit.slice(colon))}`;
+}
+
 // ─── Type metadata ────────────────────────────────────────────────────────────
 
 const TYPE_META = {
@@ -228,6 +236,7 @@ function resourceCardHtml(resource, globalIndex, col) {
             <div class="resource-desc">${escHtml(resource.description)}</div>
         </div>
         <div class="resource-card-foot">
+            ${resource.credit ? `<span class="resource-credit">${formatCredit(resource.credit)}</span>` : ''}
             <span class="type-badge ${cls}">${label}</span>
         </div>
     </div>`;
@@ -326,6 +335,7 @@ function openModal(resource) {
     <div class="modal-body${hasVisual ? ' has-visual' : ''}">
       ${hasVisual ? `<div class="modal-visual-mobile">${visualHtml}</div>` : ''}
       <div class="modal-desc">${escHtml(resource.description)}</div>
+      ${resource.credit ? `<div class="modal-credit">${formatCredit(resource.credit)}</div>` : ''}
       ${hasVisual ? `<div class="modal-visual-desktop">${visualHtml}</div>` : ''}
     </div>
     <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">Open ↗</a>`;

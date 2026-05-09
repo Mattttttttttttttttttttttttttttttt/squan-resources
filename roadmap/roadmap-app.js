@@ -84,12 +84,19 @@ function escHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
+function formatCredit(credit) {
+    if (!credit) return '';
+    const colon = credit.indexOf(':');
+    if (colon === -1) return escHtml(credit);
+    return `<em>${escHtml(credit.slice(0, colon))}</em>${escHtml(credit.slice(colon))}`;
+}
+
 const TYPE_META = {
     'doc/sheet': { label: 'Doc / Sheet', cls: 'type-doc-sheet' },
-    'video':     { label: 'Video',       cls: 'type-video'     },
-    'trainer':   { label: 'Trainer',     cls: 'type-trainer'   },
-    'image':     { label: 'Image',       cls: 'type-image'     },
-    'website':   { label: 'Website',     cls: 'type-website'   },
+    'video': { label: 'Video', cls: 'type-video' },
+    'trainer': { label: 'Trainer', cls: 'type-trainer' },
+    'image': { label: 'Image', cls: 'type-image' },
+    'website': { label: 'Website', cls: 'type-website' },
 };
 
 function renderFeaturedCard(featured) {
@@ -110,12 +117,14 @@ function renderFeaturedCard(featured) {
             </div>`;
         }
         const meta = TYPE_META[resource.type] || { label: resource.type, cls: 'type-unknown' };
+        const creditHtml = resource.credit ? `<span class="fp-resource-credit">${formatCredit(resource.credit)}</span>` : '';
         return `<div class="fp-resource-row">
             <span class="fp-section-label fp-${section}">${section === 'learn' ? 'Learn' : 'Train'}</span>
             <a class="fp-resource-link" href="${escHtml(resource.url)}" target="_blank" rel="noopener">
                 <span class="fp-resource-title">${escHtml(resource.title)}</span>
                 <span class="type-badge ${meta.cls}">${meta.label}</span>
             </a>
+            ${creditHtml}
         </div>`;
     }
 
@@ -131,7 +140,7 @@ function renderStep(step, isParallel) {
     const hasPopup = !!(featured.learn || featured.train);
     const featuredHtml = hasPopup ? renderFeaturedCard(featured) : '';
 
-    return `<div class="step-card${isParallel ? ' step-card--parallel' : ''}${hasPopup ? ' has-popup' : ''}" 
+    return `<div class="step-card${isParallel ? ' step-card--parallel' : ''}${hasPopup ? ' has-popup' : ''}"
                  data-url="${escHtml(step.url)}"
                  tabindex="0"
                  role="button"

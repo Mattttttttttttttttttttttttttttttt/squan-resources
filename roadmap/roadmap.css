@@ -22,6 +22,7 @@ main.roadmap-main {
     text-decoration: none;
     transition: opacity 0.18s;
 }
+
 .roadmap-title-link:hover {
     opacity: 0.75;
 }
@@ -86,7 +87,8 @@ main.roadmap-main {
 .roadmap-timeline::before {
     content: '';
     position: absolute;
-    left: 112px; /* aligns with dot center */
+    left: 112px;
+    /* aligns with dot center */
     top: 12px;
     bottom: 12px;
     width: 1px;
@@ -112,7 +114,8 @@ main.roadmap-main {
     align-items: flex-start;
     justify-content: flex-end;
     gap: 10px;
-    padding-top: 18px; /* aligns with card top */
+    padding-top: 18px;
+    /* aligns with card top */
     position: relative;
 }
 
@@ -216,8 +219,13 @@ main.roadmap-main {
     letter-spacing: 0.02em;
 }
 
-.step-hint-desktop { display: inline; }
-.step-hint-mobile  { display: none; }
+.step-hint-desktop {
+    display: inline;
+}
+
+.step-hint-mobile {
+    display: none;
+}
 
 /* ── Featured popup card ──────────────────────────────────────────────────── */
 /* Desktop: appears on hover, anchored to top-right of card */
@@ -230,7 +238,7 @@ main.roadmap-main {
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 14px 16px 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
     z-index: 50;
 
     /* Hidden by default */
@@ -277,9 +285,17 @@ main.roadmap-main {
     text-transform: uppercase;
 }
 
-.fp-learn { color: var(--col-learn); }
-.fp-train { color: var(--col-train); }
-.fp-empty { color: var(--text-dim); }
+.fp-learn {
+    color: var(--col-learn);
+}
+
+.fp-train {
+    color: var(--col-train);
+}
+
+.fp-empty {
+    color: var(--text-dim);
+}
 
 .fp-resource-link {
     display: flex;
@@ -289,7 +305,10 @@ main.roadmap-main {
     text-decoration: none;
     transition: opacity 0.15s;
 }
-.fp-resource-link:hover { opacity: 0.75; }
+
+.fp-resource-link:hover {
+    opacity: 0.75;
+}
 
 .fp-resource-title {
     font-size: 0.85rem;
@@ -304,6 +323,18 @@ main.roadmap-main {
     color: var(--text-dim);
     line-height: 1.5;
     font-style: italic;
+}
+
+.fp-resource-credit {
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+    margin-top: 2px;
+}
+
+.fp-resource-credit em {
+    font-style: italic;
+    color: var(--text-dim);
 }
 
 /* ── Mobile popup (shown inline below card on tap) ────────────────────────── */
@@ -321,11 +352,30 @@ main.roadmap-main {
 }
 
 /* Ensure we inherit type colors from styles.css */
-.type-doc-sheet { color: var(--type-doc);     background: var(--type-doc-bg); }
-.type-video     { color: var(--type-video);   background: var(--type-video-bg); }
-.type-trainer   { color: var(--type-trainer); background: var(--type-trainer-bg); }
-.type-image     { color: var(--type-image);   background: var(--type-image-bg); }
-.type-website   { color: var(--type-website); background: var(--type-website-bg); }
+.type-doc-sheet {
+    color: var(--type-doc);
+    background: var(--type-doc-bg);
+}
+
+.type-video {
+    color: var(--type-video);
+    background: var(--type-video-bg);
+}
+
+.type-trainer {
+    color: var(--type-trainer);
+    background: var(--type-trainer-bg);
+}
+
+.type-image {
+    color: var(--type-image);
+    background: var(--type-image-bg);
+}
+
+.type-website {
+    color: var(--type-website);
+    background: var(--type-website-bg);
+}
 
 /* ── Content fade-in ──────────────────────────────────────────────────────── */
 .roadmap-timeline {
@@ -333,8 +383,15 @@ main.roadmap-main {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
@@ -394,8 +451,13 @@ main.roadmap-main {
     }
 
     /* Swap hint text */
-    .step-hint-desktop { display: none; }
-    .step-hint-mobile  { display: inline; }
+    .step-hint-desktop {
+        display: none;
+    }
+
+    .step-hint-mobile {
+        display: inline;
+    }
 
     /* Featured popup becomes a drawer below the card on mobile */
     .featured-popup {
@@ -433,6 +495,7 @@ main.roadmap-main {
     .tab-switcher {
         width: 100%;
     }
+
     .tab-btn {
         flex: 1;
         text-align: center;

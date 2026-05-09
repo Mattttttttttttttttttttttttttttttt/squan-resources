@@ -433,7 +433,32 @@ main {
 
 .resource-card-foot {
     display: flex;
-    justify-content: flex-end;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.resource-credit {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.resource-credit em {
+    font-style: italic;
+    color: var(--text-dim);
+}
+
+.modal-credit {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.modal-credit em {
+    font-style: italic;
+    color: var(--text-dim);
 }
 
 /* ── Featured card ────────────────────────────────────────────────────────── */
