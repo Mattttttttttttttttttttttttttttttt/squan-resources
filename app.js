@@ -228,7 +228,8 @@ function renderNode(node, path) {
 function resourceCardHtml(resource, globalIndex, col) {
     const { label, cls } = typeMeta(resource.type);
     const featuredAttr = resource.featured ? ' data-featured="true"' : '';
-    const colAttr = col ? ` data-col="${col}"` : '';
+    const derivedCol = col ?? (resource.type === 'trainer' ? 'train' : 'learn');
+    const colAttr = ` data-col="${derivedCol}"`;
     return `
     <div class="resource-card${resource.featured ? ' resource-card--featured' : ''}" data-index="${globalIndex}" tabindex="0"${featuredAttr}${colAttr}>
         <div class="resource-card-top">
@@ -254,8 +255,8 @@ function renderLeaf(resources, gridLayout) {
     } else {
         // ── Learn / Train interleaved flat grid ───────────────────────────────
         // Interleaving lets CSS grid equalize row heights across both columns
-        const learnItems = resources.filter(r => !r.section || r.section === 'learn');
-        const trainItems = resources.filter(r => r.section === 'train');
+        const learnItems = resources.filter(r => r.type !== 'trainer');
+        const trainItems = resources.filter(r => r.type === 'trainer');
         const rows = Math.max(learnItems.length, trainItems.length);
 
         let interleaved = '';

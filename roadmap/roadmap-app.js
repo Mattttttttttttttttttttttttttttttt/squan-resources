@@ -55,8 +55,8 @@ function getFeaturedForStep(stepUrl) {
     if (!node) return { learn: null, train: null };
     const all = _collectFeatured(node);
     return {
-        learn: all.find(r => !r.section || r.section === 'learn') || null,
-        train: all.find(r => r.section === 'train') || null,
+        learn: all.find(r => r.type !== 'trainer') || null,
+        train: all.find(r => r.type === 'trainer') || null,
     };
 }
 
