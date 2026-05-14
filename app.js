@@ -20,15 +20,13 @@ function navigate(path) {
 
 // ─── Data traversal ───────────────────────────────────────────────────────────
 
-// Case-insensitive child key lookup (excludes string/boolean metadata values)
+// Case-insensitive child key lookup (excludes string/boolean metadata and the reserved 'resources' key)
 function findKey(node, seg) {
     if (!node || typeof node !== 'object' || Array.isArray(node)) return undefined;
-    // exact match, value must be object/array (not string/boolean metadata)
-    if (seg in node && node[seg] !== null && typeof node[seg] === 'object') return seg;
+    const isNav = k => k !== 'resources' && node[k] !== null && typeof node[k] === 'object';
+    if (seg in node && isNav(seg)) return seg;
     const lower = seg.toLowerCase();
-    return Object.keys(node).find(k =>
-        node[k] !== null && typeof node[k] === 'object' && k.toLowerCase() === lower
-    );
+    return Object.keys(node).find(k => isNav(k) && k.toLowerCase() === lower);
 }
 
 function getNode(path) {
@@ -46,9 +44,9 @@ function getPathSegments(path) {
     return path ? path.split('~') : [];
 }
 
-// Children are keys whose values are objects or arrays (not string/boolean metadata)
+// Children are navigable keys — objects/arrays, excluding reserved keys and metadata
 function getNodeChildren(node) {
-    return Object.keys(node).filter(k => node[k] !== null && typeof node[k] === 'object');
+    return Object.keys(node).filter(k => k !== 'resources' && node[k] !== null && typeof node[k] === 'object');
 }
 
 // Returns true if any ancestor (or the node itself) has gridLayout: true
@@ -66,7 +64,7 @@ function isGridLayout(path) {
 
 function countLeafResources(node) {
     if (Array.isArray(node)) return node.length;
-    let count = 0;
+    let count = Array.isArray(node.resources) ? node.resources.length : 0;
     for (const key of getNodeChildren(node)) {
         count += countLeafResources(node[key]);
     }
@@ -196,8 +194,8 @@ function renderNode(node, path) {
 
     const cards = children.map(key => {
         const child = node[key];
-        const label = Array.isArray(child) ? key : (child.label || key);
-        const desc = Array.isArray(child) ? '' : (child.description || '');
+        const label = child.label || key;
+        const desc = child.bait || child.description || '';
         const childPath = path ? `${path}~${key}` : key;
         const count = countLeafResources(child);
 
@@ -205,7 +203,7 @@ function renderNode(node, path) {
       <div class="folder-card" data-path="${childPath}" role="button" tabindex="0">
         <div class="folder-card-body">
           <div class="folder-card-title">${escHtml(label)}</div>
-          ${desc ? `<div class="folder-card-desc">${escHtml(desc)}</div>` : ''}
+          ${desc ? `<div class="folder-card-desc">${desc}</div>` : ''}
         </div>
         <div class="folder-card-meta">
           <span class="folder-count">${count} resource${count !== 1 ? 's' : ''}</span>
@@ -234,10 +232,10 @@ function resourceCardHtml(resource, globalIndex, col) {
     <div class="resource-card${resource.featured ? ' resource-card--featured' : ''}" data-index="${globalIndex}" tabindex="0"${featuredAttr}${colAttr}>
         <div class="resource-card-top">
             <a class="resource-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
-            <div class="resource-desc">${escHtml(resource.description)}</div>
+            ${resource.credit ? `<div class="resource-credit">${formatCredit(resource.credit)}</div>` : ''}
+            <div class="resource-desc">${resource.description || ''}</div>
         </div>
         <div class="resource-card-foot">
-            ${resource.credit ? `<span class="resource-credit">${formatCredit(resource.credit)}</span>` : ''}
             <span class="type-badge ${cls}">${label}</span>
         </div>
     </div>`;
@@ -245,13 +243,17 @@ function resourceCardHtml(resource, globalIndex, col) {
 
 // ─── Leaf page ────────────────────────────────────────────────────────────────
 
-function renderLeaf(resources, gridLayout) {
+function renderLeaf(resources, gridLayout, folderPath, node) {
+    _currentResources = resources; // store for resource path auto-open
+    _currentFolderPath = folderPath ?? '';
     const area = document.getElementById('content-area');
+    const descHtml = (node && node.description)
+        ? `<div class="leaf-description">${node.description}</div>` : '';
 
     if (gridLayout) {
         // ── Misc-style unified grid ───────────────────────────────────────────
         const cards = resources.map((r, i) => resourceCardHtml(r, i)).join('');
-        area.innerHTML = `<div class="resource-grid">${cards}</div>`;
+        area.innerHTML = descHtml + `<div class="resource-grid">${cards}</div>`;
     } else {
         // ── Learn / Train interleaved flat grid ───────────────────────────────
         // Interleaving lets CSS grid equalize row heights across both columns
@@ -276,7 +278,7 @@ function renderLeaf(resources, gridLayout) {
         const learnHeadCls = learnItems.length ? 'col-learn' : 'col-empty';
         const trainHeadCls = trainItems.length ? 'col-train' : 'col-empty';
 
-        area.innerHTML = `
+        area.innerHTML = descHtml + `
       <div class="mobile-tab-bar">
         <button class="mobile-tab" id="tab-learn">Learn</button>
         <button class="mobile-tab" id="tab-train">Train</button>
@@ -320,26 +322,78 @@ function renderLeaf(resources, gridLayout) {
 
 // ─── Modal ────────────────────────────────────────────────────────────────────
 
-function openModal(resource) {
+// Tracks the resources array currently displayed, for auto-opening by resource path segment
+let _currentResources = [];
+let _currentFolderPath = '';
+
+// Builds a ?path= URL with literal ~ instead of %7E
+function buildUrl(folderPath, resourcePath) {
+    const fullPath = resourcePath ? `${folderPath}~${resourcePath}` : folderPath;
+    const url = new URL(window.location.href);
+    if (fullPath) {
+        url.searchParams.set('path', fullPath);
+    } else {
+        url.searchParams.delete('path');
+    }
+    return url.toString().replace(/%7E/g, '~');
+}
+
+function openModal(resource, updateUrl = true) {
     const backdrop = document.getElementById('modal-backdrop');
     const inner = document.getElementById('modal-inner');
     const { label, cls } = typeMeta(resource.type);
     const visualHtml = getVisualHtml(resource);
     const hasVisual = visualHtml !== '';
 
+    // Append resource path as ~segment to ?path= for shareability
+    if (updateUrl && resource.path) {
+        window.history.replaceState({}, '', buildUrl(_currentFolderPath, resource.path));
+    }
+
     inner.innerHTML = `
     <div class="modal-header">
       <a class="modal-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
       <span class="type-badge ${cls}">${label}</span>
     </div>
+    ${resource.credit ? `<div class="modal-credit">${formatCredit(resource.credit)}</div>` : ''}
     <div class="modal-sep"></div>
     <div class="modal-body${hasVisual ? ' has-visual' : ''}">
       ${hasVisual ? `<div class="modal-visual-mobile">${visualHtml}</div>` : ''}
-      <div class="modal-desc">${escHtml(resource.description)}</div>
-      ${resource.credit ? `<div class="modal-credit">${formatCredit(resource.credit)}</div>` : ''}
+      <div class="modal-desc">${resource.description || ''}</div>
       ${hasVisual ? `<div class="modal-visual-desktop">${visualHtml}</div>` : ''}
     </div>
-    <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">Open ↗</a>`;
+    <div class="modal-actions">
+      <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">Open ↗</a>
+      ${resource.path ? `<button class="modal-share-btn" id="modal-share-btn" title="Copy link to this resource">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+          <path d="M16 6l-4-4-4 4"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        <span id="share-label">Share</span>
+      </button>` : ''}
+    </div>`;
+
+    // Share button logic
+    const shareBtn = inner.querySelector('#modal-share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const shareUrl = window.location.href; // already has ~resourcePath appended
+            const lbl = shareBtn.querySelector('#share-label');
+            const reset = () => setTimeout(() => { lbl.textContent = 'Share'; }, 2000);
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                lbl.textContent = 'Copied!'; reset();
+            }).catch(() => {
+                const tmp = document.createElement('input');
+                tmp.value = shareUrl;
+                document.body.appendChild(tmp);
+                tmp.select();
+                document.execCommand('copy');
+                document.body.removeChild(tmp);
+                lbl.textContent = 'Copied!'; reset();
+            });
+        });
+    }
 
     backdrop.classList.add('active');
     document.body.classList.add('modal-open');
@@ -348,6 +402,8 @@ function openModal(resource) {
 function closeModal() {
     document.getElementById('modal-backdrop').classList.remove('active');
     document.body.classList.remove('modal-open');
+    // Restore URL to folder path (strip the ~resourcePath segment)
+    window.history.replaceState({}, '', buildUrl(_currentFolderPath, ''));
     // Stop iframe / image loading
     document.querySelectorAll('#modal-inner iframe').forEach(f => { f.src = f.src; });
 }
@@ -355,7 +411,25 @@ function closeModal() {
 // ─── Root render ──────────────────────────────────────────────────────────────
 
 function render(path) {
-    const node = getNode(path);
+    let node = getNode(path);
+    let autoOpenResource = null;
+
+    // If path resolves to null, check if last segment is a resource path
+    if (node === null && path.includes('~')) {
+        const lastTilde = path.lastIndexOf('~');
+        const parentPath = path.slice(0, lastTilde);
+        const lastSeg = path.slice(lastTilde + 1);
+        const parentNode = getNode(parentPath);
+        if (parentNode && Array.isArray(parentNode.resources)) {
+            const match = parentNode.resources.find(r => r.path === lastSeg);
+            if (match) {
+                node = parentNode;
+                autoOpenResource = match;
+                path = parentPath;
+            }
+        }
+    }
+
     if (node === null) {
         navigate('');
         return;
@@ -364,8 +438,9 @@ function render(path) {
     renderBreadcrumb(path);
     document.getElementById('content-area').innerHTML = '';
 
-    if (Array.isArray(node)) {
-        renderLeaf(node, isGridLayout(path));
+    if (Array.isArray(node.resources)) {
+        renderLeaf(node.resources, isGridLayout(path), path, node);
+        if (autoOpenResource) openModal(autoOpenResource, false);
     } else {
         renderNode(node, path);
     }
