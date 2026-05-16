@@ -101,7 +101,9 @@ function getVisualHtml(resource) {
     }
 
     if (type === 'doc/sheet' || type === 'website') {
-        const imgPath = `./img/${encodeURIComponent(title)}.png`;
+        const parentFolder = _currentFolderPath.split('~').pop();
+        const imgName = resource.path ? `${parentFolder}-${resource.path}` : encodeURIComponent(title);
+        const imgPath = `./img/${imgName}.png`;
         return `<div class="modal-visual-wrap modal-img-wrap">
       <img src="${imgPath}" alt="${escHtml(title)} screenshot"
         onload="this.closest('.modal-visual-wrap').classList.add('visual-loaded')"
