@@ -7,8 +7,9 @@
 // node object:
 // {
 //    label:          string,
+//    bait:           string,
 //    description:    string,
-//    subfolder-name: {another node},
+//    subfolder-path: {another node},
 //  OR, this is a node that contains resources:
 //    resources:      [resource objects]
 //    ...
@@ -31,7 +32,7 @@
 const RESOURCES = {
   "start": {
     label: "Getting Started",
-    description: "Welcome to your squan journey! Click me to learn the basics.",
+    bait: "Welcome to your squan journey! Click me to learn the basics.",
     "solve": {
       label: "Solve the Cube",
       description: "Get your cube solved.",
@@ -109,7 +110,7 @@ const RESOURCES = {
       bait: "makes learning algs SO much easier",
       description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
         "It's like the difference between \"sexy move\" and \"turn the right layer " +
-        "90°, top 90°, right -90°, top -90°\".",
+        "90째, top 90째, right -90째, top -90째\".",
       resources: [
         {
           title: "Karn sheet",
@@ -122,5 +123,372 @@ const RESOURCES = {
         }
       ]
     }
+  },
+  "cs": {
+    label: "CS & CSP",
+    bait: "solve your cube into a cubeshape, and avoid parity",
+    "cs": {
+      label: "CS",
+      bait: "solve cubeshape",
+      description: "Be more efficient at cubeshape.</br>NOTE: once you get used to how to " +
+        "think for CS, going to watch any of the CSP tutorials and picking the better " +
+        "alg would be much more efficient.",
+      resources: [
+        {
+          title: "Scallop/Kite Tutorial",
+          url: "https://youtu.be/-fYJTvNSCdo",
+          type: "video",
+          credit: "- Cube Master",
+          path: "sk",
+          description: "Explains how to the thinking behind CS. Make sure to experiment " +
+            "with the other way to solve scallops and scallop/kite, so you don't get " +
+            "stuck on algs you don't like.",
+          featured: true
+        },
+        {
+          title: "Full CS Tutorial",
+          url: "https://youtu.be/GwlHUS7e-go",
+          type: "video",
+          credit: "- Cube Master",
+          path: "full",
+          description: "A little repetitive, but again check for the other way to solve " +
+            "all the 3 slicers, so you don't get stuck on algs you don't like.",
+          featured: true
+        },
+        {
+          title: "Full CS Flowchart",
+          url: "https://imgur.com/a/full-cubeshape-chart-square-1-toXxlEv",
+          type: "image",
+          credit: "- u/olimo",
+          path: "chart",
+          description: "A neat flowchart that has questionable algs and is impossible to " +
+            "read. But it does teach you how to think about CS, and where the names came from."
+        },
+        {
+          title: "CS Trainer",
+          url: "https://cstimer.net",
+          type: "trainer",
+          credit: "- Chen Shuang",
+          path: "cstimer",
+          description: "Just the CSTimer you know and love. Switch the scramble type to " +
+            "\"Square-1\" for the left dropdown and \"CSP\" for the right dropdown, and " +
+            "use the gear icon immediately to the right to choose CS cases.",
+          featured: true
+        },
+      ]
+    },
+    "csp": {
+      label: "CSP",
+      bait: "Avoid parity by solving cubeshape differently. Basis of VDB and Lin.",
+      description: "By tracing the parity of the cube during inspection, you can distinguish" +
+        "between the two parities of the cube, and do different algs for this. This " +
+        "(theoretically) ensures you NEVER get parity.",
+      resources: [
+        {
+          title: "SquanGo CSP Algs",
+          url: "https://squan-go.web.app/csp/",
+          type: "website",
+          credit: "- Abid & Matt",
+          path: "sqgalg",
+          description: "Does everything you can imagine. Integrates seamlessly with Matt's " +
+            "tutorials. Provides trainer, progress tracker, parity tracer, and more.",
+          featured: true
+        },
+        {
+          title: "CSP Tutorials",
+          url: "https://www.youtube.com/watch?v=GNmrLHw86ss&list=PL8Izpzk-6zizm3E5icawyJ637EJyaIwrB&index=1",
+          type: "video",
+          credit: "- Matt",
+          path: "matt",
+          description: "Shapes sorted by frequency. Includes a full tutorial and explains " +
+            "the algs.",
+          featured: true
+        },
+        {
+          title: "SquanGo CSP Tools",
+          url: "https://squan-go.web.app/csp/",
+          type: "trainer",
+          credit: "- Abid",
+          path: "sqgtool",
+          description: "Does everything you can imagine. Integrates seamlessly with Matt's " +
+            "tutorials. Provides trainer, progress tracker, parity tracer, and more.",
+          featured: true
+        },
+        {
+          title: "CSP Sheet",
+          url: "https://docs.google.com/spreadsheets/d/1F627bYHNPyVpD-zqvEXeq7W1_Xod27wnQ6fPMaGVXmg/edit",
+          type: "doc/sheet",
+          credit: "- BlueAcidBall",
+          path: "bab",
+          description: "Shapes sorted by frequency. Includes everything apart from tracing. " +
+            "Algorithms displayed with images."
+        },
+        {
+          title: "CSP Site",
+          url: "https://wo0fle.github.io/square-1/cs/ezcsp",
+          type: "website",
+          credit: "- Seby",
+          path: "seby",
+          description: "Shapes sorted by frequency. Includes a full tutorial. Has non-standard" +
+            "naming though."
+        },
+        {
+          title: "CSP Sheet",
+          url: "https://docs.google.com/spreadsheets/d/1eB4gjEUYEOWKnMvimfReXuzsWBPhLqbMp_tgWrFO3DA/edit",
+          type: "doc/sheet",
+          credit: "- Matt",
+          path: "matt2",
+          description: "Shapes sorted by frequency. A probably outdated version of the " +
+            "CSP tutorials. Includes everything apart from tracing."
+        },
+        {
+          title: "CSP Doc",
+          url: "https://docs.google.com/document/d/1_PWDmEZKot5MV7bJ1qWDxhTQyLBQGKqgsBeh3FgW6tU/edit",
+          type: "doc/sheet",
+          credit: "- Lorenzo",
+          path: "lorenzo",
+          description: "Shapes organized by symmetry. Includes a full tutorial."
+        },
+        {
+          title: "CSP Sheet",
+          url: "https://docs.google.com/spreadsheets/d/1SvFjP5UiiJYJ4Wls341NmP_PKEd2skFyMXHm6Qsk2go/edit",
+          type: "doc/sheet",
+          credit: "- Marco",
+          path: "marco",
+          description: "Shapes sorted by shape. Includes everything apart from tracing. " +
+            "Outdated and not maintained."
+        },
+        {
+          title: "CSP Tutorials",
+          url: "https://youtube.com/playlist?list=PLF0mfn_ogsH_mGKR9j4mR-USh7CnBxec-",
+          type: "video",
+          credit: "- Cube Master",
+          path: "cm",
+          description: "Shapes sorted by shape. Includes a full tutorial, but outdated."
+        },
+        {
+          title: "CSP Tutorial",
+          url: "https://youtu.be/pXXr87kwZuI",
+          type: "video",
+          credit: "- Eva",
+          path: "eva",
+          description: "Only teaches tracing. Outdated."
+        }
+      ]
+    }
+  },
+  "VDB": {
+    title: "Vandenberg",
+    bait: "the most popular method, with the highest ceiling and most resources",
+    "5look": {
+      title: "5 look",
+      bait: "Solve the whole squan in 5 steps. The logical step after beginners.",
+      description: "The 5 steps of 5 look are: CS, CO, EO, CP, EP. These stand for cubeshape, " +
+        "corner orientation, edge orientation, corner permutation, edge permutation. " +
+        "You are also encouraged to do CSP for CS.</br>Find CS under its folder in the " +
+        "homepage. ",
+      "CO": {
+        title: "CO",
+        bait: "First step after CS: corner orientation.",
+        description: "A very intuitive step: very similar to 2x2.",
+        resources: [
+          {
+            title: "CO sheet",
+            url: "https://docs.google.com/spreadsheets/d/1q-CmTEhda9E6bkPqADygln7BdymHLXUmaHtidtyywfY/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matt",
+            description: "",
+            featured: true
+          },
+          {
+            title: "CO Tutorial",
+            url: "https://youtu.be/9msR6Ss1Epw",
+            type: "video",
+            credit: "- Cube Master",
+            path: "cm",
+            description: "Outdated."
+          }
+        ]
+      },
+      "EO": {
+        title: "EO",
+        bait: "Second step after CS: edge orientation",
+        description: "For an easier version, you can M2 to either 1/1 or L/L. Everything " +
+          "is just some combo of M2s or setup to M2s. If all the EO solutions you use " +
+          "don't move the corners, then you can predict CP and maybe even cancel into it.",
+        resources: [
+          {
+            title: "EO Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1q-CmTEhda9E6bkPqADygln7BdymHLXUmaHtidtyywfY/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matt",
+            description: "",
+            featured: true
+          },
+          {
+            title: "EO Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1S95zSl49vUd51hiu2vCt2yjVzFQMWTm349-JJLjeXb8/edit",
+            type: "doc/sheet",
+            credit: "- Stepan",
+            path: "stepan",
+            description: "Contains optimal algs that are probably not needed for starters, " +
+              "but worth getting into if you want to get faster."
+          },
+          {
+            title: "EO video",
+            url: "https://youtu.be/KOCYNsDGxU4",
+            type: "video",
+            credit: "- Cube Master",
+            path: "cm",
+            description: "Outdated with little explanation of the algs."
+          }
+        ]
+      },
+      "CP": {
+        title: "CP",
+        bait: "The first step after you solve orientation of both layer (OBL).",
+        description: "To get faster at this step, you can do EOCP, which is basically " +
+          "predicting CP before you do EO, and eliminating the pause in between.",
+        resources: [
+          {
+            title: "CP Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1q-CmTEhda9E6bkPqADygln7BdymHLXUmaHtidtyywfY/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matt",
+            description: "",
+            featured: true
+          },
+          {
+            title: "CP Tutorial",
+            url: "https://youtu.be/kUpSACA-VJU",
+            type: "video",
+            credit: "- Cube Master",
+            path: "cm",
+            description: "Outdated terminology and concepts, but touches on how to preserve" +
+              "blocks during CP."
+          },
+          {
+            title: "CP Algs and CP Parity Algs",
+            url: "https://sarah.cubing.net/square-1/cp",
+            type: "website",
+            credit: "- Sarah",
+            path: "sarah",
+            description: "Could be useful if you decides you want to learn CP parity, but " +
+              "otherwise, no."
+          }
+        ]
+      },
+      "EP": {
+        title: "EP",
+        bait: "Last step to 5 look: permute the remaining edges.",
+        description: "It is important that you learn EP while paying attention to HOW the " +
+          "algs work. Squan algs are quite intuitive, and it's best if you get that earlier " +
+          "rather than later.",
+        resources: [
+          {
+            title: "EP Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1q-CmTEhda9E6bkPqADygln7BdymHLXUmaHtidtyywfY/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matt",
+            description: "",
+            featured: true
+          },
+          {
+            title: "EP Tutorial",
+            url: "https://youtu.be/JsuYDfhUkmE",
+            type: "video",
+            credit: "- Cube Master",
+            path: "cm",
+            description: "Good ideas, but incredibly outdated fingertricks AND notation."
+          },
+
+        ]
+      }
+    },
+    "CSBL": {
+      title: "3 look and 2 look",
+      bait: "Click me if you want to get faster at squan and go past 5 look!",
+      description: "3 look consists of CSP → OBL → PBL, and 2 look consists of OBLP → PBL. " +
+        "</br>You can find resources for both of them here.",
+      "OBL": {
+        title: "OBL",
+        bait: "Orientation of Both Layers. Solve CO and EO in one step.",
+        description: "OBL is very like CS: you have a recognition system that you need to " +
+          "get used to, and cases reduce to each other in a tree-like structure. Start " +
+          "learning from 1 slicers all the way up to 6 slicers.",
+        resources: [
+          {
+            title: "OBL Tutorial",
+            url: "https://youtu.be/pv2RgznaHgY&list=PLlEIANnLzI5ON2bbw9e2v0X4HyeX3eZd-&index=1",
+            type: "video",
+            credit: "- Oxzowachi",
+            path: "ox",
+            description: "The most in depth tutorial. Perfect aside from a few solutions.",
+            featured: true
+          },
+          {
+            title: "OBL Trainer",
+            url: "https://squan-go.web.app/oblpbl/",
+            type: "trainer",
+            credit: "- Matt & Abid & Le Kit",
+            path: "sqg",
+            description: "OBL and PBL trainers in one. Click on the all-caps text at the top " +
+              "of the website to switch between the two trainers. Incorporates Matt's OBL " +
+              "Sheet and Daniel's OBL Sheet",
+            featured: true
+          },
+          {
+            title: "OBL Tutorial",
+            url: "https://sq1obl.com/",
+            type: "website",
+            credit: "- Michael Young",
+            path: "sq1obl",
+            description: "Very in detail, but also very old with outdated names for cases. " +
+              "Contains alg memorization tips."
+          },
+          {
+            title: "OBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/172Vy9q4WNEvmI2FHkH96XzfXJHdTqeSWBMiANhWbXYA/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matt",
+            description: "Similar in style to Matt's PBL Doc, complete with angle and alg " +
+              "explanations. In his opinion, you should switch to his solutions for these " +
+              "OBLs: kite/T, bad bunnies, bad thumbs, 1e1e, shells, bad Ts, bad ties, bad " +
+              "pairs, gem/knight, yoshi/hazard, 1c1c, yoshis, bad axes, bad birds, bad " +
+              "cut/N, bad cuts and bad cut/kite."
+          },
+          {
+            title: "OBL Trainer",
+            url: "https://jdsolano02.github.io/OBLTrainer/",
+            type: "trainer",
+            credit: "- Jose",
+            path: "jose",
+            description: "OBL trainer with time tracking, but not maintained."
+          },
+          {
+            title: "OBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1BZQxg11RD829O0tKagGVC65b3s57Hd7Y0GplDCR7--w/edit",
+            type: "doc/sheet",
+            credit: "- Daniel",
+            path: "derpy",
+            description: "Just lots of algs. Has errors and organized confusingly."
+          }
+        ]
+      },
+      "PBL": {
+        title: "PBL",
+        bait: "Permutation of Both Layers. Solve CP and EP in one step.",
+        description: "PBL is a journey. You never stop learning. Knowing full optimal PBL " +
+          "would be like knowing 1LLL—it's a bit ridiculous.",
+        resources: [
+
+        ]
+      }
+    },
   }
 };

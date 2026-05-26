@@ -83,13 +83,6 @@ function getEmbedUrl(url, type) {
         if (ytShort) return `https://www.youtube.com/embed/${ytShort[1]}`;
         return url;
     }
-    if (type === 'doc/sheet') {
-        const docMatch = url.match(/(https:\/\/docs\.google\.com\/document\/d\/[^/]+)/);
-        if (docMatch) return `${docMatch[1]}/pub?embedded=true`;
-        const sheetMatch = url.match(/(https:\/\/docs\.google\.com\/spreadsheets\/d\/[^/]+)/);
-        if (sheetMatch) return `${sheetMatch[1]}/pubhtml?embedded=true&widget=true`;
-        return url;
-    }
     return null;
 }
 
@@ -107,8 +100,10 @@ function getVisualHtml(resource) {
     </div>`;
     }
 
-    if (type === 'website') {
-        const imgPath = `./img/${encodeURIComponent(title)}.png`;
+    if (type === 'doc/sheet' || type === 'website') {
+        const parentFolder = _currentFolderPath.split('~').pop();
+        const imgName = resource.path ? `${parentFolder}-${resource.path}` : encodeURIComponent(title);
+        const imgPath = `./img/${imgName}.png`;
         return `<div class="modal-visual-wrap modal-img-wrap">
       <img src="${imgPath}" alt="${escHtml(title)} screenshot"
         onload="this.closest('.modal-visual-wrap').classList.add('visual-loaded')"
