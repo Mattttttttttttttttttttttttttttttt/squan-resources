@@ -37,26 +37,28 @@ function _collectFeatured(node) {
     return results;
 }
 
-// Extract path from a step URL like "../?path=VDB~EP"
-function _parseStepPath(url) {
-    try {
-        const u = new URL(url, window.location.href);
-        return u.searchParams.get('path') || '';
-    } catch {
-        return '';
-    }
-}
+// Returns { learn: resource[], train: resource[] } for a step.
+// If step.resources (array of paths) is present, those paths are used instead
+// of the step's own path.
+function getFeaturedForStep(step) {
+    let all = [];
 
-// Returns { learn: resource|null, train: resource|null } for featured resources
-function getFeaturedForStep(stepUrl) {
-    const path = _parseStepPath(stepUrl);
-    if (!path) return { learn: null, train: null };
-    const node = _getNode(path);
-    if (!node) return { learn: null, train: null };
-    const all = _collectFeatured(node);
+    if (Array.isArray(step.resources) && step.resources.length > 0) {
+        // Issue 4: explicit resource list overrides automatic featured lookup
+        for (const p of step.resources) {
+            const node = _getNode(p);
+            if (node) all.push(..._collectFeatured(node));
+        }
+    } else {
+        if (!step.path) return { learn: [], train: [] };
+        const node = _getNode(step.path);
+        if (!node) return { learn: [], train: [] };
+        all = _collectFeatured(node);
+    }
+
     return {
-        learn: all.find(r => r.type !== 'trainer') || null,
-        train: all.find(r => r.type === 'trainer') || null,
+        learn: all.filter(r => r.type !== 'trainer'),
+        train: all.filter(r => r.type === 'trainer'),
     };
 }
 
@@ -101,7 +103,7 @@ const TYPE_META = {
 
 function renderFeaturedCard(featured) {
     const { learn, train } = featured;
-    const hasAny = learn || train;
+    const hasAny = learn.length || train.length;
     if (!hasAny) return '';
 
     const isMobile = window.matchMedia('(max-width: 700px)').matches;
@@ -109,39 +111,42 @@ function renderFeaturedCard(featured) {
         ? 'Double-tap the step to see the full resource list.'
         : 'Click the step card to see the full resource list.';
 
-    function resRow(resource, section) {
-        if (!resource) {
+    function resRows(resources, section) {
+        if (!resources.length) {
             return `<div class="fp-empty-section">
                 <span class="fp-section-label fp-empty">${section === 'learn' ? 'Learn' : 'Train'}</span>
                 <span class="fp-empty-note">${emptyNote}</span>
             </div>`;
         }
-        const meta = TYPE_META[resource.type] || { label: resource.type, cls: 'type-unknown' };
-        const creditHtml = resource.credit ? `<span class="fp-resource-credit">${formatCredit(resource.credit)}</span>` : '';
-        return `<div class="fp-resource-row">
-            <span class="fp-section-label fp-${section}">${section === 'learn' ? 'Learn' : 'Train'}</span>
-            <a class="fp-resource-link" href="${escHtml(resource.url)}" target="_blank" rel="noopener">
-                <span class="fp-resource-title">${escHtml(resource.title)}</span>
-                <span class="type-badge ${meta.cls}">${meta.label}</span>
-            </a>
-            ${creditHtml}
-        </div>`;
+        return resources.map(resource => {
+            const meta = TYPE_META[resource.type] || { label: resource.type, cls: 'type-unknown' };
+            const creditHtml = resource.credit ? `<span class="fp-resource-credit">${formatCredit(resource.credit)}</span>` : '';
+            return `<div class="fp-resource-row">
+                <span class="fp-section-label fp-${section}">${section === 'learn' ? 'Learn' : 'Train'}</span>
+                <a class="fp-resource-link" href="${escHtml(resource.url)}" target="_blank" rel="noopener">
+                    <span class="fp-resource-title">${escHtml(resource.title)}</span>
+                    <span class="type-badge ${meta.cls}">${meta.label}</span>
+                </a>
+                ${creditHtml}
+            </div>`;
+        }).join('');
     }
 
-    return `<div class="featured-popup" role="complementary" aria-label="Featured resources">
-        <div class="fp-heading">Featured resources</div>
-        ${resRow(learn, 'learn')}
-        ${resRow(train, 'train')}
+    return `<div class="featured-popup" role="complementary" aria-label="Resources">
+        <div class="fp-heading">Resources</div>
+        ${resRows(learn, 'learn')}
+        ${resRows(train, 'train')}
     </div>`;
 }
 
 function renderStep(step, isParallel) {
-    const featured = getFeaturedForStep(step.url);
-    const hasPopup = !!(featured.learn || featured.train);
+    const featured = getFeaturedForStep(step);
+    const hasPopup = !!(featured.learn.length || featured.train.length);
     const featuredHtml = hasPopup ? renderFeaturedCard(featured) : '';
+    const navUrl = `../?path=${encodeURIComponent(step.path).replace(/%7E/g, '~')}`;
 
     return `<div class="step-card${isParallel ? ' step-card--parallel' : ''}${hasPopup ? ' has-popup' : ''}"
-                 data-url="${escHtml(step.url)}"
+                 data-url="${escHtml(navUrl)}"
                  tabindex="0"
                  role="button"
                  aria-label="${escHtml(step.title)}">

@@ -189,7 +189,7 @@ function renderNode(node, path) {
 
     const cards = children.map(key => {
         const child = node[key];
-        const label = child.label || key;
+        const title = child.title || key;
         const desc = child.bait || child.description || '';
         const childPath = path ? `${path}~${key}` : key;
         const count = countLeafResources(child);
@@ -197,7 +197,7 @@ function renderNode(node, path) {
         return `
       <div class="folder-card" data-path="${childPath}" role="button" tabindex="0">
         <div class="folder-card-body">
-          <div class="folder-card-title">${escHtml(label)}</div>
+          <div class="folder-card-title">${escHtml(title)}</div>
           ${desc ? `<div class="folder-card-desc">${desc}</div>` : ''}
         </div>
         <div class="folder-card-meta">

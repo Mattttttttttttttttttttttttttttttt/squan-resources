@@ -1,12 +1,12 @@
 // resources.js
 // Source of truth for all the resources and folder structures.
 //
-// NODE  = object  (has label, description metadata; optionally gridLayout: true)
+// NODE  = object  (has title, description metadata; optionally gridLayout: true)
 // LEAF  = array   (list of resource objects)
 //
 // node object:
 // {
-//    label:          string,
+//    title:          string,
 //    bait:           string,
 //    description:    string,
 //    subfolder-path: {another node},
@@ -31,10 +31,10 @@
 
 const RESOURCES = {
   "start": {
-    label: "Getting Started",
+    title: "Getting Started",
     bait: "Welcome to your squan journey! Click me to learn the basics.",
     "solve": {
-      label: "Solve the Cube",
+      title: "Solve the Cube",
       description: "Get your cube solved.",
       resources: [
         {
@@ -79,7 +79,7 @@ const RESOURCES = {
       ]
     },
     "fingertricks": {
-      label: "Fingertricks",
+      title: "Fingertricks",
       bait: "ABSOLUTELY ESSENTIAL for a smooth start to squan!",
       description: "ABSOLUTELY ESSENTIAL! Most people spend a LONG time correcting bad " +
         "turning habits that they picked up from the beginning. Learning these will " +
@@ -106,7 +106,7 @@ const RESOURCES = {
       ]
     },
     "karn": {
-      label: "Notation",
+      title: "Notation",
       bait: "makes learning algs SO much easier",
       description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
         "It's like the difference between \"sexy move\" and \"turn the right layer " +
@@ -125,10 +125,10 @@ const RESOURCES = {
     }
   },
   "cs": {
-    label: "CS & CSP",
+    title: "CS & CSP",
     bait: "solve your cube into a cubeshape, and avoid parity",
     "cs": {
-      label: "CS",
+      title: "CS",
       bait: "solve cubeshape",
       description: "Be more efficient at cubeshape.</br>NOTE: once you get used to how to " +
         "think for CS, going to watch any of the CSP tutorials and picking the better " +
@@ -178,7 +178,7 @@ const RESOURCES = {
       ]
     },
     "csp": {
-      label: "CSP",
+      title: "CSP",
       bait: "Avoid parity by solving cubeshape differently. Basis of VDB and Lin.",
       description: "By tracing the parity of the cube during inspection, you can distinguish" +
         "between the two parities of the cube, and do different algs for this. This " +
