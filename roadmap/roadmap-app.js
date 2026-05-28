@@ -132,20 +132,20 @@ function renderFeaturedCard(featured) {
         }).join('');
     }
 
-    return `<div class="featured-popup" role="complementary" aria-label="Resources">
-        <div class="fp-heading">Resources</div>
+    return `<div class="featured-popup" role="complementary" aria-label="Featured resources">
+        <div class="fp-heading">Featured resources</div>
         ${resRows(learn, 'learn')}
         ${resRows(train, 'train')}
     </div>`;
 }
 
-function renderStep(step, isParallel) {
+function renderStep(step) {
     const featured = getFeaturedForStep(step);
     const hasPopup = !!(featured.learn.length || featured.train.length);
     const featuredHtml = hasPopup ? renderFeaturedCard(featured) : '';
     const navUrl = `../?path=${encodeURIComponent(step.path).replace(/%7E/g, '~')}`;
 
-    return `<div class="step-card${isParallel ? ' step-card--parallel' : ''}${hasPopup ? ' has-popup' : ''}"
+    return `<div class="step-card${hasPopup ? ' has-popup' : ''}"
                  data-url="${escHtml(navUrl)}"
                  tabindex="0"
                  role="button"
@@ -162,33 +162,73 @@ function renderStep(step, isParallel) {
     </div>`;
 }
 
+// ─── Branch rendering engine ──────────────────────────────────────────────────
+
+// An item is a branchGroup if it's an array (of branch arrays).
+function isBranchGroup(item) {
+    return Array.isArray(item);
+}
+
+// Render one timeline row for a step.
+function renderTimelineRow(step, isLast) {
+    return `<div class="timeline-row${isLast ? ' timeline-row--last' : ''}">
+        <div class="timeline-left">
+            <span class="timeline-timestamp">${escHtml(step.timestamp)}</span>
+            <div class="timeline-dot"></div>
+        </div>
+        <div class="timeline-steps">
+            ${renderStep(step)}
+        </div>
+    </div>`;
+}
+
+// Render a branch: an array of steps and/or branchGroups.
+// isNested = true when rendering inside a branch lane — uses simple card stack,
+// no sub-timeline grid, so the main timeline's line passes through cleanly.
+function renderBranch(items, isNested = false) {
+    let html = `<div class="${isNested ? 'branch-timeline' : 'roadmap-timeline'}">`;
+    items.forEach((item, i) => {
+        const isLast = i === items.length - 1;
+        if (isBranchGroup(item)) {
+            html += renderBranchGroup(item);
+        } else {
+            html += renderTimelineRow(item, isLast && !isNested);
+        }
+    });
+    html += '</div>';
+    return html;
+}
+
+// Render a branchGroup: an array of branch arrays.
+// Rendered as a top-level sibling of timeline-rows (NOT wrapped in a timeline-row),
+// so branch step rows share the same grid and line position as main rows.
+function renderBranchGroup(branches) {
+    const lanesHtml = branches.map((branchItems, idx) =>
+        `<div class="branch-lane" data-branch-index="${idx}">
+            ${renderBranch(branchItems, true)}
+        </div>`
+    ).join('');
+
+    return `<div class="branch-group" data-active-branch="0">
+        <div class="branch-nav-row">
+            <div class="timeline-left"></div>
+            <div class="branch-nav" role="group" aria-label="Branch navigation">
+                <button class="branch-nav-btn branch-nav-prev" aria-label="Previous option">&#8592;</button>
+                <span class="branch-nav-indicator" aria-live="polite"></span>
+                <button class="branch-nav-btn branch-nav-next" aria-label="Next option">&#8594;</button>
+            </div>
+        </div>
+        <div class="branch-group-lanes">
+            ${lanesHtml}
+        </div>
+    </div>`;
+}
+
 function renderRoadmap(tabKey) {
     const container = document.getElementById('roadmap-container');
     const tab = ROADMAP[tabKey];
     if (!tab) { container.innerHTML = ''; return; }
-
-    const timestamps = Object.keys(tab);
-    let html = '<div class="roadmap-timeline">';
-
-    timestamps.forEach((ts, i) => {
-        const value = tab[ts];
-        const isParallel = Array.isArray(value);
-        const steps = isParallel ? value : [value];
-        const isLast = i === timestamps.length - 1;
-
-        html += `<div class="timeline-row${isLast ? ' timeline-row--last' : ''}">
-            <div class="timeline-left">
-                <span class="timeline-timestamp">${escHtml(ts)}</span>
-                <div class="timeline-dot"></div>
-            </div>
-            <div class="timeline-steps${isParallel ? ' timeline-steps--parallel' : ''}">
-                ${steps.map(s => renderStep(s, isParallel)).join('')}
-            </div>
-        </div>`;
-    });
-
-    html += '</div>';
-    container.innerHTML = html;
+    container.innerHTML = renderBranch(tab);
     attachCardListeners(container);
 }
 
@@ -248,6 +288,45 @@ function attachCardListeners(container) {
             container.querySelectorAll('.step-card.popup-open').forEach(c => c.classList.remove('popup-open'));
         }
     }, { passive: true });
+
+    attachBranchNavListeners(container);
+}
+
+// ─── Branch navigation ────────────────────────────────────────────────────────
+
+function updateBranchNav(group) {
+    const lanes = group.querySelectorAll(':scope > .branch-group-lanes > .branch-lane');
+    const count = lanes.length;
+    const active = parseInt(group.dataset.activeBranch) || 0;
+
+    const indicator = group.querySelector('.branch-nav-indicator');
+    if (indicator) indicator.textContent = `${active + 1} / ${count}`;
+
+    const prevBtn = group.querySelector('.branch-nav-prev');
+    const nextBtn = group.querySelector('.branch-nav-next');
+    if (prevBtn) prevBtn.disabled = active === 0;
+    if (nextBtn) nextBtn.disabled = active === count - 1;
+
+    lanes.forEach((lane, i) => lane.classList.toggle('branch-lane--active', i === active));
+}
+
+function navigateBranch(group, delta) {
+    const lanes = group.querySelectorAll(':scope > .branch-group-lanes > .branch-lane');
+    const count = lanes.length;
+    const current = parseInt(group.dataset.activeBranch) || 0;
+    const next = Math.max(0, Math.min(count - 1, current + delta));
+    group.dataset.activeBranch = String(next);
+    updateBranchNav(group);
+}
+
+function attachBranchNavListeners(container) {
+    container.querySelectorAll('.branch-group').forEach(group => {
+        updateBranchNav(group);
+        group.querySelector(':scope > .branch-nav .branch-nav-prev')
+            ?.addEventListener('click', e => { e.stopPropagation(); navigateBranch(group, -1); });
+        group.querySelector(':scope > .branch-nav .branch-nav-next')
+            ?.addEventListener('click', e => { e.stopPropagation(); navigateBranch(group, 1); });
+    });
 }
 
 // ─── Tab switcher ─────────────────────────────────────────────────────────────

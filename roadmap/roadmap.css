@@ -156,11 +156,6 @@ main.roadmap-main {
     gap: 10px;
 }
 
-.timeline-steps--parallel {
-    flex-direction: row;
-    gap: 12px;
-}
-
 /* ── Step card ────────────────────────────────────────────────────────────── */
 .step-card {
     position: relative;
@@ -394,6 +389,84 @@ main.roadmap-main {
     }
 }
 
+/* ── Branch group ─────────────────────────────────────────────────────────── */
+
+/* Branch group — top-level sibling of timeline-rows */
+.branch-group {
+    width: 100%;
+}
+
+/* Nav row: same grid as timeline-row so the empty left column aligns with the line */
+.branch-nav-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 20px;
+    margin-bottom: 8px;
+}
+
+/* Branch nav — always shown (carousel on all screen sizes) */
+.branch-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 0 10px;
+}
+
+.branch-nav-btn {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    flex-shrink: 0;
+}
+
+.branch-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.branch-nav-btn:not(:disabled):hover {
+    background: var(--surface-hover);
+}
+
+.branch-nav-btn:not(:disabled):active {
+    background: var(--surface-hover);
+}
+
+.branch-nav-indicator {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    flex: 1;
+    text-align: center;
+}
+
+/* Lane container — no border; only one lane visible at a time */
+.branch-group-lanes {
+    display: block;
+}
+
+.branch-lane {
+    display: none;
+}
+
+.branch-lane.branch-lane--active {
+    display: block;
+}
+
+/* Branch lane: inherits timeline-row styles from parent, just a wrapper */
+.branch-timeline {
+    display: flex;
+    flex-direction: column;
+}
+
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
 @media (max-width: 700px) {
     main.roadmap-main {
@@ -411,7 +484,8 @@ main.roadmap-main {
         top: 20px;
     }
 
-    .timeline-row {
+    .timeline-row,
+    .branch-nav-row {
         grid-template-columns: 1fr;
         gap: 0;
         margin-bottom: 24px;
@@ -436,12 +510,6 @@ main.roadmap-main {
         text-align: left;
         max-width: none;
         font-size: 0.78rem;
-    }
-
-    /* Parallel steps stack on mobile */
-    .timeline-steps--parallel {
-        flex-direction: column;
-        gap: 10px;
     }
 
     /* Card inner: no nudge on mobile (we're using tap) */
