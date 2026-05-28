@@ -277,7 +277,7 @@ const RESOURCES = {
       ]
     }
   },
-  "VDB": {
+  "vdb": {
     title: "Vandenberg",
     bait: "the most popular method, with the highest ceiling and most resources",
     "5look": {
@@ -311,7 +311,7 @@ const RESOURCES = {
           }
         ]
       },
-      "EO": {
+      "eo": {
         title: "EO",
         bait: "Second step after CS: edge orientation",
         description: "For an easier version, you can M2 to either 1/1 or L/L. Everything " +
@@ -346,7 +346,7 @@ const RESOURCES = {
           }
         ]
       },
-      "CP": {
+      "cp": {
         title: "CP",
         bait: "The first step after you solve orientation of both layer (OBL).",
         description: "To get faster at this step, you can do EOCP, which is basically " +
@@ -381,7 +381,7 @@ const RESOURCES = {
           }
         ]
       },
-      "EP": {
+      "ep": {
         title: "EP",
         bait: "Last step to 5 look: permute the remaining edges.",
         description: "It is important that you learn EP while paying attention to HOW the " +
@@ -409,12 +409,12 @@ const RESOURCES = {
         ]
       }
     },
-    "CSBL": {
+    "csbl": {
       title: "3 look and 2 look",
       bait: "Click me if you want to get faster at squan and go past 5 look!",
       description: "3 look consists of CSP → OBL → PBL, and 2 look consists of OBLP → PBL. " +
         "</br>You can find resources for both of them here.",
-      "OBL": {
+      "obl": {
         title: "OBL",
         bait: "Orientation of Both Layers. Solve CO and EO in one step.",
         description: "OBL is very like CS: you have a recognition system that you need to " +
@@ -438,7 +438,7 @@ const RESOURCES = {
             path: "sqg",
             description: "OBL and PBL trainers in one. Click on the all-caps text at the top " +
               "of the website to switch between the two trainers. Incorporates Matt's OBL " +
-              "Sheet and Daniel's OBL Sheet",
+              "Sheet and Daniel's OBL Sheet.",
             featured: true
           },
           {
@@ -480,15 +480,419 @@ const RESOURCES = {
           }
         ]
       },
-      "PBL": {
+      "pbl": {
         title: "PBL",
         bait: "Permutation of Both Layers. Solve CP and EP in one step.",
         description: "PBL is a journey. You never stop learning. Knowing full optimal PBL " +
-          "would be like knowing 1LLL—it's a bit ridiculous.",
+          "would be like knowing 1LLL—it's a bit ridiculous. Makanaming and karnotation are" +
+          "prerequisites.",
         resources: [
-
+          {
+            title: "Makanaming Tutorial",
+            url: "https://docs.google.com/spreadsheets/d/19Pr0r425ygxU2JjAw0YCjBBZVrOcDM8gmtv6kZi2Ya8/edit",
+            type: "doc/sheet",
+            credit: "- Oxzowachi",
+            path: "maka",
+            description: "Learn how the PBL faces are named. Not knowing this would be like " +
+              "trying to learn PLL without knowing what the cases are called.",
+            featured: true
+          },
+          {
+            title: "2-Alg PBL Tutorial",
+            url: "https://youtu.be/r8l3U9K9R_I&list=PLIAD7bABu3ZvDSkS82y06-6O9lhg4js1F",
+            type: "video",
+            credit: "- Dalton",
+            path: "daltonv",
+            description: "The most updated tutorial we have.",
+            featured: true
+          },
+          {
+            title: "PBL Trainer",
+            url: "https://squan-go.web.app/oblpbl/",
+            type: "trainer",
+            credit: "- Matt & Abid & Le Kit",
+            path: "sqg",
+            description: "OBL and PBL trainers in one. Click on the all-caps text at the top " +
+              "of the website to switch between the two trainers. Incorporates Matt's PBL " +
+              "Doc, Daniel's PBL Sheet, and JLMinx's PBL Sheet.",
+            featured: true
+          },
+          {
+            title: "PBL Doc",
+            url: "https://docs.google.com/document/d/1bLCZGcQn4Or9uZZWK8Z4cdg8AkP2l7Ljm5xwEGH97BI/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "mattd",
+            description: "With explanations",
+            featured: true
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/10yJdudCtT-zIt7YVjhgPv4VfOuqXHa3u1fxYhaBPP8s/edit",
+            type: "doc/sheet",
+            credit: "- JL Minx",
+            path: "jlminx",
+            description: "Speed optimal solutions that are really hard to learn. Reference " +
+              "this sheet only for cases you don't like. With no explanations."
+          },
+          {
+            title: "PBL Organizer",
+            url: "https://docs.google.com/spreadsheets/d/1knBnskgfCIkdd6E67q6uFqCYcHFeOEAVju0uHp4QkZA/edit",
+            type: "doc/sheet",
+            credit: "- 2009HILD01 & Matt",
+            path: "hild",
+            description: "A spreadsheet to help you track your PBL progress, complete with a " +
+              "heatmap that tells you what cases you should learn."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1VQNYNwdOLqqBkacHcfYtEBst22FOVhH9EAhTOYOZTgo/edit",
+            type: "doc/sheet",
+            credit: "- Daniel et al.",
+            path: "daniel",
+            description: "An extensive community project of speed optimal algs. With no " +
+              "explanations."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1Ttr7R2IYFLOR1BA3rh-hj_ELQGnGLgAp9n1G_jqhVFE/edit",
+            type: "doc/sheet",
+            credit: "- Brian",
+            path: "brian",
+            description: "An incomplete collection of good algs. Less optimal than JL Minx, " +
+              "but more optimal than Matt. With no explanations."
+          },
+          {
+            title: "2-Alg PBL Cheat Sheet",
+            url: "https://drive.google.com/file/d/1jZBtssPGyn5uGRpSHVmF-qFNepyHW3-Y/view",
+            type: "doc/sheet",
+            credit: "- Dalton",
+            path: "daltonp",
+            description: "Neat looking PDF for 2 alg angles, but not very useful in practice."
+          }
+          ,
+          {
+            title: "2-Alg PBL Introduction",
+            url: "https://youtu.be/ASyErFJ-O6Y",
+            type: "video",
+            credit: "- Oxzowachi",
+            path: "ox",
+            description: "Very outdated in terms of resources it mentions, but good " +
+              "explanation of what 2-alg PBL is."
+          },
+          {
+            title: "PBL Tutorial",
+            url: "https://youtu.be/uPDbHQQwLtM&list=PLh8G8F13X7w8fvip0BX9gQ1vJPRRKR94k&index=1",
+            type: "video",
+            credit: "- Chen Yen-An",
+            path: "cya",
+            description: "In Chinese, but it's another possible video tutorial series."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1lVzeINDKFXTk40ah7PEEMcML-7DENsqtk_hBMNDJpdg/edit",
+            type: "doc/sheet",
+            credit: "- Dubi",
+            path: "dubi",
+            description: "A personal project with lots of statistics."
+          },
+          {
+            title: "PBL Tutorial",
+            url: "https://youtu.be/vVN_eFiYB88&list=PLF0mfn_ogsH_ogg-ffsVVPvOMD6yRtBzf&index=1",
+            type: "video",
+            credit: "- Cube Master",
+            path: "cm",
+            description: "The OG tutorial for PBL, but outdated."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1GTt_6yO2go_a929AvfY14rUtDwTse8atZsPi4JkQH_E/edit",
+            type: "doc/sheet",
+            credit: "- Rasmus",
+            path: "rasmus",
+            description: "A spreadsheet version of Cube Master's videos."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/11a1vnUpp-aiMmRuO7IiN78ZosQHhFi9E-zDBg8-qSSM/edit",
+            type: "doc/sheet",
+            credit: "- Oxzowachi",
+            path: "ox",
+            description: "A really random list of algs."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1bLhYXaW1HGGTypOQGOJvnS2L40gKXHlbc8zJ3ZXYeTE/edit",
+            type: "doc/sheet",
+            credit: "- Cube Master",
+            path: "cmd",
+            description: "A really outdated spreadsheet version of Cube Master's videos."
+          },
+          {
+            title: "PBL Statistics",
+            url: "https://docs.google.com/spreadsheets/d/1wscfNtPwNv_lkK8IVxFkYgVecOdg6Fs0PFFSMyXVo34/edit",
+            type: "doc/sheet",
+            credit: "- Michael",
+            path: "michael",
+            description: "A spreadsheet with interesting PBL statistics."
+          },
+          {
+            title: "PBL Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1G1HOhOUFSyr_qPhDj4HD5sSI8DaQbgbJ5O3motKAO3Q/edit",
+            type: "doc/sheet",
+            credit: "- Stepan",
+            path: "stepan",
+            description: "DISCONTINUED"
+          },
+          {
+            title: "PBL Trainer & Manager",
+            url: "https://pbl-manager.netlify.app/",
+            type: "trainer",
+            credit: "- Charlie",
+            path: "charlie",
+            description: "A very old trainer and PBL manager."
+          }
+        ]
+      },
+      "oblp": {
+        title: "OBLP",
+        bait: "OBL Prediction. Predict OBL during inspection and 2 look every scramble.",
+        description: "The most cutting-edge method right now. Requires strong foundation " +
+          "of CSP and fast tracing. You can also use the concepts from OBLP to do CO " +
+          "prediction (COP) or partial COP (PCOP).",
+        resources: [
+          {
+            title: "OBLP Tutorial",
+            url: "https://youtu.be/Y5i1ZeHtrCY&list=PL8Izpzk-6ziyXXgFj8zuBfGFpduPSI2av&index=1",
+            type: "video",
+            credit: "- Matt",
+            path: "mattv",
+            description: "",
+            featured: true
+          },
+          {
+            title: "OBLP Organizer",
+            url: "https://docs.google.com/spreadsheets/d/1xvVfpSOhPmbBlxMmQDn9CIr3XFOiThlHFZvKn8BtOSM/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matto",
+            description: ""
+          },
+          {
+            title: "OBLP Sheet",
+            url: "https://docs.google.com/spreadsheets/d/13S_-ylwRx7UbaNvzWgwpIoAoxIufZtk9y9SDtWDBXK8/edit",
+            type: "doc/sheet",
+            credit: "- Matt",
+            path: "matts",
+            description: "Spreadsheet version of the video tutorials."
+          },
+          {
+            title: "OBLP Trainer",
+            url: "https://squan-go.web.app/oblp/",
+            type: "website",
+            credit: "- Abid",
+            path: "sqg",
+            description: "Under development."
+          },
+          {
+            title: "OBLP Visualization Trainer",
+            url: "https://oblp.cubegym.net/#/",
+            type: "trainer",
+            credit: "- Calvin",
+            path: "calvinv",
+            description: "A visualization trainer supporting 3 different naming schemes."
+          },
+          {
+            title: "OBLP Scheme Generator",
+            url: "https://oblp.cubegym.net/#/generate",
+            type: "website",
+            credit: "- Calvin",
+            path: "calvins",
+            description: "Visually see the schemes that your alg generates, in 3 different " +
+              "naming schemes."
+          },
+          {
+            title: "OBLP Sheet",
+            url: "https://docs.google.com/spreadsheets/d/1tSjXvXOwTlrqMaFGRucWFQnrQZAgxuFKbMCizTxJRko/edit",
+            type: "doc/sheet",
+            credit: "- Oxzowachi",
+            path: "ox",
+            description: "The OG tutorial for OBLP, but a bit outdated."
+          },
+          {
+            title: "OBLP Sheet",
+            url: "https://docs.google.com/spreadsheets/d/10BNar8MbW8pQbAwmpMRi-STUiaAvjOy_As6DplPxrtg/edit",
+            type: "doc/sheet",
+            credit: "- Stepan",
+            path: "stepan",
+            description: "Outdated and incomplete."
+          }
         ]
       }
     },
+  },
+  "lin": {
+    title: "Lin",
+    bait: "A fun method, kinda like Roux. Also fast.",
+    description: "The steps of Lin doesn't have much variation. They are: CSP, FB, SB, PLL+1.",
+    "f2b": {
+      title: "First Two Blocks",
+      bait: "Build two Roux-style blocks on the bottom.",
+      description: "Efficiency is key.",
+      resources: [
+        {
+          title: "FB Tutorial",
+          url: "https://youtu.be/6rLfvkKNG4U",
+          type: "video",
+          credit: "- Ricci",
+          path: "riccifb",
+          description: "Explains the basics of lin blockbuilding well to a beginner.",
+          featured: true
+        },
+        {
+          title: "SB Tutorial",
+          url: "https://youtu.be/JJPezT2rUMg",
+          type: "video",
+          credit: "- Ricci",
+          path: "riccisb",
+          description: "Does well to explain how SB solving works, as well as introducing " +
+            "the concept of solving the DB edge along with SB, which is something that " +
+            "becomes very, very important to learn as you get better at lin.",
+          featured: true
+        },
+        {
+          title: "Blockbuilding Tips",
+          url: "https://youtu.be/vFUJsh98SMI",
+          type: "video",
+          credit: "- Helmer",
+          path: "helmer",
+          description: "A very useful video with good tips on how to solve blocks efficiently. " +
+            "This talks about SBEC as well, and it is debatable how useful that is these days."
+        },
+        {
+          title: "Blockbuilding Trick",
+          url: "https://youtu.be/DRdXLxoex7A&",
+          type: "video",
+          credit: "- Ricci",
+          path: "riccit",
+          description: "A trick that's touched upon in Ricci's SB video and Helmer's " +
+            "video, but expanded upon here. In my opinion this is a very, very important " +
+            "trick to learn and get used to, as it just makes your solves so much smoother " +
+            "without having to pause to recognize how to M2 your DB edge into its slot, and " +
+            "also getting used to it helps transition you into using OPLL+1 in your solves."
+        },
+        {
+          title: "FB walkthrough",
+          url: "https://youtu.be/DmYYwFBrd7c",
+          type: "video",
+          credit: "- Ricci",
+          path: "riccif",
+          description: "Shows you every single FB case, and how best to solve them. " +
+            "These are very useful in showing you strategies and techniques to solve " +
+            "blocks. It is more useful to watch them and see the general patterns in " +
+            "solving, rather than trying to learn every single solution individually."
+        },
+        {
+          title: "SB walkthrough",
+          url: "https://youtu.be/MbWln-qty68",
+          type: "video",
+          credit: "- Ricci",
+          path: "riccis",
+          description: "Shows you every single SB case, and how best to solve them. " +
+            "These are very useful in showing you strategies and techniques to solve " +
+            "blocks. It is more useful to watch them and see the general patterns in " +
+            "solving, rather than trying to learn every single solution individually."
+        },
+        {
+          title: "SB + SBEC Doc",
+          url: "https://docs.google.com/document/d/13GrwFubdDdS0RwIPnyAWzjhsncpvlPWexx9jpYvX09g/edit",
+          type: "doc/sheet",
+          credit: "- Marco",
+          path: "sbec",
+          description: "A useful resource for looking up optimal SB solutions when " +
+            "you're struggling to come up with one yourself. The utility of SBEC these " +
+            "days is debatable, personally I would say it isn't useful at all."
+        }
+      ]
+    },
+    "l9p": {
+      title: "PLL / PLL+1",
+      bait: "Solve the cube after F2B.",
+      description: "You can either do CP+DF and EPLL, or PLL+1.",
+      resources: [
+        {
+          title: "Lin Algs",
+          url: "https://docs.google.com/spreadsheets/d/1ur-PKtSKZgyADCqAoSYEopCjRjMNliRStA6y2GJhlcY/edit",
+          type: "doc/sheet",
+          credit: "- Adrien & Ben",
+          path: "ab",
+          description: "The big one. Has just about every lin algset you might need, " +
+            "including PLL, PLL+1, OPLL, OPll+1, SBEC, and beginner algs.",
+          featured: true
+        },
+        {
+          title: "CP+DF Tutorial",
+          url: "https://youtu.be/432HNoTKLWg",
+          type: "video",
+          credit: "- Ricci",
+          path: "riccicpdf",
+          description: "Perfectly fine algs, explained well. Does its job.",
+          featured: true
+        },
+        {
+          title: "EPLL Tutorial",
+          url: "https://youtu.be/NyUiDwjC0fo",
+          type: "video",
+          credit: "- Ricci",
+          path: "ricciepll",
+          description: "Perhaps a bit outdated, the only problems being that it shows " +
+            "the 8 slice H perm and the shield/square U perm algs.",
+          featured: true
+        },
+        {
+          title: "Lin Algs",
+          url: "https://docs.google.com/spreadsheets/d/1xdMMw402OPVOKW2cGhnz4wPgWWGo51pJlRQpKlNk4xY/edit",
+          type: "doc/sheet",
+          credit: "- Ben",
+          path: "ben",
+          description: "A good source of some alternative algs if you feel the ones " +
+            "from Adrien's Lin algs aren't to your liking."
+        },
+        {
+          title: "PLL Algs",
+          url: "https://www.sonyc-cuber.com/tutorials/PLL.html",
+          type: "website",
+          credit: "- Ricci",
+          path: "riccipll",
+          description: "A good source of algs that you should use in conjunction with " +
+            "Adrien and Ben's sheet to find algs that suit you."
+        },
+        {
+          title: "PLL+1 Algs",
+          url: "https://www.sonyc-cuber.com/tutorials/PLL+1.html",
+          type: "website",
+          credit: "- Ricci",
+          path: "riccipll1",
+          description: "A good source of algs that you should use in conjunction with " +
+            "Adrien and Ben's sheet to find algs that suit you."
+        },
+        {
+          title: "PLL, PLL+1, CP Trainer",
+          url: "https://squanmate.cuber.pro/#/algorithm-trainer",
+          type: "trainer",
+          credit: "- Squanmate",
+          path: "squanmate",
+          description: "The only lin trainer out there I think, and serves its purpose " +
+            "well with just a few kinks here and there. The PLL+1 trainer gives you the " +
+            "wrong D layer angle, which you have to adjust every time, and the cases " +
+            "are all in the weird naming scheme that nobody uses anymore. Adrien's " +
+            "sheet has numbers next to each PLL+1 case, which tells you which case in " +
+            "this trainer it is. There are also numbers for the OPLL+1 cases as well, " +
+            "which tell you the equivalent PLL+1 cases that you can turn into OPLL+1 " +
+            "cases by M2ing the top edge into the DB.",
+          featured: true
+        }
+      ]
+    }
   }
 };
