@@ -143,7 +143,8 @@ function renderStep(step) {
     const featured = getFeaturedForStep(step);
     const hasPopup = !!(featured.learn.length || featured.train.length);
     const featuredHtml = hasPopup ? renderFeaturedCard(featured) : '';
-    const navUrl = `../?path=${encodeURIComponent(step.path).replace(/%7E/g, '~')}`;
+    const hasNav = !!(step.path || step.resources);
+    const navUrl = hasNav ? `../?path=${encodeURIComponent(step.path).replace(/%7E/g, '~')}` : '#';
 
     return `<div class="step-card${hasPopup ? ' has-popup' : ''}"
                  data-url="${escHtml(navUrl)}"
@@ -152,11 +153,11 @@ function renderStep(step) {
                  aria-label="${escHtml(step.title)}">
         <div class="step-card-inner">
             <div class="step-card-title">${escHtml(step.title)}</div>
-            <div class="step-card-desc">${escHtml(step.description)}</div>
-            <div class="step-card-hint">
+            ${step.description ? `<div class="step-card-desc">${escHtml(step.description)}</div>` : ''}
+            ${hasNav ? `<div class="step-card-hint">
                 <span class="step-hint-desktop">Click to open · hover for resources</span>
                 <span class="step-hint-mobile">Tap for resources · double-tap to open</span>
-            </div>
+            </div>` : ''}
         </div>
         ${featuredHtml}
     </div>`;
@@ -244,14 +245,14 @@ function attachCardListeners(container) {
 
         // ── Desktop: click = navigate ─────────────────────────────────────────
         card.addEventListener('click', e => {
-            if (isMobile()) return; // mobile handled separately
-            if (e.target.closest('.featured-popup')) return; // don't nav from popup
-            window.location.href = url;
+            if (isMobile()) return;
+            if (e.target.closest('.featured-popup')) return;
+            if (url && url !== '#') window.location.href = url;
         });
 
         // Keyboard: Enter = navigate
         card.addEventListener('keydown', e => {
-            if (e.key === 'Enter') window.location.href = url;
+            if (e.key === 'Enter' && url && url !== '#') window.location.href = url;
         });
 
         // ── Mobile: tap = toggle popup; double-tap = navigate ─────────────────
@@ -266,7 +267,7 @@ function attachCardListeners(container) {
 
                 if (gap < 320) {
                     // Double-tap → navigate
-                    window.location.href = url;
+                    if (url && url !== '#') window.location.href = url;
                     return;
                 }
 

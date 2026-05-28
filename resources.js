@@ -110,7 +110,7 @@ const RESOURCES = {
       bait: "makes learning algs SO much easier",
       description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
         "It's like the difference between \"sexy move\" and \"turn the right layer " +
-        "90째, top 90째, right -90째, top -90째\".",
+        "90°, top 90°, right -90°, top -90°\".",
       resources: [
         {
           title: "Karn sheet",
