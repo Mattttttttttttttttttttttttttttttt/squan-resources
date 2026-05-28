@@ -322,9 +322,9 @@ function navigateBranch(group, delta) {
 function attachBranchNavListeners(container) {
     container.querySelectorAll('.branch-group').forEach(group => {
         updateBranchNav(group);
-        group.querySelector(':scope > .branch-nav .branch-nav-prev')
+        group.querySelector('.branch-nav-prev')
             ?.addEventListener('click', e => { e.stopPropagation(); navigateBranch(group, -1); });
-        group.querySelector(':scope > .branch-nav .branch-nav-next')
+        group.querySelector('.branch-nav-next')
             ?.addEventListener('click', e => { e.stopPropagation(); navigateBranch(group, 1); });
     });
 }
