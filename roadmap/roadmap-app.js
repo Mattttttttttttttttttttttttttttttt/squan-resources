@@ -258,9 +258,22 @@ function attachCardListeners(container) {
         // ── Mobile: tap = toggle popup; double-tap = navigate ─────────────────
         if (popup) {
             let lastTap = 0;
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            card.addEventListener('touchstart', e => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
 
             card.addEventListener('touchend', e => {
                 if (!isMobile()) return;
+
+                // Ignore if the finger moved — this was a scroll/drag
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+                if (Math.abs(dx) > 8 || Math.abs(dy) > 8) return;
+
                 const now = Date.now();
                 const gap = now - lastTap;
                 lastTap = now;
