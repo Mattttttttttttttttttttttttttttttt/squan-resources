@@ -538,6 +538,12 @@ main.roadmap-main {
         transform: none;
     }
 
+    /* Suppress sticky hover highlight when a popup is expanded */
+    .roadmap-container:has(.step-card.popup-open) .step-card:hover {
+        border-color: var(--border);
+        box-shadow: none;
+    }
+
     /* Swap hint text */
     .step-hint-desktop {
         display: none;
