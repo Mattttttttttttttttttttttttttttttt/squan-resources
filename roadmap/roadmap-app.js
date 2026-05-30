@@ -37,29 +37,55 @@ function _collectFeatured(node) {
     return results;
 }
 
-// Returns { learn: resource[], train: resource[] } for a step.
-// If step.resources (array of paths) is present, those paths are used instead
-// of the step's own path.
+// Returns groups: Array<{ learn: resource[], train: resource[] }>
+// path can be a string or string[].
+// resources can be:
+//   - string[]            → single group of explicit paths (old behaviour)
+//   - Array<string[]|null> → one group per entry; null = fall back to featured for that path
+// If neither is present, one group per path using featured resources.
 function getFeaturedForStep(step) {
-    let all = [];
+    const paths = Array.isArray(step.path) ? step.path : (step.path ? [step.path] : []);
 
-    if (Array.isArray(step.resources) && step.resources.length > 0) {
-        // Issue 4: explicit resource list overrides automatic featured lookup
-        for (const p of step.resources) {
-            const node = _getNode(p);
-            if (node) all.push(..._collectFeatured(node));
+    // Detect multi-group resources format: outer array whose elements are arrays or null
+    const isMultiGroup = Array.isArray(step.resources) && step.resources.length > 0 &&
+        step.resources.every(r => r === null || Array.isArray(r));
+
+    let groups = [];
+
+    if (isMultiGroup) {
+        const count = Math.max(step.resources.length, paths.length);
+        for (let i = 0; i < count; i++) {
+            const res = step.resources[i];
+            const path = paths[i];
+            if (res === null) {
+                // Fall back to featured for the corresponding path
+                if (!path) continue;
+                const node = _getNode(path);
+                if (!node) continue;
+                const all = _collectFeatured(node);
+                groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+            } else {
+                let all = [];
+                for (const p of res) { const node = _getNode(p); if (node) all.push(..._collectFeatured(node)); }
+                groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+            }
         }
+    } else if (Array.isArray(step.resources) && step.resources.length > 0) {
+        // Flat string[] — single explicit group
+        let all = [];
+        for (const p of step.resources) { const node = _getNode(p); if (node) all.push(..._collectFeatured(node)); }
+        groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
     } else {
-        if (!step.path) return { learn: [], train: [] };
-        const node = _getNode(step.path);
-        if (!node) return { learn: [], train: [] };
-        all = _collectFeatured(node);
+        // No resources override — one group per path
+        for (const path of paths) {
+            const node = _getNode(path);
+            if (!node) continue;
+            const all = _collectFeatured(node);
+            groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+        }
     }
 
-    return {
-        learn: all.filter(r => r.type !== 'trainer'),
-        train: all.filter(r => r.type === 'trainer'),
-    };
+    return groups.filter(g => g.learn.length || g.train.length);
 }
 
 // ─── Tab state ────────────────────────────────────────────────────────────────
@@ -101,18 +127,18 @@ const TYPE_META = {
     'website': { label: 'Website', cls: 'type-website' },
 };
 
-function renderFeaturedCard(featured) {
-    const { learn, train } = featured;
-    const hasAny = learn.length || train.length;
-    if (!hasAny) return '';
+function renderFeaturedCard(groups) {
+    if (!groups.length) return '';
 
     const isMobile = window.matchMedia('(max-width: 700px)').matches;
     const emptyNote = isMobile
         ? 'Double-tap the step to see the full resource list.'
         : 'Click the step card to see the full resource list.';
+    const multiGroup = groups.length > 1;
 
     function resRows(resources, section) {
         if (!resources.length) {
+            if (multiGroup) return ''; // don't show empty-section notes in multi-group mode
             return `<div class="fp-empty-section">
                 <span class="fp-section-label fp-empty">${section === 'learn' ? 'Learn' : 'Train'}</span>
                 <span class="fp-empty-note">${emptyNote}</span>
@@ -132,19 +158,23 @@ function renderFeaturedCard(featured) {
         }).join('');
     }
 
+    const groupsHtml = groups.map(({ learn, train }) =>
+        `<div class="fp-group">${resRows(learn, 'learn')}${resRows(train, 'train')}</div>`
+    ).join('<div class="fp-separator" aria-hidden="true"></div>');
+
     return `<div class="featured-popup" role="complementary" aria-label="Featured resources">
         <div class="fp-heading">Featured resources</div>
-        ${resRows(learn, 'learn')}
-        ${resRows(train, 'train')}
+        ${groupsHtml}
     </div>`;
 }
 
 function renderStep(step) {
-    const featured = getFeaturedForStep(step);
-    const hasPopup = !!(featured.learn.length || featured.train.length);
-    const featuredHtml = hasPopup ? renderFeaturedCard(featured) : '';
+    const groups = getFeaturedForStep(step);
+    const hasPopup = groups.length > 0;
+    const featuredHtml = hasPopup ? renderFeaturedCard(groups) : '';
     const hasNav = !!(step.path || step.resources);
-    const navUrl = hasNav ? `../?path=${encodeURIComponent(step.path).replace(/%7E/g, '~')}` : '#';
+    const firstPath = Array.isArray(step.path) ? step.path[0] : step.path;
+    const navUrl = hasNav && firstPath ? `../?path=${encodeURIComponent(firstPath).replace(/%7E/g, '~')}` : '#';
 
     return `<div class="step-card${hasPopup ? ' has-popup' : ''}"
                  data-url="${escHtml(navUrl)}"

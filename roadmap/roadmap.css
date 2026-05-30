@@ -332,6 +332,18 @@ main.roadmap-main {
     color: var(--text-dim);
 }
 
+.fp-group {
+    display: contents;
+    /* groups are purely logical; no extra box */
+}
+
+.fp-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0;
+    opacity: 0.5;
+}
+
 /* ── Mobile popup (shown inline below card on tap) ────────────────────────── */
 /* On mobile the popup becomes a drawer below the card */
 
@@ -538,7 +550,7 @@ main.roadmap-main {
         pointer-events: none;
         transform: none;
         border: none;
-        border-top: 1px solid var(--border-subtle);
+        border-top: 1px solid var(--border);
         border-radius: 0 0 var(--radius-md) var(--radius-md);
         box-shadow: none;
         background: var(--surface);
