@@ -305,12 +305,32 @@ main.roadmap-main {
     opacity: 0.75;
 }
 
+.fp-resource-title-group {
+    flex: 1;
+    min-width: 0;
+}
+
 .fp-resource-title {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text);
-    line-height: 1.3;
-    flex: 1;
+    line-height: 1.4;
+    display: inline;
+}
+
+.fp-resource-credit {
+    display: inline-block;
+    vertical-align: baseline;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+}
+
+.fp-resource-credit em {
+    font-style: italic;
+    color: var(--text-dim);
 }
 
 .fp-empty-note {
@@ -318,18 +338,6 @@ main.roadmap-main {
     color: var(--text-dim);
     line-height: 1.5;
     font-style: italic;
-}
-
-.fp-resource-credit {
-    font-size: 0.76rem;
-    color: var(--text-dim);
-    line-height: 1.4;
-    margin-top: 2px;
-}
-
-.fp-resource-credit em {
-    font-style: italic;
-    color: var(--text-dim);
 }
 
 .fp-group {

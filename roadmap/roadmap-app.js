@@ -150,10 +150,11 @@ function renderFeaturedCard(groups) {
             return `<div class="fp-resource-row">
                 <span class="fp-section-label fp-${section}">${section === 'learn' ? 'Learn' : 'Train'}</span>
                 <a class="fp-resource-link" href="${escHtml(resource.url)}" target="_blank" rel="noopener">
-                    <span class="fp-resource-title">${escHtml(resource.title)}</span>
+                    <span class="fp-resource-title-group">
+                        <span class="fp-resource-title">${escHtml(resource.title)}</span> ${creditHtml}
+                    </span>
                     <span class="type-badge ${meta.cls}">${meta.label}</span>
                 </a>
-                ${creditHtml}
             </div>`;
         }).join('');
     }
