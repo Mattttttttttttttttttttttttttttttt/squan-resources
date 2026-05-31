@@ -226,7 +226,6 @@ function isBranchGroup(item) {
 
 // Render one timeline row for a step.
 function renderTimelineRow(step, isLast) {
-    if (step.timestamp === "for sub 30") debugger;
     return `<div class="timeline-row${isLast ? ' timeline-row--last' : ''}">
         <div class="timeline-left">
             <span class="timeline-timestamp">${escHtml(step.timestamp)}</span>
