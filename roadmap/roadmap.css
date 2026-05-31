@@ -35,6 +35,7 @@ main.roadmap-main {
     color: var(--text-dim);
     margin-top: 8px;
     margin-bottom: 36px;
+    text-align: center;
 }
 
 /* ── Tab switcher ─────────────────────────────────────────────────────────── */
@@ -208,7 +209,7 @@ main.roadmap-main {
 
 .step-card-desc b {
     font-weight: 700;
-    color: #b2bfd0;
+    color: #c4d3e8;
 }
 
 /* Hint text at bottom of card */
