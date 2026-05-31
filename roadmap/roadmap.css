@@ -206,6 +206,11 @@ main.roadmap-main {
     line-height: 1.56;
 }
 
+.step-card-desc b {
+    font-weight: 700;
+    color: #b2bfd0;
+}
+
 /* Hint text at bottom of card */
 .step-card-hint {
     margin-top: 10px;
@@ -260,16 +265,14 @@ main.roadmap-main {
     margin-bottom: 12px;
 }
 
-.fp-resource-row,
-.fp-empty-section {
+.fp-section {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     margin-bottom: 10px;
 }
 
-.fp-resource-row:last-child,
-.fp-empty-section:last-child {
+.fp-section:last-child {
     margin-bottom: 0;
 }
 
@@ -334,6 +337,7 @@ main.roadmap-main {
 }
 
 .fp-empty-note {
+    display: block;
     font-size: 0.8rem;
     color: var(--text-dim);
     line-height: 1.5;
@@ -445,6 +449,8 @@ main.roadmap-main {
     cursor: pointer;
     transition: background 0.15s, opacity 0.15s;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .branch-nav-btn:disabled {
@@ -485,6 +491,128 @@ main.roadmap-main {
 .branch-timeline {
     display: flex;
     flex-direction: column;
+}
+
+/* ── Tab description ──────────────────────────────────────────────────────── */
+.roadmap-tab-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    text-align: center;
+    max-width: 540px;
+    margin-top: -20px;
+    margin-bottom: 28px;
+}
+
+/* ── Path selector modal ──────────────────────────────────────────────────── */
+.path-selector-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    padding: 24px;
+}
+
+.path-selector-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.path-selector-modal {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 560px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    transform: translateY(8px);
+    transition: transform 0.18s ease;
+}
+
+.path-selector-backdrop.active .path-selector-modal {
+    transform: translateY(0);
+}
+
+.path-selector-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.path-selector-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.path-selector-close {
+    font-size: 1.3rem;
+    line-height: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color 0.15s;
+}
+
+.path-selector-close:hover {
+    color: var(--text);
+}
+
+.path-selector-list {
+    padding: 6px 0;
+}
+
+.path-selector-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    text-decoration: none;
+    border-top: 1px solid var(--border);
+    transition: background 0.12s;
+}
+
+.path-selector-row:first-child {
+    border-top: none;
+}
+
+.path-selector-row:hover {
+    background: var(--surface-hover);
+}
+
+.path-selector-arrow {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: color 0.12s, transform 0.12s;
+}
+
+.path-selector-row:hover .path-selector-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+}
+
+.path-selector-text {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+}
+
+.path-selector-node-title {
+    font-weight: 700;
+    color: var(--text);
 }
 
 /* ── Mobile ───────────────────────────────────────────────────────────────── */

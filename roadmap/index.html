@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,6 +20,7 @@
   <!-- Roadmap-specific styles -->
   <link rel="stylesheet" href="roadmap.css" />
 </head>
+
 <body>
 
   <header class="topbar">
@@ -35,6 +37,9 @@
     </h1>
     <p class="roadmap-subtitle">Progression Roadmap</p>
 
+    <!-- Tab description — populated by JS from first string element of tab array -->
+    <p class="roadmap-tab-desc" id="roadmap-tab-desc" hidden></p>
+
     <!-- Tab switcher — populated by JS -->
     <div class="tab-switcher" id="tab-switcher" role="tablist" aria-label="Select method"></div>
 
@@ -47,4 +52,5 @@
   <script src="roadmap.js"></script>
   <script src="roadmap-app.js"></script>
 </body>
+
 </html>

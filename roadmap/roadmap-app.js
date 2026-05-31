@@ -165,31 +165,33 @@ function renderFeaturedCard(groups) {
         : 'Click the step card to see the full resource list.';
     const multiGroup = groups.length > 1;
 
-    function resRows(resources, section) {
+    function resSection(resources, section) {
+        const label = section === 'learn' ? 'Learn' : 'Train';
         if (!resources.length) {
-            if (multiGroup) return ''; // don't show empty-section notes in multi-group mode
+            if (multiGroup) return '';
             return `<div class="fp-empty-section">
-                <span class="fp-section-label fp-empty">${section === 'learn' ? 'Learn' : 'Train'}</span>
+                <span class="fp-section-label fp-empty">${label}</span>
                 <span class="fp-empty-note">${emptyNote}</span>
             </div>`;
         }
-        return resources.map(resource => {
+        const rows = resources.map(resource => {
             const meta = TYPE_META[resource.type] || { label: resource.type, cls: 'type-unknown' };
             const creditHtml = resource.credit ? `<span class="fp-resource-credit">${formatCredit(resource.credit)}</span>` : '';
-            return `<div class="fp-resource-row">
-                <span class="fp-section-label fp-${section}">${section === 'learn' ? 'Learn' : 'Train'}</span>
-                <a class="fp-resource-link" href="${escHtml(resource.url)}" target="_blank" rel="noopener">
-                    <span class="fp-resource-title-group">
-                        <span class="fp-resource-title">${escHtml(resource.title)}</span> ${creditHtml}
-                    </span>
-                    <span class="type-badge ${meta.cls}">${meta.label}</span>
-                </a>
-            </div>`;
+            return `<a class="fp-resource-link" href="${escHtml(resource.url)}" target="_blank" rel="noopener">
+                <span class="fp-resource-title-group">
+                    <span class="fp-resource-title">${escHtml(resource.title)}</span> ${creditHtml}
+                </span>
+                <span class="type-badge ${meta.cls}">${meta.label}</span>
+            </a>`;
         }).join('');
+        return `<div class="fp-section">
+            <span class="fp-section-label fp-${section}">${label}</span>
+            ${rows}
+        </div>`;
     }
 
     const groupsHtml = groups.map(({ learn, train }) =>
-        `<div class="fp-group">${resRows(learn, 'learn')}${resRows(train, 'train')}</div>`
+        `<div class="fp-group">${resSection(learn, 'learn')}${resSection(train, 'train')}</div>`
     ).join('<div class="fp-separator" aria-hidden="true"></div>');
 
     return `<div class="featured-popup" role="complementary" aria-label="Featured resources">
@@ -203,11 +205,17 @@ function renderStep(step) {
     const hasPopup = groups.length > 0;
     const featuredHtml = hasPopup ? renderFeaturedCard(groups) : '';
     const hasNav = !!(step.path || step.resources);
+    const isMultiPath = Array.isArray(step.path) && step.path.length > 1;
     const firstPath = Array.isArray(step.path) ? step.path[0] : step.path;
-    const navUrl = hasNav && firstPath ? `../?path=${encodeURIComponent(firstPath).replace(/%7E/g, '~')}` : '#';
+    const navUrl = (hasNav && firstPath && !isMultiPath)
+        ? `../?path=${encodeURIComponent(firstPath).replace(/%7E/g, '~')}`
+        : '#';
+    const pathsAttr = isMultiPath
+        ? ` data-paths="${escHtml(JSON.stringify(step.path))}"`
+        : '';
 
-    return `<div class="step-card${hasPopup ? ' has-popup' : ''}"
-                 data-url="${escHtml(navUrl)}"
+    return `<div class="step-card${hasPopup ? ' has-popup' : ''}${isMultiPath ? ' step-card--multi-path' : ''}"
+                 data-url="${escHtml(navUrl)}"${pathsAttr}
                  tabindex="0"
                  role="button"
                  aria-label="${escHtml(step.title)}">
@@ -215,10 +223,10 @@ function renderStep(step) {
             <div class="step-card-title">${escHtml(step.title)}</div>
             ${step.description ? `
                 <div class="step-card-desc">${escHtmlAngled(step.description)}</div>` :
-                ''}
+            ''}
             ${hasNav ? `<div class="step-card-hint">
-                <span class="step-hint-desktop">Click to open · hover for resources</span>
-                <span class="step-hint-mobile">Tap for resources · double-tap to open</span>
+                <span class="step-hint-desktop">${isMultiPath ? 'Click to select page' : 'Click to open'} · hover for resources</span>
+                <span class="step-hint-mobile">Tap for resources · double-tap to ${isMultiPath ? 'select page' : 'open'}</span>
             </div>` : ''}
         </div>
         ${featuredHtml}
@@ -291,8 +299,72 @@ function renderRoadmap(tabKey) {
     const container = document.getElementById('roadmap-container');
     const tab = ROADMAP[tabKey];
     if (!tab) { container.innerHTML = ''; return; }
-    container.innerHTML = renderBranch(tab);
+    // First string element (if any) is the tab description — skip it here, rendered in selectTab
+    const items = tab.filter(item => typeof item !== 'string');
+    container.innerHTML = renderBranch(items);
     attachCardListeners(container);
+}
+
+// ─── Path selector modal ──────────────────────────────────────────────────────
+
+function ensurePathSelectorModal() {
+    if (document.getElementById('path-selector-backdrop')) return;
+    const el = document.createElement('div');
+    el.id = 'path-selector-backdrop';
+    el.className = 'path-selector-backdrop';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-label', 'Select resource page');
+    el.innerHTML = `
+        <div class="path-selector-modal">
+            <div class="path-selector-topbar">
+                <span class="path-selector-title">Select the resource page...</span>
+                <button class="path-selector-close" id="path-selector-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="path-selector-list" id="path-selector-list"></div>
+        </div>`;
+    document.body.appendChild(el);
+
+    el.addEventListener('click', e => {
+        if (e.target === el) closePathSelector();
+    });
+    document.getElementById('path-selector-close').addEventListener('click', closePathSelector);
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closePathSelector();
+    });
+}
+
+let _pathSelectorOpenTime = 0;
+
+function openPathSelector(paths) {
+    ensurePathSelectorModal();
+    const list = document.getElementById('path-selector-list');
+    const arrowSvg = `<svg class="path-selector-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+    list.innerHTML = paths.map(p => {
+        const node = _getNode(p);
+        if (!node) return '';
+        const title = escHtml(node.title || p);
+        const bait = node.bait ? `<span class="path-selector-bait">${escHtml(node.bait)}</span>` : '';
+        const url = `../?path=${encodeURIComponent(p).replace(/%7E/g, '~')}`;
+        return `<a class="path-selector-row" href="${escHtml(url)}">
+            ${arrowSvg}
+            <span class="path-selector-text">
+                <span class="path-selector-node-title">${title}:</span> ${bait}
+            </span>
+        </a>`;
+    }).join('');
+    _pathSelectorOpenTime = Date.now();
+    document.getElementById('path-selector-backdrop').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePathSelector() {
+    // Ignore close calls within 250ms of opening — swallows synthetic clicks from the opening touch
+    if (Date.now() - _pathSelectorOpenTime < 250) return;
+    document.getElementById('path-selector-backdrop')?.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 // ─── Card interaction ─────────────────────────────────────────────────────────
@@ -304,34 +376,37 @@ function attachCardListeners(container) {
     cards.forEach(card => {
         const url = card.dataset.url;
         const popup = card.querySelector('.featured-popup');
+        const isMultiPath = card.classList.contains('step-card--multi-path');
+        const paths = isMultiPath ? JSON.parse(card.dataset.paths) : null;
 
-        // ── Desktop: click = navigate ─────────────────────────────────────────
+        // ── Desktop: click = navigate or open path selector ───────────────────
         card.addEventListener('click', e => {
             if (isMobile()) return;
             if (e.target.closest('.featured-popup')) return;
+            if (isMultiPath) { openPathSelector(paths); return; }
             if (url && url !== '#') window.location.href = url;
         });
 
-        // Keyboard: Enter = navigate
+        // Keyboard: Enter = navigate or open path selector
         card.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && url && url !== '#') window.location.href = url;
+            if (e.key !== 'Enter') return;
+            if (isMultiPath) { openPathSelector(paths); return; }
+            if (url && url !== '#') window.location.href = url;
         });
 
-        // ── Mobile: tap = toggle popup; double-tap = navigate ─────────────────
-        if (popup) {
-            let lastTap = 0;
-            let touchStartX = 0;
-            let touchStartY = 0;
+        // ── Mobile touch ──────────────────────────────────────────────────────
+        let lastTap = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
 
-            card.addEventListener('touchstart', e => {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
+        card.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
 
+        if (popup || isMultiPath) {
             card.addEventListener('touchend', e => {
                 if (!isMobile()) return;
-
-                // Ignore if the finger moved — this was a scroll/drag
                 const dx = e.changedTouches[0].clientX - touchStartX;
                 const dy = e.changedTouches[0].clientY - touchStartY;
                 if (Math.abs(dx) > 8 || Math.abs(dy) > 8) return;
@@ -341,15 +416,20 @@ function attachCardListeners(container) {
                 lastTap = now;
 
                 if (gap < 320) {
-                    // Double-tap → navigate
-                    if (url && url !== '#') window.location.href = url;
+                    // Double-tap
+                    if (isMultiPath) {
+                        e.preventDefault(); // suppress synthetic click so backdrop doesn't immediately close
+                        openPathSelector(paths);
+                    } else if (url && url !== '#') {
+                        window.location.href = url;
+                    }
                     return;
                 }
 
                 // Single tap → toggle popup
+                if (!popup) return;
                 e.preventDefault();
                 const isOpen = card.classList.contains('popup-open');
-                // Close all other open popups first
                 container.querySelectorAll('.step-card.popup-open').forEach(c => {
                     if (c !== card) c.classList.remove('popup-open');
                 });
@@ -358,8 +438,9 @@ function attachCardListeners(container) {
         }
     });
 
-    // Close mobile popups when tapping outside
+    // Close mobile popups when tapping outside — skip entirely if path selector is open
     document.addEventListener('touchend', e => {
+        if (document.getElementById('path-selector-backdrop')?.classList.contains('active')) return;
         if (!e.target.closest('.step-card')) {
             container.querySelectorAll('.step-card.popup-open').forEach(c => c.classList.remove('popup-open'));
         }
@@ -429,6 +510,15 @@ function selectTab(key) {
         btn.classList.toggle('tab-btn--active', sel);
         btn.setAttribute('aria-selected', sel ? 'true' : 'false');
     });
+
+    // Show tab description (first string element of the tab array, if present)
+    const descEl = document.getElementById('roadmap-tab-desc');
+    if (descEl) {
+        const tab = ROADMAP[key];
+        const desc = Array.isArray(tab) ? tab.find(item => typeof item === 'string') : null;
+        descEl.textContent = desc || '';
+        descEl.hidden = !desc;
+    }
 
     renderRoadmap(key);
 }
