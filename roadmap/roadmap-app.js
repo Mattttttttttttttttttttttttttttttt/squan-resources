@@ -37,6 +37,30 @@ function _collectFeatured(node) {
     return results;
 }
 
+// Find a single resource by its url property within a node (searches leaf arrays recursively)
+function _findResourceWithPath(node, url) {
+    if (Array.isArray(node.resources)) return node.resources.find(r => r.path === url) || null;
+    for (const key of Object.keys(node)) {
+        const val = node[key];
+        if (val !== null && typeof val === 'object') {
+            const found = _findResourceWithPath(val, url);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+// Resolve a resource path like "cs~cs~sk":
+// all segments except the last = node path; last segment = resource url value.
+function _getResourceByPath(fullPath) {
+    const segs = fullPath.split('~');
+    if (segs.length < 2) return null;
+    const resourceUrl = segs.pop();
+    const node = _getNode(segs.join('~'));
+    if (!node) return null;
+    return _findResourceWithPath(node, resourceUrl);
+}
+
 // Returns groups: Array<{ learn: resource[], train: resource[] }>
 // path can be a string or string[].
 // resources can be:
@@ -58,22 +82,21 @@ function getFeaturedForStep(step) {
             const res = step.resources[i];
             const path = paths[i];
             if (res === null) {
-                // Fall back to featured for the corresponding path
+                // null → fall back to featured resources for corresponding path
                 if (!path) continue;
                 const node = _getNode(path);
                 if (!node) continue;
                 const all = _collectFeatured(node);
                 groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
             } else {
-                let all = [];
-                for (const p of res) { const node = _getNode(p); if (node) all.push(..._collectFeatured(node)); }
+                // explicit resource path list → look up each individual resource by url
+                const all = res.map(_getResourceByPath).filter(Boolean);
                 groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
             }
         }
     } else if (Array.isArray(step.resources) && step.resources.length > 0) {
-        // Flat string[] — single explicit group
-        let all = [];
-        for (const p of step.resources) { const node = _getNode(p); if (node) all.push(..._collectFeatured(node)); }
+        // Flat string[] — single group of individually-addressed resources
+        const all = step.resources.map(_getResourceByPath).filter(Boolean);
         groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
     } else {
         // No resources override — one group per path
@@ -203,6 +226,7 @@ function isBranchGroup(item) {
 
 // Render one timeline row for a step.
 function renderTimelineRow(step, isLast) {
+    if (step.timestamp === "for sub 30") debugger;
     return `<div class="timeline-row${isLast ? ' timeline-row--last' : ''}">
         <div class="timeline-left">
             <span class="timeline-timestamp">${escHtml(step.timestamp)}</span>
