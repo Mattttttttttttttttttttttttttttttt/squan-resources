@@ -135,6 +135,12 @@ function escHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
+function escHtmlAngled(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;');
+}
+
 function formatCredit(credit) {
     if (!credit) return '';
     const colon = credit.indexOf(':');
@@ -207,7 +213,9 @@ function renderStep(step) {
                  aria-label="${escHtml(step.title)}">
         <div class="step-card-inner">
             <div class="step-card-title">${escHtml(step.title)}</div>
-            ${step.description ? `<div class="step-card-desc">${escHtml(step.description)}</div>` : ''}
+            ${step.description ? `
+                <div class="step-card-desc">${escHtmlAngled(step.description)}</div>` :
+                ''}
             ${hasNav ? `<div class="step-card-hint">
                 <span class="step-hint-desktop">Click to open · hover for resources</span>
                 <span class="step-hint-mobile">Tap for resources · double-tap to open</span>
