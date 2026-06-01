@@ -287,7 +287,7 @@ const RESOURCES = {
         "corner orientation, edge orientation, corner permutation, edge permutation. " +
         "You are also encouraged to do CSP for CS.</br>Find CS under its folder in the " +
         "homepage. ",
-      "CO": {
+      "co": {
         title: "CO",
         bait: "First step after CS: corner orientation.",
         description: "A very intuitive step: very similar to 2x2.",
@@ -877,7 +877,7 @@ const RESOURCES = {
             "Adrien and Ben's sheet to find algs that suit you."
         },
         {
-          title: "PLL, PLL+1, CP Trainer",
+          title: "EPLL, PLL, PLL+1, CP Trainer",
           url: "https://squanmate.cuber.pro/#/algorithm-trainer",
           type: "trainer",
           credit: "- Squanmate",
