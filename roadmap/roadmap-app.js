@@ -286,8 +286,8 @@ function renderBranchGroup(branches) {
             <div class="branch-nav" role="group" aria-label="Branch navigation">
                 <span class="branch-label">Choose a path:</span>
                 <span class="branch-nav-indicator" aria-live="polite"></span>
-                <button class="branch-nav-btn branch-nav-prev" aria-label="Previous option">&#8592;</button>
-                <button class="branch-nav-btn branch-nav-next" aria-label="Next option">&#8594;</button>
+                <button class="branch-nav-btn branch-nav-prev" aria-label="Previous option"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="branch-nav-btn branch-nav-next" aria-label="Next option"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
         </div>
         <div class="branch-group-lanes">
