@@ -263,7 +263,7 @@ function renderBranch(items, isNested = false) {
         if (isBranchGroup(item)) {
             html += renderBranchGroup(item);
         } else {
-            html += renderTimelineRow(item, isLast && !isNested);
+            html += renderTimelineRow(item, isLast);
         }
     });
     html += '</div>';
@@ -284,8 +284,9 @@ function renderBranchGroup(branches) {
         <div class="branch-nav-row">
             <div class="timeline-left"></div>
             <div class="branch-nav" role="group" aria-label="Branch navigation">
-                <button class="branch-nav-btn branch-nav-prev" aria-label="Previous option">&#8592;</button>
+                <span class="branch-label">Choose a path:</span>
                 <span class="branch-nav-indicator" aria-live="polite"></span>
+                <button class="branch-nav-btn branch-nav-prev" aria-label="Previous option">&#8592;</button>
                 <button class="branch-nav-btn branch-nav-next" aria-label="Next option">&#8594;</button>
             </div>
         </div>
