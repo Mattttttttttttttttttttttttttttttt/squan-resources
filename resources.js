@@ -196,7 +196,7 @@ const RESOURCES = {
         },
         {
           title: "CSP Tutorials",
-          url: "https://www.youtube.com/watch?v=GNmrLHw86ss&list=PL8Izpzk-6zizm3E5icawyJ637EJyaIwrB&index=1",
+          url: "https://www.youtube.com/watch?v=GNmrLHw86ss&list=PL8Izpzk-6zizm3E5icawyJ637EJyaIwrB",
           type: "video",
           credit: "- Matt",
           path: "matt",
@@ -423,7 +423,7 @@ const RESOURCES = {
         resources: [
           {
             title: "OBL Tutorial",
-            url: "https://youtu.be/pv2RgznaHgY&list=PLlEIANnLzI5ON2bbw9e2v0X4HyeX3eZd-&index=1",
+            url: "https://youtu.be/pv2RgznaHgY&list=PLlEIANnLzI5ON2bbw9e2v0X4HyeX3eZd-",
             type: "video",
             credit: "- Oxzowachi",
             path: "ox",
@@ -582,7 +582,7 @@ const RESOURCES = {
           },
           {
             title: "PBL Tutorial",
-            url: "https://youtu.be/uPDbHQQwLtM&list=PLh8G8F13X7w8fvip0BX9gQ1vJPRRKR94k&index=1",
+            url: "https://youtu.be/uPDbHQQwLtM&list=PLh8G8F13X7w8fvip0BX9gQ1vJPRRKR94k",
             type: "video",
             credit: "- Chen Yen-An",
             path: "cya",
@@ -598,7 +598,7 @@ const RESOURCES = {
           },
           {
             title: "PBL Tutorial",
-            url: "https://youtu.be/vVN_eFiYB88&list=PLF0mfn_ogsH_ogg-ffsVVPvOMD6yRtBzf&index=1",
+            url: "https://youtu.be/vVN_eFiYB88&list=PLF0mfn_ogsH_ogg-ffsVVPvOMD6yRtBzf",
             type: "video",
             credit: "- Cube Master",
             path: "cm",
@@ -663,7 +663,7 @@ const RESOURCES = {
         resources: [
           {
             title: "OBLP Tutorial",
-            url: "https://youtu.be/Y5i1ZeHtrCY&list=PL8Izpzk-6ziyXXgFj8zuBfGFpduPSI2av&index=1",
+            url: "https://youtu.be/Y5i1ZeHtrCY&list=PL8Izpzk-6ziyXXgFj8zuBfGFpduPSI2av",
             type: "video",
             credit: "- Matt",
             path: "mattv",
@@ -742,7 +742,7 @@ const RESOURCES = {
       resources: [
         {
           title: "FB Tutorial",
-          url: "https://youtu.be/6rLfvkKNG4U",
+          url: "https://youtu.be/6rLfvkKNG4U&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "riccifb",
@@ -751,7 +751,7 @@ const RESOURCES = {
         },
         {
           title: "SB Tutorial",
-          url: "https://youtu.be/JJPezT2rUMg",
+          url: "https://youtu.be/JJPezT2rUMg&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "riccisb",
@@ -832,7 +832,7 @@ const RESOURCES = {
         },
         {
           title: "CP+DF Tutorial",
-          url: "https://youtu.be/432HNoTKLWg",
+          url: "https://youtu.be/432HNoTKLWg&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "riccicpdf",
@@ -841,7 +841,7 @@ const RESOURCES = {
         },
         {
           title: "EPLL Tutorial",
-          url: "https://youtu.be/NyUiDwjC0fo",
+          url: "https://youtu.be/NyUiDwjC0fo&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "ricciepll",
