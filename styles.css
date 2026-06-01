@@ -75,6 +75,8 @@ body {
     font-family: var(--font-body);
     min-height: 100dvh;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 body.modal-open {
@@ -181,7 +183,9 @@ main,
 main {
     max-width: var(--max-w);
     margin: 0 auto;
-    padding: 56px 28px 90px;
+    padding: 56px 28px 50px;
+    flex: 1;
+    width: 100%;
 }
 
 /* ── Page Title ───────────────────────────────────────────────────────────── */
@@ -811,6 +815,18 @@ main {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ── Site footer credit ───────────────────────────────────────────────────── */
+.site-footer {
+    margin-top: auto;
+    padding-top: 24px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.6;
 }
 
 /* ── Mobile tab bar (hidden on desktop) ───────────────────────────────────── */
