@@ -766,8 +766,9 @@ const RESOURCES = {
           type: "video",
           credit: "- Helmer",
           path: "helmer",
-          description: "A very useful video with good tips on how to solve blocks efficiently. " +
-            "This talks about SBEC as well, and it is debatable how useful that is these days."
+          description: "A very useful video with good tips on how to solve blocks " +
+            "efficiently. This talks about SBEC as well, though it is debatable how " +
+            "useful that is these days."
         },
         {
           title: "Blockbuilding Trick",
@@ -776,10 +777,10 @@ const RESOURCES = {
           credit: "- Ricci",
           path: "riccit",
           description: "A trick that's touched upon in Ricci's SB video and Helmer's " +
-            "video, but expanded upon here. In my opinion this is a very, very important " +
-            "trick to learn and get used to, as it just makes your solves so much smoother " +
-            "without having to pause to recognize how to M2 your DB edge into its slot, and " +
-            "also getting used to it helps transition you into using OPLL+1 in your solves."
+            "video, but expanded upon here. This is a very, very important trick to learn " +
+            "and get used to, as it just makes your solves so much smoother without " +
+            "having to pause to recognize how to M2 your DB edge into its slot. Getting " +
+            "used to it also helps transition you into using OPLL+1 in your solves."
         },
         {
           title: "FB walkthrough",
@@ -811,7 +812,7 @@ const RESOURCES = {
           path: "sbec",
           description: "A useful resource for looking up optimal SB solutions when " +
             "you're struggling to come up with one yourself. The utility of SBEC these " +
-            "days is debatable, personally I would say it isn't useful at all."
+            "days is very debatable, perhaps not useful at all."
         }
       ]
     },
@@ -850,15 +851,6 @@ const RESOURCES = {
           featured: true
         },
         {
-          title: "Lin Algs",
-          url: "https://docs.google.com/spreadsheets/d/1xdMMw402OPVOKW2cGhnz4wPgWWGo51pJlRQpKlNk4xY/edit",
-          type: "doc/sheet",
-          credit: "- Ben",
-          path: "ben",
-          description: "A good source of some alternative algs if you feel the ones " +
-            "from Adrien's Lin algs aren't to your liking."
-        },
-        {
           title: "PLL Algs",
           url: "https://www.sonyc-cuber.com/tutorials/PLL.html",
           type: "website",
@@ -877,19 +869,28 @@ const RESOURCES = {
             "Adrien and Ben's sheet to find algs that suit you."
         },
         {
+          title: "Lin Algs",
+          url: "https://docs.google.com/spreadsheets/d/1xdMMw402OPVOKW2cGhnz4wPgWWGo51pJlRQpKlNk4xY/edit",
+          type: "doc/sheet",
+          credit: "- Ben",
+          path: "ben",
+          description: "A good source of some alternative algs if you feel the ones " +
+            "from Adrien's Lin algs aren't to your liking."
+        },
+        {
           title: "EPLL, PLL, PLL+1, CP Trainer",
           url: "https://squanmate.cuber.pro/#/algorithm-trainer",
           type: "trainer",
           credit: "- Squanmate",
           path: "squanmate",
-          description: "The only lin trainer out there I think, and serves its purpose " +
-            "well with just a few kinks here and there. The PLL+1 trainer gives you the " +
-            "wrong D layer angle, which you have to adjust every time, and the cases " +
-            "are all in the weird naming scheme that nobody uses anymore. Adrien's " +
-            "sheet has numbers next to each PLL+1 case, which tells you which case in " +
-            "this trainer it is. There are also numbers for the OPLL+1 cases as well, " +
-            "which tell you the equivalent PLL+1 cases that you can turn into OPLL+1 " +
-            "cases by M2ing the top edge into the DB.",
+          description: "The only lin trainer out there, and serves its purpose well with " +
+            "just a few kinks here and there. The PLL+1 trainer gives you the wrong D " +
+            "layer angle, which you have to adjust every time, and the cases are all in a " +
+            "weird naming scheme that nobody uses anymore. Adrien's sheet has numbers " +
+            "next to each PLL+1 case, which tells you which case in this trainer it is. " +
+            "There are also numbers for the OPLL+1 cases as well, which tell you the " +
+            "equivalent PLL+1 cases that you can turn into OPLL+1 cases by M2ing the top " +
+            "edge into the DB.",
           featured: true
         }
       ]
