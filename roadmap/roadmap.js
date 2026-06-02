@@ -44,7 +44,7 @@ const ROADMAP = {
       description: "Helps you <b>A LOT</b> with memorizing algs. It's like the " +
         "difference between \"sexy move\" and \"turn the right layer 90°, top 90°, " +
         "right -90°, top -90°\".",
-      path: "start~karn"
+      path: "misc~karn"
     },
     {
       timestamp: "for sub 1",
@@ -143,7 +143,7 @@ const ROADMAP = {
           title: "learn PBL base cases",
           description: "In Dalton's tutorials, this is \"part 3a: 3, 4&5 slicers\". In " +
             "Matt's PBL Doc, this is the tab called \"BASE CASES\". Learn these, and " +
-            "drill them into your muscle memory while you are learning OBL. Also helps" +
+            "drill them into your muscle memory while you are learning OBL. Also helps " +
             "with getting familiar with PBL recog early.",
           path: "vdb~csbl~pbl"
         },

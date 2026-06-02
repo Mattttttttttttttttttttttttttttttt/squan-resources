@@ -35,7 +35,8 @@ const RESOURCES = {
     bait: "Welcome to your squan journey! Click me to learn the basics.",
     "solve": {
       title: "Solve the Cube",
-      description: "Get your cube solved.",
+      description: "There are good tutorials and bad tutorials. <b>Anything not listed " +
+        "here</b> is very likely going to lead you astray in some way.",
       resources: [
         {
           title: "Beginner tutorial",
@@ -102,24 +103,6 @@ const RESOURCES = {
           path: "cm",
           description: "Seems like more fingertricks, but either outdated, bad, or " +
             "just different ways of talking about the same thing."
-        }
-      ]
-    },
-    "karn": {
-      title: "Notation",
-      bait: "makes learning algs SO much easier",
-      description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
-        "It's like the difference between \"sexy move\" and \"turn the right layer " +
-        "90°, top 90°, right -90°, top -90°\".",
-      resources: [
-        {
-          title: "Karn sheet",
-          url: "https://docs.google.com/spreadsheets/d/11WRdlUpMJMd2vMloNvz2pp_AYKO1XFeCErpmx5wUKvQ/edit",
-          type: "doc/sheet",
-          credit: "- Matt",
-          path: "sheet",
-          description: "the most up-to-date information",
-          featured: true
         }
       ]
     }
@@ -658,8 +641,10 @@ const RESOURCES = {
         title: "OBLP",
         bait: "OBL Prediction. Predict OBL during inspection and 2 look every scramble.",
         description: "The most cutting-edge method right now. Requires strong foundation " +
-          "of CSP and fast tracing. You can also use the concepts from OBLP to do CO " +
-          "prediction (COP) or partial COP (PCOP).",
+          "of CSP and fast tracing. If you are trying to learn it, you almost certainly " +
+          "go off the major tutorials and tweak things to your liking at some point. " +
+          "You can also use the concepts from OBLP to do CO prediction (COP) or partial " +
+          "COP (PCOP).",
         resources: [
           {
             title: "OBLP Tutorial",
@@ -717,15 +702,7 @@ const RESOURCES = {
             type: "doc/sheet",
             credit: "- Oxzowachi",
             path: "ox",
-            description: "The OG tutorial for OBLP, but a bit outdated."
-          },
-          {
-            title: "OBLP Sheet",
-            url: "https://docs.google.com/spreadsheets/d/10BNar8MbW8pQbAwmpMRi-STUiaAvjOy_As6DplPxrtg/edit",
-            type: "doc/sheet",
-            credit: "- Stepan",
-            path: "stepan",
-            description: "Outdated and incomplete."
+            description: "The OG tutorial for OBLP."
           }
         ]
       }
@@ -897,10 +874,29 @@ const RESOURCES = {
     }
   },
   "misc": {
+    gridLayout: true,
     title: "Miscellaneous Resources",
     bait: "Solvers, image genners, and more!",
-    gridLayout: true,
+    "karn": {
+      title: "Notation",
+      bait: "makes learning algs SO much easier",
+      description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
+        "It's like the difference between \"sexy move\" and \"turn the right layer " +
+        "90°, top 90°, right -90°, top -90°\".",
+      resources: [
+        {
+          title: "Karn sheet",
+          url: "https://docs.google.com/spreadsheets/d/11WRdlUpMJMd2vMloNvz2pp_AYKO1XFeCErpmx5wUKvQ/edit",
+          type: "doc/sheet",
+          credit: "- Matt",
+          path: "sheet",
+          description: "the most up-to-date information",
+          featured: true
+        }
+      ]
+    },
     "alg": {
+      gridLayout: true,
       title: "Alg Genners",
       bait: "Generate your own algs!",
       description: "All the alg genners and helpers out there.",
@@ -933,6 +929,7 @@ const RESOURCES = {
       ]
     },
     "draw": {
+      gridLayout: true,
       title: "Image Genners",
       bait: "Generate squan images!",
       resources: [
@@ -965,6 +962,7 @@ const RESOURCES = {
       ]
     },
     "mods": {
+      gridLayout: true,
       title: "Squan Mods",
       bait: "Mod your squan to make it better.",
       description: "Some common mods you will hear mentioned (in order): maglev, slice " +
@@ -1008,6 +1006,7 @@ const RESOURCES = {
       ]
     },
     "lore": {
+      gridLayout: true,
       title: "Squan Lore",
       bait: "Are you ready to go down this rabbit hole?",
       resources: [
