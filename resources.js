@@ -1015,6 +1015,12 @@ const RESOURCES = {
           url: "https://www.jaapsch.net/puzzles/square1.htm",
           credit: "- Jaap",
           description: "In one word: lore."
+        },
+        {
+          title: "Podcase Episode with Lars Vandenbergh",
+          url: "https://youtu.be/qpvMovvSpTE",
+          credit: "- Jaap & Brandon",
+          description: "A hour-long podcast with the inventer of the VDB method."
         }
       ]
     },
