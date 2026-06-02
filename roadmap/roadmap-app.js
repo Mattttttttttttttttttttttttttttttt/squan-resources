@@ -24,6 +24,18 @@ function _getNode(path) {
     return node;
 }
 
+function _isGridLayout(path) {
+    if (!path) return !!(RESOURCES.gridLayout);
+    let node = RESOURCES;
+    for (const seg of path.split('~')) {
+        if (node.gridLayout) return true;
+        const key = _findKey(node, seg);
+        if (key === undefined) return false;
+        node = node[key];
+    }
+    return !!(node && node.gridLayout);
+}
+
 // Recursively collect all items with featured: true from a node or leaf array
 function _collectFeatured(node) {
     if (Array.isArray(node)) return node.filter(r => r.featured);
@@ -82,33 +94,37 @@ function getFeaturedForStep(step) {
             const res = step.resources[i];
             const path = paths[i];
             if (res === null) {
-                // null → fall back to featured resources for corresponding path
                 if (!path) continue;
                 const node = _getNode(path);
                 if (!node) continue;
                 const all = _collectFeatured(node);
-                groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+                if (_isGridLayout(path)) {
+                    if (all.length) groups.push({ flat: true, all });
+                } else {
+                    groups.push({ flat: false, learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+                }
             } else {
-                // explicit resource path list → look up each individual resource by url
                 const all = res.map(_getResourceByPath).filter(Boolean);
-                groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+                groups.push({ flat: false, learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
             }
         }
     } else if (Array.isArray(step.resources) && step.resources.length > 0) {
-        // Flat string[] — single group of individually-addressed resources
         const all = step.resources.map(_getResourceByPath).filter(Boolean);
-        groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+        groups.push({ flat: false, learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
     } else {
-        // No resources override — one group per path
         for (const path of paths) {
             const node = _getNode(path);
             if (!node) continue;
             const all = _collectFeatured(node);
-            groups.push({ learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+            if (_isGridLayout(path)) {
+                if (all.length) groups.push({ flat: true, all });
+            } else {
+                groups.push({ flat: false, learn: all.filter(r => r.type !== 'trainer'), train: all.filter(r => r.type === 'trainer') });
+            }
         }
     }
 
-    return groups.filter(g => g.learn.length || g.train.length);
+    return groups.filter(g => g.flat ? g.all.length : (g.learn.length || g.train.length));
 }
 
 // ─── Tab state ────────────────────────────────────────────────────────────────
@@ -190,9 +206,20 @@ function renderFeaturedCard(groups) {
         </div>`;
     }
 
-    const groupsHtml = groups.map(({ learn, train }) =>
-        `<div class="fp-group">${resSection(learn, 'learn')}${resSection(train, 'train')}</div>`
-    ).join('<div class="fp-separator" aria-hidden="true"></div>');
+    const groupsHtml = groups.map(g => {
+        if (g.flat) {
+            const rows = g.all.map(r => {
+                const creditHtml = r.credit ? `<span class="fp-resource-credit">${formatCredit(r.credit)}</span>` : '';
+                return `<a class="fp-resource-link" href="${escHtml(r.url)}" target="_blank" rel="noopener">
+                    <span class="fp-resource-title-group">
+                        <span class="fp-resource-title">${escHtml(r.title)}</span> ${creditHtml}
+                    </span>
+                </a>`;
+            }).join('');
+            return `<div class="fp-group">${rows}</div>`;
+        }
+        return `<div class="fp-group">${resSection(g.learn, 'learn')}${resSection(g.train, 'train')}</div>`;
+    }).join('<div class="fp-separator" aria-hidden="true"></div>');
 
     return `<div class="featured-popup" role="complementary" aria-label="Featured resources">
         <div class="fp-heading">Featured resources</div>

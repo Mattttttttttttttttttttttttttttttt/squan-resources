@@ -202,12 +202,16 @@ function renderNode(node, path) {
         </div>
         <div class="folder-card-meta">
           <span class="folder-count">${count} resource${count !== 1 ? 's' : ''}</span>
-          <span class="folder-arrow">→</span>
+          <span class="folder-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </div>
       </div>`;
     }).join('');
 
-    area.innerHTML = `<div class="folder-grid">${cards}</div>`;
+    area.innerHTML = `<div class="card-grid">${cards}</div>`;
 
     area.querySelectorAll('.folder-card').forEach(card => {
         const go = () => navigate(card.dataset.path);
@@ -218,7 +222,7 @@ function renderNode(node, path) {
 
 // ─── Resource card HTML ───────────────────────────────────────────────────────
 
-function resourceCardHtml(resource, globalIndex, col) {
+function resourceCardHtml(resource, globalIndex, col, hideBadge = false) {
     const { label, cls } = typeMeta(resource.type);
     const featuredAttr = resource.featured ? ' data-featured="true"' : '';
     const derivedCol = col ?? (resource.type === 'trainer' ? 'train' : 'learn');
@@ -230,25 +234,35 @@ function resourceCardHtml(resource, globalIndex, col) {
             ${resource.credit ? `<div class="resource-credit">${formatCredit(resource.credit)}</div>` : ''}
             <div class="resource-desc">${resource.description || ''}</div>
         </div>
-        <div class="resource-card-foot">
+        ${hideBadge ? '' : `<div class="resource-card-foot">
             <span class="type-badge ${cls}">${label}</span>
-        </div>
+        </div>`}
     </div>`;
 }
 
 // ─── Leaf page ────────────────────────────────────────────────────────────────
 
-function renderLeaf(resources, gridLayout, folderPath, node) {
+function renderLeaf(resources, gridLayout, folderPath, node, append = false) {
     _currentResources = resources; // store for resource path auto-open
     _currentFolderPath = folderPath ?? '';
     const area = document.getElementById('content-area');
-    const descHtml = (node && node.description)
+    const descHtml = (!append && node && node.description)
         ? `<div class="leaf-description">${node.description}</div>` : '';
 
     if (gridLayout) {
         // ── Misc-style unified grid ───────────────────────────────────────────
-        const cards = resources.map((r, i) => resourceCardHtml(r, i)).join('');
-        area.innerHTML = descHtml + `<div class="resource-grid">${cards}</div>`;
+        const cards = resources.map((r, i) => resourceCardHtml(r, i, undefined, true)).join('');
+        if (append) {
+            const grid = area.querySelector('.card-grid');
+            if (grid) {
+                grid.insertAdjacentHTML('beforeend', cards);
+            } else {
+                area.insertAdjacentHTML('beforeend', `<div class="card-grid">${cards}</div>`);
+            }
+        } else {
+            const html = descHtml + `<div class="card-grid">${cards}</div>`;
+            area.innerHTML = html;
+        }
     } else {
         // ── Learn / Train interleaved flat grid ───────────────────────────────
         // Interleaving lets CSS grid equalize row heights across both columns
@@ -433,7 +447,11 @@ function render(path) {
     renderBreadcrumb(path);
     document.getElementById('content-area').innerHTML = '';
 
-    if (Array.isArray(node.resources)) {
+    if (isGridLayout(path) && Array.isArray(node.resources) && getNodeChildren(node).length > 0) {
+        renderNode(node, path);
+        renderLeaf(node.resources, true, path, node, true);
+        if (autoOpenResource) openModal(autoOpenResource, false);
+    } else if (Array.isArray(node.resources)) {
         renderLeaf(node.resources, isGridLayout(path), path, node);
         if (autoOpenResource) openModal(autoOpenResource, false);
     } else {

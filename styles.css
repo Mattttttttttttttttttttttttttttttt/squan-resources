@@ -239,10 +239,12 @@ main {
     line-height: 1;
 }
 
-/* ── Folder Grid (Node pages) ─────────────────────────────────────────────── */
-.folder-grid {
+/* ── Unified card grid for folders and resources ─────────────────────────── */
+.card-grid,
+.folder-grid,
+.resource-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
 }
 
@@ -297,15 +299,23 @@ main {
 }
 
 .folder-arrow {
-    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
     color: var(--text-dim);
-    transition: color 0.15s, transform 0.15s;
+    transition: color 0.12s, transform 0.12s;
+}
+
+.folder-arrow svg {
+    display: block;
 }
 
 .folder-card:hover .folder-arrow,
 .folder-card:focus-visible .folder-arrow {
-    color: var(--accent);
-    transform: translateX(4px);
+    color: var(--text-muted);
+    transform: translateX(3px);
 }
 
 /* ── Resource flat grid (Leaf pages — Learn / Train) ─────────────────────── */
@@ -384,6 +394,8 @@ main {
 }
 
 /* ── Misc unified grid ────────────────────────────────────────────────────── */
+.card-grid,
+.folder-grid,
 .resource-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -958,10 +970,8 @@ main {
         font-size: 0.95rem;
     }
 
-    .folder-grid {
-        grid-template-columns: 1fr;
-    }
-
+    .card-grid,
+    .folder-grid,
     .resource-grid {
         grid-template-columns: 1fr;
     }
