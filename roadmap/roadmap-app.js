@@ -130,6 +130,8 @@ function getFeaturedForStep(step) {
 // ─── Tab state ────────────────────────────────────────────────────────────────
 
 let activeTab = null;
+let _pathSelectorHistoryPushed = false;
+let _roadmapIgnoreNextPopstate = false;
 
 // Try to find a tab matching URL ?from= param (path segments ~-split)
 function detectTabFromUrl() {
@@ -384,15 +386,24 @@ function openPathSelector(paths) {
         </a>`;
     }).join('');
     _pathSelectorOpenTime = Date.now();
+    if (!document.getElementById('path-selector-backdrop')?.classList.contains('active')) {
+        window.history.pushState({ squan: 'roadmap-path-selector' }, '', window.location.href);
+        _pathSelectorHistoryPushed = true;
+    }
     document.getElementById('path-selector-backdrop').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-function closePathSelector() {
+function closePathSelector(ignoreHistory = false) {
     // Ignore close calls within 250ms of opening — swallows synthetic clicks from the opening touch
     if (Date.now() - _pathSelectorOpenTime < 250) return;
     document.getElementById('path-selector-backdrop')?.classList.remove('active');
     document.body.style.overflow = '';
+    if (_pathSelectorHistoryPushed && !ignoreHistory) {
+        _pathSelectorHistoryPushed = false;
+        _roadmapIgnoreNextPopstate = true;
+        window.history.back();
+    }
 }
 
 // ─── Card interaction ─────────────────────────────────────────────────────────
@@ -555,6 +566,19 @@ function selectTab(key) {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderTabs();
+
+    window.history.pushState({ squan: 'roadmap' }, '', window.location.href);
+    window.addEventListener('popstate', () => {
+        if (_roadmapIgnoreNextPopstate) {
+            _roadmapIgnoreNextPopstate = false;
+            return;
+        }
+        if (document.getElementById('path-selector-backdrop')?.classList.contains('active')) {
+            closePathSelector(true);
+            return;
+        }
+        window.location.href = '..';
+    });
 
     const tabs = Object.keys(ROADMAP);
     const fromTab = detectTabFromUrl();

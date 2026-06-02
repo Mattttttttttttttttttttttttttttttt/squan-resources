@@ -334,6 +334,9 @@ function renderLeaf(resources, gridLayout, folderPath, node, append = false) {
 // Tracks the resources array currently displayed, for auto-opening by resource path segment
 let _currentResources = [];
 let _currentFolderPath = '';
+let _modalOpen = false;
+let _modalHistoryPushed = false;
+let _ignoreNextPopstate = false;
 
 // Builds a ?path= URL with literal ~ instead of %7E
 function buildUrl(folderPath, resourcePath) {
@@ -355,10 +358,13 @@ function openModal(resource, updateUrl = true) {
     const hasVisual = visualHtml !== '';
 
     // Append resource path as ~segment to ?path= for shareability
-    if (updateUrl && resource.path) {
-        window.history.replaceState({}, '', buildUrl(_currentFolderPath, resource.path));
+    if (resource.path) {
+        const url = buildUrl(_currentFolderPath, resource.path);
+        window.history.pushState({ squan: 'modal' }, '', url);
+        _modalHistoryPushed = true;
     }
 
+    _modalOpen = true;
     inner.innerHTML = `
     <div class="modal-header">
       <a class="modal-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
@@ -408,13 +414,25 @@ function openModal(resource, updateUrl = true) {
     document.body.classList.add('modal-open');
 }
 
-function closeModal() {
+function closeModal({ ignoreHistory = false } = {}) {
+    if (!_modalOpen) return;
     document.getElementById('modal-backdrop').classList.remove('active');
     document.body.classList.remove('modal-open');
-    // Restore URL to folder path (strip the ~resourcePath segment)
-    window.history.replaceState({}, '', buildUrl(_currentFolderPath, ''));
+    _modalOpen = false;
+
     // Stop iframe / image loading
     document.querySelectorAll('#modal-inner iframe').forEach(f => { f.src = f.src; });
+
+    if (_modalHistoryPushed && !ignoreHistory) {
+        _modalHistoryPushed = false;
+        _ignoreNextPopstate = true;
+        window.history.back();
+        return;
+    }
+
+    if (!ignoreHistory) {
+        window.history.replaceState({}, '', buildUrl(_currentFolderPath, ''));
+    }
 }
 
 // ─── Root render ──────────────────────────────────────────────────────────────
@@ -473,6 +491,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    window.addEventListener('popstate', () => render(getCurrentPath()));
+    window.addEventListener('popstate', () => {
+        if (_ignoreNextPopstate) {
+            _ignoreNextPopstate = false;
+            return;
+        }
+        if (_modalOpen) {
+            closeModal({ ignoreHistory: true });
+            return;
+        }
+        render(getCurrentPath());
+    });
     render(getCurrentPath());
 });
