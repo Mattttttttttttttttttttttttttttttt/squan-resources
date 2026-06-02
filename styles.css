@@ -209,19 +209,100 @@ main {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1px;
-    margin-top: 16px;
-    margin-bottom: 44px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    gap: 10px;
+    margin-top: 18px;
+    margin-bottom: 42px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Shared capsule wrapping both nav buttons */
+.bc-nav-capsule {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: calc(var(--radius-sm) + 2px);
+    overflow: hidden;
+}
+
+.bc-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: rgba(233, 239, 245, 0.92);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+
+.bc-nav-btn:hover {
+    background: rgba(117, 179, 240, 0.18);
+    color: var(--link);
+}
+
+.bc-nav-btn.disabled,
+.bc-nav-btn[disabled] {
+    color: rgba(131, 148, 167, 0.85);
+    background: transparent;
+    cursor: default;
+}
+
+.bc-nav-btn.disabled:hover,
+.bc-nav-btn[disabled]:hover {
+    background: transparent;
+    color: rgba(131, 148, 167, 0.85);
+}
+
+.bc-nav-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.bc-nav-btn svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+
+/* Thin divider between the two nav buttons inside the capsule */
+.bc-nav-inner-sep {
+    width: 1px;
+    align-self: stretch;
+    background: rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+}
+
+/* Vertical rule separating capsule from path */
+.bc-vdiv {
+    width: 1px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+}
+
+/* Folder icon anchoring the path section */
+.bc-folder-icon {
+    display: flex;
+    align-items: center;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
 }
 
 .bc-link {
     color: var(--link);
     cursor: pointer;
     border-radius: var(--radius-sm);
-    padding: 2px 5px;
-    margin: -2px -5px;
+    padding: 4px 7px;
+    margin: -4px -7px;
     transition: color 0.15s, background 0.15s;
 }
 
@@ -230,11 +311,12 @@ main {
     background: rgba(117, 179, 240, 0.10);
 }
 
+/* Slash separator — visually distinct from nav chevrons */
 .bc-sep {
-    color: var(--text-muted);
-    padding: 0 6px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    color: var(--text-dim);
+    padding: 0 2px;
+    font-size: 0.9rem;
+    font-weight: 400;
     user-select: none;
     line-height: 1;
 }

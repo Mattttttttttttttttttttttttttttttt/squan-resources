@@ -7,6 +7,51 @@ function getCurrentPath() {
     return params.get('path') || '';
 }
 
+let _historyIndex = 0;
+let _historyMaxIndex = 0;
+
+function initHistoryState() {
+    const state = window.history.state;
+    const baseState = state && typeof state === 'object' ? { ...state } : {};
+    if (typeof baseState.squanIndex === 'number') {
+        _historyIndex = baseState.squanIndex;
+        _historyMaxIndex = typeof baseState.squanMaxIndex === 'number' ? baseState.squanMaxIndex : baseState.squanIndex;
+    } else {
+        window.history.replaceState({ ...baseState, squanIndex: 0, squanMaxIndex: 0 }, '', window.location.href);
+        _historyIndex = 0;
+        _historyMaxIndex = 0;
+    }
+}
+
+function updateBreadcrumbNavState() {
+    const backBtn = document.querySelector('.bc-nav-btn[data-nav="back"]');
+    const forwardBtn = document.querySelector('.bc-nav-btn[data-nav="forward"]');
+    if (!backBtn || !forwardBtn) return;
+
+    const canBack = _historyIndex > 0;
+    const canForward = _historyIndex < _historyMaxIndex;
+
+    if (canBack) {
+        backBtn.classList.remove('disabled');
+        backBtn.disabled = false;
+        backBtn.setAttribute('aria-disabled', 'false');
+    } else {
+        backBtn.classList.add('disabled');
+        backBtn.disabled = true;
+        backBtn.setAttribute('aria-disabled', 'true');
+    }
+
+    if (canForward) {
+        forwardBtn.classList.remove('disabled');
+        forwardBtn.disabled = false;
+        forwardBtn.setAttribute('aria-disabled', 'false');
+    } else {
+        forwardBtn.classList.add('disabled');
+        forwardBtn.disabled = true;
+        forwardBtn.setAttribute('aria-disabled', 'true');
+    }
+}
+
 function navigate(path) {
     const url = new URL(window.location.href);
     if (!path) {
@@ -14,7 +59,18 @@ function navigate(path) {
     } else {
         url.searchParams.set('path', path);
     }
-    window.history.pushState({ path }, '', url.toString());
+
+    if (path === getCurrentPath()) {
+        return;
+    }
+
+    if (_historyIndex < _historyMaxIndex) {
+        _historyMaxIndex = _historyIndex;
+    }
+    _historyMaxIndex += 1;
+    _historyIndex = _historyMaxIndex;
+
+    window.history.pushState({ squanIndex: _historyIndex, squanMaxIndex: _historyMaxIndex, path }, '', url.toString());
     render(path);
 }
 
@@ -163,7 +219,24 @@ function renderBreadcrumb(path) {
     const el = document.getElementById('breadcrumb');
     const segments = getPathSegments(path);
 
-    const parts = [`<span class="bc-item bc-link" data-path="">home</span>`];
+    const parts = [
+        `<div class="bc-nav-capsule">
+            <button class="bc-nav-btn" type="button" data-nav="back" aria-label="Go back">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <span class="bc-nav-inner-sep" aria-hidden="true"></span>
+            <button class="bc-nav-btn" type="button" data-nav="forward" aria-label="Go forward">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>`,
+        `<span class="bc-vdiv" aria-hidden="true"></span>`,
+        `<svg class="bc-folder-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+        `<span class="bc-item bc-link" data-path="">home</span>`
+    ];
     let node = RESOURCES;
     const builtSegs = [];
     for (const seg of segments) {
@@ -171,7 +244,7 @@ function renderBreadcrumb(path) {
         if (!key) break;
         builtSegs.push(key);
         const p = builtSegs.join('~');
-        parts.push(`<span class="bc-sep">›</span><span class="bc-item bc-link" data-path="${p}">${escHtml(key)}</span>`);
+        parts.push(`<span class="bc-sep">/</span><span class="bc-item bc-link" data-path="${p}">${escHtml(key)}</span>`);
         node = node[key];
     }
 
@@ -179,6 +252,14 @@ function renderBreadcrumb(path) {
     el.querySelectorAll('.bc-link').forEach(item => {
         item.addEventListener('click', () => navigate(item.dataset.path));
     });
+    el.querySelectorAll('.bc-nav-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            if (button.disabled) return;
+            if (button.dataset.nav === 'back') window.history.back();
+            else window.history.forward();
+        });
+    });
+    updateBreadcrumbNavState();
 }
 
 // ─── Node page (folder view) ──────────────────────────────────────────────────
@@ -360,7 +441,7 @@ function openModal(resource, updateUrl = true) {
     // Append resource path as ~segment to ?path= for shareability
     if (resource.path) {
         const url = buildUrl(_currentFolderPath, resource.path);
-        window.history.pushState({ squan: 'modal' }, '', url);
+        window.history.pushState({ squan: 'modal', squanIndex: _historyIndex, squanMaxIndex: _historyMaxIndex }, '', url);
         _modalHistoryPushed = true;
     }
 
@@ -491,16 +572,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', event => {
         if (_ignoreNextPopstate) {
             _ignoreNextPopstate = false;
             return;
         }
+
         if (_modalOpen) {
             closeModal({ ignoreHistory: true });
             return;
         }
+
+        const state = event.state;
+        if (state && typeof state.squanIndex === 'number') {
+            _historyIndex = state.squanIndex;
+            if (typeof state.squanMaxIndex === 'number') {
+                _historyMaxIndex = Math.max(_historyMaxIndex, state.squanMaxIndex);
+            }
+        }
+
         render(getCurrentPath());
     });
+
+    initHistoryState();
     render(getCurrentPath());
 });
