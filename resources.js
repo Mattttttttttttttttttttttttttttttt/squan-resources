@@ -431,7 +431,7 @@ const RESOURCES = {
             featured: true
           },
           {
-            title: "OBL Trainer",
+            title: "SquanGo OBL Trainer",
             url: "https://squan-go.web.app/oblpbl/",
             type: "trainer",
             credit: "- Matt & Abid & Le Kit",
@@ -507,7 +507,7 @@ const RESOURCES = {
             featured: true
           },
           {
-            title: "PBL Trainer",
+            title: "SquanGo PBL Trainer",
             url: "https://squan-go.web.app/oblpbl/",
             type: "trainer",
             credit: "- Matt & Abid & Le Kit",
@@ -894,5 +894,137 @@ const RESOURCES = {
         }
       ]
     }
+  },
+  "misc": {
+    title: "Miscellaneous Resources",
+    bait: "Solvers, image genners, and more!",
+    gridLayout: true,
+    "alg": {
+      title: "Alg Genners",
+      bait: "Generate your own algs!",
+      description: "All the alg genners and helpers out there.",
+      resources: [
+        {
+          title: "Sq1Optim v2",
+          url: "https://github.com/Mattttttttttttttttttttttttttttttt/sq1opt",
+          credit: "- Matt & Abid & Michael & Jaap",
+          description: "Best solver currently.",
+          featured: true
+        },
+        {
+          title: "Alg Genner Library",
+          url: "https://github.com/Abid-speedcuber/sq1-scramble-genner",
+          credit: "- Abid & Matt & Shuang Chen",
+          description: "A ton of tools for programmers."
+        },
+        {
+          title: "Alg Normalizer",
+          url: "https://github.com/Mattttttttttttttttttttttttttttttt/rubiks-cube-tools/blob/main/sq1normalizer.py",
+          credit: "- Matt",
+          description: "honestly useless, will be making a better one soon",
+        },
+        {
+          title: "Sq1Optim v1",
+          url: "https://www.jaapsch.net/puzzles/square1.htm#progs",
+          credit: "- Jaap",
+          description: "DO NOT USE. Use the v2 instead.",
+        }
+      ]
+    },
+    "draw": {
+      title: "Image Genners",
+      bait: "Generate squan images!",
+      resources: [
+        {
+          title: "SquanGo Image Genner",
+          url: "https://squan-go.web.app/draw/",
+          credit: "- Abid & Matt",
+          description: "The best image genner, complete with two designs.",
+          featured: true
+        },
+        {
+          title: "Image Genner",
+          url: "https://sq1-img-gen-gold-grass.reflex.run/",
+          credit: "- Seby",
+          description: "Has weird unresponsive glitches, but gets the job done most of the " +
+            "time."
+        },
+        {
+          title: "Image Genner 1",
+          url: "https://wol4rwwr5d.execute-api.us-east-1.amazonaws.com/default/get_image?alg=",
+          credit: "- Stepan",
+          description: "This is where all the OG images came from. Edit URL to use."
+        },
+        {
+          title: "Image Genner 2",
+          url: "https://wol4rwwr5d.execute-api.us-east-1.amazonaws.com/default/get_image3?alg=",
+          credit: "- Stepan",
+          description: "This is... another one. Edit URL to use."
+        }
+      ]
+    },
+    "mods": {
+      title: "Squan Mods",
+      bait: "Mod your squan to make it better.",
+      description: "Some common mods you will hear mentioned (in order): maglev, slice " +
+        "mod, edge magnets, full U/D, DSR (Double Slice Repulsion), corner-to-edge.",
+      resources: [
+        {
+          title: "Paper Polishing Tutorial",
+          url: "https://youtu.be/N8A_WZMMEMk",
+          credit: "- Cube Master",
+          description: "Polish your matte cubes to make them feel A LOT better!",
+          featured: true
+        },
+        {
+          title: "Maglev Tutorial",
+          url: "https://youtu.be/_Ew54m8614M",
+          credit: "- Cube Master",
+          description: "Maglev is an ABSOLUTE essential to high level solving.",
+          featured: true
+        },
+        {
+          title: "Slice Mod Tutorial",
+          url: "https://youtu.be/focj2OUFCF8",
+          credit: "- Oxzowachi",
+          description: "Takes out ONE slice magnet to make slice magnets weaker, thereby " +
+            "making the slice feel smoother.",
+          featured: true
+        },
+        {
+          title: "Partial U/D & Edge Magnets Tutorial",
+          url: "https://youtu.be/5pbvZje4RH0",
+          credit: "- Isaac",
+          description: "Basically teaches you how to mod a /B squan. Includes polishing, " +
+            "partial U/D, and edge magnets."
+        },
+        {
+          title: "Full Mod Tutorial",
+          url: "https://youtu.be/X74OVvD8OYs",
+          credit: "- Jad",
+          description: "Includes maglev, edge magnets, U/D repulsion, and slice repulsion."
+        }
+      ]
+    },
+    "lore": {
+      title: "Squan Lore",
+      bait: "Are you ready to go down this rabbit hole?",
+      resources: [
+        {
+          title: "Squan Puzzle Page",
+          url: "https://www.jaapsch.net/puzzles/square1.htm",
+          credit: "- Jaap",
+          description: "In one word: lore."
+        }
+      ]
+    },
+    resources: [
+      {
+        title: "SquanGo Everything Trainer",
+        url: "https://squan-go.web.app/squanGo/",
+        credit: "- Abid",
+        description: "IN DEVELOPMENT"
+      }
+    ]
   }
 };
