@@ -105,16 +105,9 @@ function getNodeChildren(node) {
     return Object.keys(node).filter(k => k !== 'resources' && node[k] !== null && typeof node[k] === 'object');
 }
 
-// Returns true if any ancestor (or the node itself) has gridLayout: true
+// Returns true if the current node has gridLayout: true
 function isGridLayout(path) {
-    if (!path) return !!(RESOURCES.gridLayout);
-    let node = RESOURCES;
-    for (const seg of path.split('~')) {
-        if (node.gridLayout) return true;
-        const key = findKey(node, seg);
-        if (key === undefined) return false;
-        node = node[key];
-    }
+    const node = getNode(path);
     return !!(node && node.gridLayout);
 }
 

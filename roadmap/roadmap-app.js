@@ -25,14 +25,7 @@ function _getNode(path) {
 }
 
 function _isGridLayout(path) {
-    if (!path) return !!(RESOURCES.gridLayout);
-    let node = RESOURCES;
-    for (const seg of path.split('~')) {
-        if (node.gridLayout) return true;
-        const key = _findKey(node, seg);
-        if (key === undefined) return false;
-        node = node[key];
-    }
+    const node = _getNode(path);
     return !!(node && node.gridLayout);
 }
 
