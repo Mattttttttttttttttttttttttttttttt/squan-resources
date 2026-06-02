@@ -140,7 +140,7 @@ const RESOURCES = {
         },
         {
           title: "Full CS Flowchart",
-          url: "https://imgur.com/a/full-cubeshape-chart-square-1-toXxlEv",
+          url: "https://i.imgur.com/Apg1NQ7.png",
           type: "image",
           credit: "- u/olimo",
           path: "chart",
@@ -203,7 +203,7 @@ const RESOURCES = {
           type: "doc/sheet",
           credit: "- BlueAcidBall",
           path: "bab",
-          description: "Shapes sorted by frequency. Includes everything apart from tracing. " +
+          description: "Shapes sorted by frequency. Includes everything apart from tracing. "+
             "Algorithms displayed with images."
         },
         {

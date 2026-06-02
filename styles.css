@@ -848,6 +848,38 @@ main {
     background: var(--surface-card);
 }
 
+/* Copy button: visually matches share button */
+.modal-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s, background 0.12s, box-shadow 0.12s;
+}
+
+.modal-copy-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+    background: var(--surface-card);
+}
+
+/* Flash state for successful copy/share */
+.copied-flash {
+    background: var(--type-doc-bg);
+    border-color: rgba(77, 217, 160, 0.36);
+    color: var(--type-doc);
+    box-shadow: 0 6px 20px rgba(77, 217, 160, 0.08);
+}
+
 /* ── Not Found ────────────────────────────────────────────────────────────── */
 .not-found {
     text-align: center;
@@ -1050,6 +1082,28 @@ main {
 
     .modal-desc {
         font-size: 0.95rem;
+    }
+
+    /* Allow modal action buttons to wrap naturally on small screens */
+    .modal-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Ensure copied flash styling wins even when hovered */
+    .modal-share-btn.copied-flash,
+    .modal-copy-btn.copied-flash {
+        background: var(--type-doc-bg);
+        border-color: rgba(77, 217, 160, 0.36);
+        color: var(--type-doc);
+        box-shadow: 0 6px 20px rgba(77, 217, 160, 0.08);
+    }
+
+    .modal-share-btn.copied-flash:hover,
+    .modal-copy-btn.copied-flash:hover {
+        background: var(--type-doc-bg);
+        border-color: rgba(77, 217, 160, 0.36);
+        color: var(--type-doc);
     }
 
     .card-grid,

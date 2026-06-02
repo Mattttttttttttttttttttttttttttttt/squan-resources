@@ -149,7 +149,7 @@ function getVisualHtml(resource) {
     </div>`;
     }
 
-    if (type === 'doc/sheet' || type === 'website') {
+    if (type === 'doc/sheet' || type === 'website' || type === 'trainer') {
         const parentFolder = _currentFolderPath.split('~').pop();
         const imgName = resource.path ? `${parentFolder}-${resource.path}` : encodeURIComponent(title);
         const imgPath = `./img/${imgName}.png`;
@@ -168,7 +168,7 @@ function getVisualHtml(resource) {
     </div>`;
     }
 
-    return ''; // trainer or unknown — no visual
+    return ''; // unknown — no visual
 }
 
 // Called when an image visual fails to load — collapses the modal layout
@@ -453,35 +453,90 @@ function openModal(resource, updateUrl = true) {
     </div>
     <div class="modal-actions">
       <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">Open ↗</a>
-      ${resource.path ? `<button class="modal-share-btn" id="modal-share-btn" title="Copy link to this resource">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-          <path d="M16 6l-4-4-4 4"/>
-          <line x1="12" y1="2" x2="12" y2="15"/>
-        </svg>
-        <span id="share-label">Share</span>
-      </button>` : ''}
+            <button class="modal-copy-btn" id="modal-copy-btn" title="Copy the link of this resource">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="9" height="11" rx="2"/>
+                    <rect x="3" y="5" width="9" height="11" rx="2"/>
+                </svg>
+                <span id="copy-label">Copy Link</span>
+            </button>
+            ${resource.path ? `<button class="modal-share-btn" id="modal-share-btn" title="Copy link to this page in the website">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    <path d="M16 6l-4-4-4 4"/>
+                    <line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+                <span id="share-label">Share</span>
+            </button>` : ''}
     </div>`;
 
-    // Share button logic
+    const copyBtn = inner.querySelector('#modal-copy-btn');
     const shareBtn = inner.querySelector('#modal-share-btn');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', () => {
-            const shareUrl = window.location.href; // already has ~resourcePath appended
-            const lbl = shareBtn.querySelector('#share-label');
-            const reset = () => setTimeout(() => { lbl.textContent = 'Share'; }, 2000);
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                lbl.textContent = 'Copied!'; reset();
-            }).catch(() => {
+
+    // Shared flash duration (ms)
+    const FLASH_DURATION = 2000;
+
+    const copyLabel = copyBtn ? copyBtn.querySelector('#copy-label') : null;
+    const defaultCopy = copyLabel ? copyLabel.textContent : 'Copy Link';
+    const shareLabel = shareBtn ? shareBtn.querySelector('#share-label') : null;
+    const defaultShare = shareLabel ? shareLabel.textContent : 'Share';
+
+    function clearAllFlashes() {
+        [copyBtn, shareBtn].forEach(b => {
+            if (!b) return;
+            b.classList.remove('copied-flash');
+            const lbl = b.querySelector('#copy-label') || b.querySelector('#share-label');
+            if (lbl) {
+                lbl.textContent = b === copyBtn ? defaultCopy : defaultShare;
+            }
+        });
+    }
+
+    function doCopy(text, btn, labelEl, defaultText) {
+        if (!btn || !labelEl) return;
+
+        // Stop other flashes immediately so they don't overlap
+        clearAllFlashes();
+
+        const reset = () => setTimeout(() => {
+            labelEl.textContent = defaultText;
+            btn.classList.remove('copied-flash');
+        }, FLASH_DURATION);
+
+        const succeed = () => {
+            labelEl.textContent = 'Copied!';
+            btn.classList.add('copied-flash');
+            // blur to remove persistent focus (helps mobile/devtools behavior)
+            try { btn.blur(); } catch (e) { /* ignore */ }
+            reset();
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(succeed).catch(() => {
+                // fallback
                 const tmp = document.createElement('input');
-                tmp.value = shareUrl;
+                tmp.value = text;
                 document.body.appendChild(tmp);
                 tmp.select();
-                document.execCommand('copy');
+                try { document.execCommand('copy'); succeed(); } catch (e) { /* no-op */ }
                 document.body.removeChild(tmp);
-                lbl.textContent = 'Copied!'; reset();
             });
-        });
+        } else {
+            const tmp = document.createElement('input');
+            tmp.value = text;
+            document.body.appendChild(tmp);
+            tmp.select();
+            try { document.execCommand('copy'); succeed(); } catch (e) { /* no-op */ }
+            document.body.removeChild(tmp);
+        }
+    }
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => doCopy(resource.url || '', copyBtn, copyLabel, defaultCopy));
+    }
+
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => doCopy(window.location.href, shareBtn, shareLabel, defaultShare));
     }
 
     backdrop.classList.add('active');
