@@ -149,7 +149,11 @@ function getVisualHtml(resource) {
     </div>`;
     }
 
-    if (type === 'doc/sheet' || type === 'website' || type === 'trainer') {
+    if (type === 'doc/sheet' ||
+        type === 'website' ||
+        type === 'trainer' ||
+        getNode(_currentFolderPath).gridLayout
+    ) {
         const parentFolder = _currentFolderPath.split('~').pop();
         const imgName = resource.path ? `${parentFolder}-${resource.path}` : encodeURIComponent(title);
         const imgPath = `./img/${imgName}.png`;
@@ -442,7 +446,7 @@ function openModal(resource, updateUrl = true) {
     inner.innerHTML = `
     <div class="modal-header">
       <a class="modal-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
-      <span class="type-badge ${cls}">${label}</span>
+      ${resource.type ? `<span class="type-badge ${cls}">${label}</span>` : ''}
     </div>
     ${resource.credit ? `<div class="modal-credit">${formatCredit(resource.credit)}</div>` : ''}
     <div class="modal-sep"></div>
