@@ -880,6 +880,86 @@ main {
     box-shadow: 0 6px 20px rgba(77, 217, 160, 0.08);
 }
 
+/* ── Feedback button (topbar) ─────────────────────────────────────────────── */
+.topbar-feedback-btn {
+    margin-left: auto;
+    padding: 0.5em 0.9em;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.topbar-feedback-btn:hover {
+    background: rgba(255, 255, 255, 0.11);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Feedback modal ────────────────────────────────────────────────────────── */
+.feedback-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(6, 8, 12, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+}
+
+.feedback-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.feedback-backdrop .modal {
+    max-width: 400px;
+}
+
+.feedback-backdrop.active .modal {
+    transform: translateY(0) scale(1);
+}
+
+.feedback-body {
+    color: var(--text-muted);
+    font-size: 0.97rem;
+    line-height: 1.65;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-body b {
+    font-weight: 700;
+    color: #c4d3e8;
+}
+
+.feedback-link {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(117, 179, 240, 0.45);
+    transition: color 0.14s;
+}
+
+.feedback-link:hover {
+    color: var(--link-hover);
+}
+
 /* ── Not Found ────────────────────────────────────────────────────────────── */
 .not-found {
     text-align: center;

@@ -27,6 +27,7 @@
     </a>
     <div class="nav-divider" aria-hidden="true"></div>
     <a href="./roadmap" class="topbar-link">roadmap</a>
+    <button class="topbar-feedback-btn" id="feedback-btn" aria-label="Submit feedback">feedback</button>
   </header>
 
   <main>
@@ -35,6 +36,22 @@
     <div class="content-area" id="content-area" role="main"></div>
   </main>
   <footer class="site-footer">Made &amp; Maintained by Matt</footer>
+
+  <div class="feedback-backdrop" id="feedback-backdrop" role="dialog" aria-modal="true" aria-label="Submit feedback">
+    <div class="modal feedback-modal" id="feedback-modal">
+      <button class="modal-close" id="feedback-close" aria-label="Close">&times;</button>
+      <div class="modal-inner">
+        <div class="modal-header">
+          <span class="modal-title">Submit Feedback</span>
+        </div>
+        <div class="modal-sep"></div>
+        <div class="feedback-body">
+          <p>To report an error or suggest a new resource, email us at: <b>squango.team@gmail.com</b></p>
+          <p>Alternatively, say something in the <a href="https://discord.gg/eu2rqzAREh" target="blank" class="feedback-link">squan discord server</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-label="Resource details">
     <div class="modal" id="modal">

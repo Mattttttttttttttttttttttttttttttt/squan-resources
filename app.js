@@ -615,6 +615,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
+
+    const feedbackBtn = document.getElementById('feedback-btn');
+    const feedbackBackdrop = document.getElementById('feedback-backdrop');
+    const feedbackClose = document.getElementById('feedback-close');
+    function openFeedback() { feedbackBackdrop.classList.add('active'); }
+    function closeFeedback() { feedbackBackdrop.classList.remove('active'); }
+    feedbackBtn.addEventListener('click', openFeedback);
+    feedbackClose.addEventListener('click', closeFeedback);
+    feedbackBackdrop.addEventListener('click', e => { if (e.target === feedbackBackdrop) closeFeedback(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFeedback(); });
     document.getElementById('modal-backdrop').addEventListener('click', e => {
         if (e.target === document.getElementById('modal-backdrop')) closeModal();
     });
