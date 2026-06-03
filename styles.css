@@ -795,6 +795,25 @@ main {
     border-radius: var(--radius-md);
 }
 
+/* On desktop, prevent a tall image from making the modal scroll on its own.
+   Cap height to fit within the modal's 90dvh max, minus fixed chrome
+   (padding-top 36 + header ~52 + sep ~41 + actions ~68 + padding-bottom 30 ≈ 227px).
+   Use contain so the full image is visible rather than cropped. */
+@media (min-width: 701px) {
+    .modal-visual-desktop .modal-img-wrap {
+        display: flex;
+        justify-content: center;
+        border: none;
+    }
+
+    .modal-visual-desktop .modal-img-wrap img {
+        max-height: calc(90dvh - 235px);
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+    }
+}
+
 /* Visit button */
 .modal-actions {
     display: flex;
