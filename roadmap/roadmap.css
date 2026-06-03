@@ -250,6 +250,18 @@ main.roadmap-main {
     transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
+/* Invisible bridge filling the gap between card edge and popup,
+   keeping :hover alive while the mouse travels across */
+.step-card.has-popup::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 14px; /* slightly wider than the 10px gap */
+    height: 100%;
+    background: transparent;
+}
+
 /* Show on card hover (desktop) — stays visible because popup is child of card */
 .step-card:hover .featured-popup,
 .step-card:focus-visible .featured-popup {
