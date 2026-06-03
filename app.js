@@ -432,7 +432,7 @@ function openModal(resource, updateUrl = true) {
     const hasVisual = visualHtml !== '';
 
     // Append resource path as ~segment to ?path= for shareability
-    if (resource.path) {
+    if (resource.path && updateUrl) {
         const url = buildUrl(_currentFolderPath, resource.path);
         window.history.pushState({ squan: 'modal', squanIndex: _historyIndex, squanMaxIndex: _historyMaxIndex }, '', url);
         _modalHistoryPushed = true;
