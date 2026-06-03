@@ -261,7 +261,7 @@ const RESOURCES = {
     }
   },
   "vdb": {
-    title: "Vandenberg",
+    title: "Vandenbergh",
     bait: "the most popular method, with the highest ceiling and most resources",
     "5look": {
       title: "5 look",
