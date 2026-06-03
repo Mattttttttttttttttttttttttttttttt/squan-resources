@@ -19,7 +19,7 @@
 //   {
 //     title:       string,
 //     url:         string,
-//     type:        "doc/sheet" | "video" | "trainer" | "image" | "website" | something else?,
+//     type:        "doc/sheet" | "video" | "trainer" | "image" | "website" | "code" |"other",
 //     credit:      string, // put attributions here
 //     description: string,
 //     featured:    boolean
@@ -317,7 +317,8 @@ const RESOURCES = {
             credit: "- Stepan",
             path: "stepan",
             description: "Contains optimal algs that are probably not needed for starters, " +
-              "but worth getting into if you want to get faster."
+              "but worth getting into if you want to get faster. But it's also pretty " +
+              "outdated 2for those optimal algs."
           },
           {
             title: "EO video",
@@ -532,7 +533,7 @@ const RESOURCES = {
             url: "https://docs.google.com/spreadsheets/d/1VQNYNwdOLqqBkacHcfYtEBst22FOVhH9EAhTOYOZTgo/edit",
             type: "doc/sheet",
             credit: "- Daniel et al.",
-            path: "daniel",
+            path: "derpy",
             description: "An extensive community project of speed optimal algs. With no " +
               "explanations."
           },
@@ -559,7 +560,7 @@ const RESOURCES = {
             url: "https://youtu.be/ASyErFJ-O6Y",
             type: "video",
             credit: "- Oxzowachi",
-            path: "ox",
+            path: "oxv",
             description: "Very outdated in terms of resources it mentions, but good " +
               "explanation of what 2-alg PBL is."
           },
@@ -593,14 +594,15 @@ const RESOURCES = {
             type: "doc/sheet",
             credit: "- Rasmus",
             path: "rasmus",
-            description: "A spreadsheet version of Cube Master's videos."
+            description: "A spreadsheet version of Cube Master's videos. No makanaming " +
+              "and unconventional naming."
           },
           {
             title: "PBL Sheet",
             url: "https://docs.google.com/spreadsheets/d/11a1vnUpp-aiMmRuO7IiN78ZosQHhFi9E-zDBg8-qSSM/edit",
             type: "doc/sheet",
             credit: "- Oxzowachi",
-            path: "ox",
+            path: "oxs",
             description: "A really random list of algs."
           },
           {
@@ -608,8 +610,9 @@ const RESOURCES = {
             url: "https://docs.google.com/spreadsheets/d/1bLhYXaW1HGGTypOQGOJvnS2L40gKXHlbc8zJ3ZXYeTE/edit",
             type: "doc/sheet",
             credit: "- Cube Master",
-            path: "cmd",
-            description: "A really outdated spreadsheet version of Cube Master's videos."
+            path: "cms",
+            description: "A really outdated spreadsheet version of Cube Master's videos. " +
+              "No makanaming."
           },
           {
             title: "PBL Statistics",
@@ -904,26 +907,34 @@ const RESOURCES = {
         {
           title: "Sq1Optim v2",
           url: "https://github.com/Mattttttttttttttttttttttttttttttt/sq1opt",
+          type: "code",
           credit: "- Matt & Abid & Michael & Jaap",
+          path: "v2",
           description: "Best solver currently.",
           featured: true
         },
         {
           title: "Alg Genner Library",
           url: "https://github.com/Abid-speedcuber/sq1-scramble-genner",
+          type: "code",
           credit: "- Abid & Matt & Shuang Chen",
+          path: "lib",
           description: "A ton of tools for programmers."
         },
         {
           title: "Alg Normalizer",
           url: "https://github.com/Mattttttttttttttttttttttttttttttt/rubiks-cube-tools/blob/main/sq1normalizer.py",
+          type: "code",
           credit: "- Matt",
+          path: "norm",
           description: "honestly useless, will be making a better one soon",
         },
         {
           title: "Sq1Optim v1",
           url: "https://www.jaapsch.net/puzzles/square1.htm#progs",
+          type: "code",
           credit: "- Jaap",
+          path: "v1",
           description: "DO NOT USE. Use the v2 instead.",
         }
       ]
@@ -936,27 +947,35 @@ const RESOURCES = {
         {
           title: "SquanGo Image Genner",
           url: "https://squan-go.web.app/draw/",
+          type: "website",
           credit: "- Abid & Matt",
+          path: "das",
           description: "The best image genner, complete with two designs.",
           featured: true
         },
         {
           title: "Image Genner",
           url: "https://sq1-img-gen-gold-grass.reflex.run/",
+          type: "website",
           credit: "- Seby",
+          path: "seby",
           description: "Has weird unresponsive glitches, but gets the job done most of the " +
             "time."
         },
         {
           title: "Image Genner 1",
           url: "https://wol4rwwr5d.execute-api.us-east-1.amazonaws.com/default/get_image?alg=",
+          type: "website",
           credit: "- Stepan",
+          path: "stepanh",
           description: "This is where all the OG images came from. Edit URL to use."
         },
         {
           title: "Image Genner 2",
           url: "https://wol4rwwr5d.execute-api.us-east-1.amazonaws.com/default/get_image3?alg=",
+          type: "website",
           credit: "- Stepan",
+          path: "stepanv",
           description: "This is... another one. Edit URL to use."
         }
       ]
@@ -971,21 +990,27 @@ const RESOURCES = {
         {
           title: "Paper Polishing Tutorial",
           url: "https://youtu.be/N8A_WZMMEMk",
-          credit: "- Cube Master",
+          type: "video",
+          credit: "- Michal",
+          path: "polish",
           description: "Polish your matte cubes to make them feel A LOT better!",
           featured: true
         },
         {
           title: "Maglev Tutorial",
           url: "https://youtu.be/_Ew54m8614M",
+          type: "video",
           credit: "- Cube Master",
+          path: "maglev",
           description: "Maglev is an ABSOLUTE essential to high level solving.",
           featured: true
         },
         {
           title: "Slice Mod Tutorial",
           url: "https://youtu.be/focj2OUFCF8",
+          type: "video",
           credit: "- Oxzowachi",
+          path: "slice",
           description: "Takes out ONE slice magnet to make slice magnets weaker, thereby " +
             "making the slice feel smoother.",
           featured: true
@@ -993,14 +1018,18 @@ const RESOURCES = {
         {
           title: "Partial U/D & Edge Magnets Tutorial",
           url: "https://youtu.be/5pbvZje4RH0",
+          type: "video",
           credit: "- Isaac",
+          path: "isaac",
           description: "Basically teaches you how to mod a /B squan. Includes polishing, " +
             "partial U/D, and edge magnets."
         },
         {
           title: "Full Mod Tutorial",
           url: "https://youtu.be/X74OVvD8OYs",
+          type: "video",
           credit: "- Jad",
+          path: "jad",
           description: "Includes maglev, edge magnets, U/D repulsion, and slice repulsion."
         }
       ]
@@ -1013,13 +1042,17 @@ const RESOURCES = {
         {
           title: "Squan Puzzle Page",
           url: "https://www.jaapsch.net/puzzles/square1.htm",
+          type: "website",
           credit: "- Jaap",
+          path: "og",
           description: "In one word: lore."
         },
         {
           title: "Podcase Episode with Lars Vandenbergh",
           url: "https://youtu.be/qpvMovvSpTE",
+          type: "video",
           credit: "- Jaap & Brandon",
+          path: "podcast",
           description: "A hour-long podcast with the inventer of the VDB method."
         }
       ]
@@ -1028,7 +1061,9 @@ const RESOURCES = {
       {
         title: "SquanGo Everything Trainer",
         url: "https://squan-go.web.app/squanGo/",
+        type: "trainer",
         credit: "- Abid",
+        path: "sqx",
         description: "IN DEVELOPMENT"
       }
     ]
