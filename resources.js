@@ -203,7 +203,7 @@ const RESOURCES = {
           type: "doc/sheet",
           credit: "- BlueAcidBall",
           path: "bab",
-          description: "Shapes sorted by frequency. Includes everything apart from tracing. "+
+          description: "Shapes sorted by frequency. Includes everything apart from tracing. " +
             "Algorithms displayed with images."
         },
         {
@@ -212,8 +212,8 @@ const RESOURCES = {
           type: "website",
           credit: "- Seby",
           path: "seby",
-          description: "Shapes sorted by frequency. Includes a full tutorial. Has non-standard" +
-            "naming though."
+          description: "Shapes sorted by frequency. Includes a full tutorial. Has " +
+            "non-standard naming though."
         },
         {
           title: "CSP Sheet",
@@ -873,28 +873,28 @@ const RESOURCES = {
       ]
     }
   },
+  "karn": {
+    title: "Notation",
+    bait: "makes learning algs SO much easier",
+    description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
+      "It's like the difference between \"sexy move\" and \"turn the right layer " +
+      "90°, top 90°, right -90°, top -90°\".",
+    resources: [
+      {
+        title: "Karn sheet",
+        url: "https://docs.google.com/spreadsheets/d/11WRdlUpMJMd2vMloNvz2pp_AYKO1XFeCErpmx5wUKvQ/edit",
+        type: "doc/sheet",
+        credit: "- Matt",
+        path: "sheet",
+        description: "the most up-to-date information",
+        featured: true
+      }
+    ]
+  },
   "misc": {
     gridLayout: true,
     title: "Miscellaneous Resources",
     bait: "Solvers, image genners, and more!",
-    "karn": {
-      title: "Notation",
-      bait: "makes learning algs SO much easier",
-      description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
-        "It's like the difference between \"sexy move\" and \"turn the right layer " +
-        "90°, top 90°, right -90°, top -90°\".",
-      resources: [
-        {
-          title: "Karn sheet",
-          url: "https://docs.google.com/spreadsheets/d/11WRdlUpMJMd2vMloNvz2pp_AYKO1XFeCErpmx5wUKvQ/edit",
-          type: "doc/sheet",
-          credit: "- Matt",
-          path: "sheet",
-          description: "the most up-to-date information",
-          featured: true
-        }
-      ]
-    },
     "alg": {
       gridLayout: true,
       title: "Alg Genners",
