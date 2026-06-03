@@ -586,4 +586,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('main-title')?.addEventListener('click', () => {
         window.location.href = '..';
     });
+
+    const mobileTab = document.getElementById('mobile-page-tab');
+    if (mobileTab) {
+        new IntersectionObserver(
+            ([entry]) => mobileTab.classList.toggle('visible', entry.isIntersecting),
+            { threshold: 1.0 }
+        ).observe(mobileTab);
+    }
 });

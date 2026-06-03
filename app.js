@@ -662,4 +662,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initHistoryState();
     render(getCurrentPath());
+
+    const mobileTab = document.getElementById('mobile-page-tab');
+    if (mobileTab) {
+        new IntersectionObserver(
+            ([entry]) => mobileTab.classList.toggle('visible', entry.isIntersecting),
+            { threshold: 1.0 }
+        ).observe(mobileTab);
+    }
 });
