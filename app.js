@@ -152,7 +152,9 @@ function getVisualHtml(resource) {
     if (type === 'doc/sheet' ||
         type === 'website' ||
         type === 'trainer' ||
-        getNode(_currentFolderPath).gridLayout
+        type === 'code' ||
+        type === 'other' ||
+        (!type && getNode(_currentFolderPath)?.gridLayout)
     ) {
         const parentFolder = _currentFolderPath.split('~').pop();
         const imgName = resource.path ? `${parentFolder}-${resource.path}` : encodeURIComponent(title);
