@@ -204,10 +204,12 @@ const TYPE_META = {
     'trainer': { label: 'Trainer', cls: 'type-trainer' },
     'image': { label: 'Image', cls: 'type-image' },
     'website': { label: 'Website', cls: 'type-website' },
+    'code': { label: 'Code', cls: 'type-website' },
+    'other': { label: 'Other', cls: 'type-other' },
 };
 
 function typeMeta(type) {
-    return TYPE_META[type] || { label: type, cls: 'type-unknown' };
+    return TYPE_META[type] || { label: type || '', cls: 'type-unknown' };
 }
 
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
@@ -312,7 +314,7 @@ function resourceCardHtml(resource, globalIndex, col, hideBadge = false) {
             ${resource.credit ? `<div class="resource-credit">${formatCredit(resource.credit)}</div>` : ''}
             <div class="resource-desc">${resource.description || ''}</div>
         </div>
-        ${hideBadge ? '' : `<div class="resource-card-foot">
+        ${hideBadge || !resource.type ? '' : `<div class="resource-card-foot">
             <span class="type-badge ${cls}">${label}</span>
         </div>`}
     </div>`;
@@ -329,7 +331,7 @@ function renderLeaf(resources, gridLayout, folderPath, node, append = false) {
 
     if (gridLayout) {
         // ── Misc-style unified grid ───────────────────────────────────────────
-        const cards = resources.map((r, i) => resourceCardHtml(r, i, undefined, true)).join('');
+        const cards = resources.map((r, i) => resourceCardHtml(r, i, undefined, false)).join('');
         if (append) {
             const grid = area.querySelector('.card-grid');
             if (grid) {

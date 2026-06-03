@@ -165,6 +165,8 @@ const TYPE_META = {
     'trainer': { label: 'Trainer', cls: 'type-trainer' },
     'image': { label: 'Image', cls: 'type-image' },
     'website': { label: 'Website', cls: 'type-website' },
+    'code': { label: 'Code', cls: 'type-website' },
+    'other': { label: 'Other', cls: 'type-other' },
 };
 
 function renderFeaturedCard(groups) {
@@ -192,7 +194,7 @@ function renderFeaturedCard(groups) {
                 <span class="fp-resource-title-group">
                     <span class="fp-resource-title">${escHtml(resource.title)}</span> ${creditHtml}
                 </span>
-                <span class="type-badge ${meta.cls}">${meta.label}</span>
+                ${resource.type ? `<span class="type-badge ${meta.cls}">${meta.label}</span>` : ''}
             </a>`;
         }).join('');
         return `<div class="fp-section">
@@ -205,10 +207,13 @@ function renderFeaturedCard(groups) {
         if (g.flat) {
             const rows = g.all.map(r => {
                 const creditHtml = r.credit ? `<span class="fp-resource-credit">${formatCredit(r.credit)}</span>` : '';
+                const meta = TYPE_META[r.type] || { label: r.type, cls: 'type-unknown' };
+                const badgeHtml = r.type ? `<span class="type-badge ${meta.cls}">${meta.label}</span>` : '';
                 return `<a class="fp-resource-link" href="${escHtml(r.url)}" target="_blank" rel="noopener">
                     <span class="fp-resource-title-group">
                         <span class="fp-resource-title">${escHtml(r.title)}</span> ${creditHtml}
                     </span>
+                    ${badgeHtml}
                 </a>`;
             }).join('');
             return `<div class="fp-group">${rows}</div>`;
