@@ -44,7 +44,7 @@ const ROADMAP = {
       description: "Helps you <b>A LOT</b> with memorizing algs. It's like the " +
         "difference between \"sexy move\" and \"turn the right layer 90°, top 90°, " +
         "right -90°, top -90°\".",
-      path: "misc~karn"
+      path: "karn"
     },
     {
       timestamp: "for sub 1",
