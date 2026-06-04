@@ -245,7 +245,7 @@ main,
     opacity: 1;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 700px) {
     .roadmap-nudge {
         display: flex;
     }
@@ -262,8 +262,8 @@ main,
         align-items: center;
         justify-content: center;
         gap: 8px;
-        align-self: center;
-        margin: 28px 0;
+        width: fit-content;
+        margin: 28px auto;
         padding: 10px 22px;
         text-decoration: none;
         color: var(--text-muted);
@@ -302,7 +302,13 @@ main,
 main {
     max-width: var(--max-w);
     margin: 0 auto;
-    padding: 56px 28px 50px;
+    /*
+     * Reserve space for the fixed left nudge (~96px wide). When the page's natural
+     * auto-centering margin already clears the nudge, padding returns to the base 28px.
+     * Half of --max-w (1200px) = 600px → that's where auto-centering kicks in.
+     */
+    --_side-pad: clamp(28px, calc(96px - max(0px, calc(50vw - 600px))), 96px);
+    padding: 56px var(--_side-pad) 50px;
     flex: 1;
     width: 100%;
 }

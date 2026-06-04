@@ -5,7 +5,13 @@
 main.roadmap-main {
     max-width: 760px;
     margin: 0 auto;
-    padding: 52px 24px 50px;
+    /*
+     * At viewports where auto-centering already pushes content past the nudge (~96px),
+     * padding returns to the base 24px. Below that (700–950px), it grows up to 96px
+     * so the nudge always sits in blank space. Formula: 50vw - 380px = natural margin.
+     */
+    --_side-pad: clamp(24px, calc(96px - max(0px, calc(50vw - 380px))), 96px);
+    padding: 52px var(--_side-pad) 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -257,7 +263,8 @@ main.roadmap-main {
     position: absolute;
     top: 0;
     left: 100%;
-    width: 14px; /* slightly wider than the 10px gap */
+    width: 14px;
+    /* slightly wider than the 10px gap */
     height: 100%;
     background: transparent;
 }
