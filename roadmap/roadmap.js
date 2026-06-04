@@ -18,8 +18,7 @@
 // }
 //
 // branchGroup = branch[]   — array of 2+ branches shown side by side.
-//   Desktop: all lanes visible simultaneously (git-graph style).
-//   Mobile:  one lane at a time, ← → arrows to flip between them.
+//   One lane at a time, ← → arrows to flip between them.
 //   Branches can contain further branchGroups (infinite depth).
 //   Items placed after a branchGroup in the parent branch are the rejoined path.
 
@@ -168,7 +167,7 @@ const ROADMAP = {
       timestamp: "for sub 8",
       title: "Work on Your Recog",
       description: "Believe it or not, often you are losing time on recog more than " +
-        "anything. If you aren't already, use <b>3 sided PBL recog</b>."
+        "anything. If you don't already, use <b>3 sided PBL recog</b>."
     },
     {
       timestamp: "around 7",
