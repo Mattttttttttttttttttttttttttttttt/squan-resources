@@ -5,10 +5,17 @@
 main.roadmap-main {
     max-width: 760px;
     margin: 0 auto;
-    padding: 52px 24px 100px;
+    /*
+     * At viewports where auto-centering already pushes content past the nudge (~96px),
+     * padding returns to the base 24px. Below that (700–950px), it grows up to 96px
+     * so the nudge always sits in blank space. Formula: 50vw - 380px = natural margin.
+     */
+    --_side-pad: clamp(24px, calc(96px - max(0px, calc(50vw - 380px))), 96px);
+    padding: 52px var(--_side-pad) 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
 }
 
 /* ── Title ────────────────────────────────────────────────────────────────── */
@@ -35,6 +42,7 @@ main.roadmap-main {
     color: var(--text-dim);
     margin-top: 8px;
     margin-bottom: 36px;
+    text-align: center;
 }
 
 /* ── Tab switcher ─────────────────────────────────────────────────────────── */
@@ -156,11 +164,6 @@ main.roadmap-main {
     gap: 10px;
 }
 
-.timeline-steps--parallel {
-    flex-direction: row;
-    gap: 12px;
-}
-
 /* ── Step card ────────────────────────────────────────────────────────────── */
 .step-card {
     position: relative;
@@ -211,6 +214,11 @@ main.roadmap-main {
     line-height: 1.56;
 }
 
+.step-card-desc b {
+    font-weight: 700;
+    color: #c4d3e8;
+}
+
 /* Hint text at bottom of card */
 .step-card-hint {
     margin-top: 10px;
@@ -248,6 +256,19 @@ main.roadmap-main {
     transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
+/* Invisible bridge filling the gap between card edge and popup,
+   keeping :hover alive while the mouse travels across */
+.step-card.has-popup::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 14px;
+    /* slightly wider than the 10px gap */
+    height: 100%;
+    background: transparent;
+}
+
 /* Show on card hover (desktop) — stays visible because popup is child of card */
 .step-card:hover .featured-popup,
 .step-card:focus-visible .featured-popup {
@@ -265,16 +286,14 @@ main.roadmap-main {
     margin-bottom: 12px;
 }
 
-.fp-resource-row,
-.fp-empty-section {
+.fp-section {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     margin-bottom: 10px;
 }
 
-.fp-resource-row:last-child,
-.fp-empty-section:last-child {
+.fp-section:last-child {
     margin-bottom: 0;
 }
 
@@ -310,31 +329,52 @@ main.roadmap-main {
     opacity: 0.75;
 }
 
+.fp-resource-title-group {
+    flex: 1;
+    min-width: 0;
+}
+
 .fp-resource-title {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text);
-    line-height: 1.3;
-    flex: 1;
+    line-height: 1.4;
+    display: inline;
+}
+
+.fp-resource-credit {
+    display: inline-block;
+    vertical-align: baseline;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+}
+
+.fp-resource-credit em {
+    font-style: italic;
+    color: var(--text-dim);
 }
 
 .fp-empty-note {
+    display: block;
     font-size: 0.8rem;
     color: var(--text-dim);
     line-height: 1.5;
     font-style: italic;
 }
 
-.fp-resource-credit {
-    font-size: 0.76rem;
-    color: var(--text-dim);
-    line-height: 1.4;
-    margin-top: 2px;
+.fp-group {
+    display: contents;
+    /* groups are purely logical; no extra box */
 }
 
-.fp-resource-credit em {
-    font-style: italic;
-    color: var(--text-dim);
+.fp-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 0;
+    opacity: 0.5;
 }
 
 /* ── Mobile popup (shown inline below card on tap) ────────────────────────── */
@@ -394,10 +434,241 @@ main.roadmap-main {
     }
 }
 
+/* ── Branch group ─────────────────────────────────────────────────────────── */
+
+/* Branch group — top-level sibling of timeline-rows */
+.branch-group {
+    width: 100%;
+    margin: 4px 0 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 8px 16px 14px 0;
+    position: relative;
+    z-index: 0;
+}
+
+/* Nav row: same grid as timeline-row so the empty left column aligns with the line */
+.branch-nav-row {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Branch nav — always shown (carousel on all screen sizes) */
+.branch-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px 10px 35px;
+    position: relative;
+}
+
+.branch-nav-indicator {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+.branch-nav-prev {
+    margin-left: auto;
+}
+
+.branch-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    flex-shrink: 0;
+}
+
+.branch-nav-btn {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.branch-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.branch-nav-btn:not(:disabled):hover {
+    background: var(--surface-hover);
+}
+
+.branch-nav-btn:not(:disabled):active {
+    background: var(--surface-hover);
+}
+
+.branch-nav-row .timeline-left {
+    display: none;
+}
+
+.branch-group-lanes {
+    display: block;
+}
+
+/* Indent branch step cards slightly vs main-line cards */
+.branch-timeline .timeline-steps {
+    padding-left: 10px;
+}
+
+.branch-lane {
+    display: none;
+}
+
+.branch-lane.branch-lane--active {
+    display: block;
+}
+
+/* Branch lane: inherits timeline-row styles from parent, just a wrapper */
+.branch-timeline {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Tab description ──────────────────────────────────────────────────────── */
+.roadmap-tab-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    text-align: center;
+    max-width: 540px;
+    margin-top: -20px;
+    margin-bottom: 28px;
+}
+
+/* ── Path selector modal ──────────────────────────────────────────────────── */
+.path-selector-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    padding: 24px;
+}
+
+.path-selector-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.path-selector-modal {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 560px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    transform: translateY(8px);
+    transition: transform 0.18s ease;
+}
+
+.path-selector-backdrop.active .path-selector-modal {
+    transform: translateY(0);
+}
+
+.path-selector-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.path-selector-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.path-selector-close {
+    font-size: 1.3rem;
+    line-height: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color 0.15s;
+}
+
+.path-selector-close:hover {
+    color: var(--text);
+}
+
+.path-selector-list {
+    padding: 6px 0;
+}
+
+.path-selector-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    text-decoration: none;
+    border-top: 1px solid var(--border);
+    transition: background 0.12s;
+}
+
+.path-selector-row:first-child {
+    border-top: none;
+}
+
+.path-selector-row:hover {
+    background: var(--surface-hover);
+}
+
+.path-selector-arrow {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: color 0.12s, transform 0.12s;
+}
+
+.path-selector-row:hover .path-selector-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+}
+
+.path-selector-text {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+}
+
+.path-selector-node-title {
+    font-weight: 700;
+    color: var(--text);
+}
+
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
 @media (max-width: 700px) {
     main.roadmap-main {
-        padding: 36px 16px 80px;
+        padding: 36px 16px 0;
         align-items: stretch;
     }
 
@@ -407,14 +678,24 @@ main.roadmap-main {
 
     /* Collapse timeline columns — timestamp above card */
     .roadmap-timeline::before {
-        left: 8px;
+        left: 23px;
         top: 20px;
     }
 
     .timeline-row {
         grid-template-columns: 1fr;
         gap: 0;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
+    }
+
+    .timeline-row--last {
+        margin-bottom: 0;
+    }
+
+    .branch-nav-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+        margin-bottom: 0;
     }
 
     .timeline-left {
@@ -424,7 +705,39 @@ main.roadmap-main {
         gap: 8px;
         padding-top: 0;
         margin-bottom: 8px;
-        padding-left: 2px;
+        padding-left: 18px;
+    }
+
+    /* Branch nav on mobile: single row, indicator back in flow */
+    .branch-nav {
+        flex-wrap: nowrap;
+        padding: 0 0 8px;
+        padding-left: 18px;
+    }
+
+    .branch-nav-indicator {
+        position: static;
+        flex: 1;
+        text-align: center;
+        pointer-events: auto;
+    }
+
+    .branch-nav-prev {
+        margin-left: 0;
+    }
+
+    .branch-label {
+        flex: unset;
+        width: auto;
+        text-align: left;
+        margin-bottom: 0;
+        padding-left: 0;
+    }
+
+    .branch-nav-indicator {
+        flex: 1;
+        text-align: center;
+        margin-right: 0;
     }
 
     .timeline-dot {
@@ -438,16 +751,16 @@ main.roadmap-main {
         font-size: 0.78rem;
     }
 
-    /* Parallel steps stack on mobile */
-    .timeline-steps--parallel {
-        flex-direction: column;
-        gap: 10px;
-    }
-
     /* Card inner: no nudge on mobile (we're using tap) */
     .step-card:hover .step-card-inner,
     .step-card.popup-open .step-card-inner {
         transform: none;
+    }
+
+    /* Suppress sticky hover highlight when a popup is expanded */
+    .roadmap-container:has(.step-card.popup-open) .step-card:hover {
+        border-color: var(--border);
+        box-shadow: none;
     }
 
     /* Swap hint text */
@@ -470,7 +783,7 @@ main.roadmap-main {
         pointer-events: none;
         transform: none;
         border: none;
-        border-top: 1px solid var(--border-subtle);
+        border-top: 1px solid var(--border);
         border-radius: 0 0 var(--radius-md) var(--radius-md);
         box-shadow: none;
         background: var(--surface);

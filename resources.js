@@ -19,7 +19,7 @@
 //   {
 //     title:       string,
 //     url:         string,
-//     type:        "doc/sheet" | "video" | "trainer" | "image" | "website" | something else?,
+//     type:        "doc/sheet" | "video" | "trainer" | "image" | "website" | "code" |"other",
 //     credit:      string, // put attributions here
 //     description: string,
 //     featured:    boolean
@@ -35,7 +35,8 @@ const RESOURCES = {
     bait: "Welcome to your squan journey! Click me to learn the basics.",
     "solve": {
       title: "Solve the Cube",
-      description: "Get your cube solved.",
+      description: "There are good tutorials and bad tutorials. <b>Anything not listed " +
+        "here</b> is very likely going to lead you astray in some way.",
       resources: [
         {
           title: "Beginner tutorial",
@@ -104,24 +105,6 @@ const RESOURCES = {
             "just different ways of talking about the same thing."
         }
       ]
-    },
-    "karn": {
-      title: "Notation",
-      bait: "makes learning algs SO much easier",
-      description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
-        "It's like the difference between \"sexy move\" and \"turn the right layer " +
-        "90째, top 90째, right -90째, top -90째\".",
-      resources: [
-        {
-          title: "Karn sheet",
-          url: "https://docs.google.com/spreadsheets/d/11WRdlUpMJMd2vMloNvz2pp_AYKO1XFeCErpmx5wUKvQ/edit",
-          type: "doc/sheet",
-          credit: "- Matt",
-          path: "sheet",
-          description: "the most up-to-date information",
-          featured: true
-        }
-      ]
     }
   },
   "cs": {
@@ -157,7 +140,7 @@ const RESOURCES = {
         },
         {
           title: "Full CS Flowchart",
-          url: "https://imgur.com/a/full-cubeshape-chart-square-1-toXxlEv",
+          url: "https://i.imgur.com/Apg1NQ7.png",
           type: "image",
           credit: "- u/olimo",
           path: "chart",
@@ -196,7 +179,7 @@ const RESOURCES = {
         },
         {
           title: "CSP Tutorials",
-          url: "https://www.youtube.com/watch?v=GNmrLHw86ss&list=PL8Izpzk-6zizm3E5icawyJ637EJyaIwrB&index=1",
+          url: "https://www.youtube.com/watch?v=GNmrLHw86ss&list=PL8Izpzk-6zizm3E5icawyJ637EJyaIwrB",
           type: "video",
           credit: "- Matt",
           path: "matt",
@@ -229,8 +212,8 @@ const RESOURCES = {
           type: "website",
           credit: "- Seby",
           path: "seby",
-          description: "Shapes sorted by frequency. Includes a full tutorial. Has non-standard" +
-            "naming though."
+          description: "Shapes sorted by frequency. Includes a full tutorial. Has " +
+            "non-standard naming though."
         },
         {
           title: "CSP Sheet",
@@ -278,7 +261,7 @@ const RESOURCES = {
     }
   },
   "vdb": {
-    title: "Vandenberg",
+    title: "Vandenbergh",
     bait: "the most popular method, with the highest ceiling and most resources",
     "5look": {
       title: "5 look",
@@ -287,7 +270,7 @@ const RESOURCES = {
         "corner orientation, edge orientation, corner permutation, edge permutation. " +
         "You are also encouraged to do CSP for CS.</br>Find CS under its folder in the " +
         "homepage. ",
-      "CO": {
+      "co": {
         title: "CO",
         bait: "First step after CS: corner orientation.",
         description: "A very intuitive step: very similar to 2x2.",
@@ -334,7 +317,8 @@ const RESOURCES = {
             credit: "- Stepan",
             path: "stepan",
             description: "Contains optimal algs that are probably not needed for starters, " +
-              "but worth getting into if you want to get faster."
+              "but worth getting into if you want to get faster. But it's also pretty " +
+              "outdated 2for those optimal algs."
           },
           {
             title: "EO video",
@@ -423,7 +407,7 @@ const RESOURCES = {
         resources: [
           {
             title: "OBL Tutorial",
-            url: "https://youtu.be/pv2RgznaHgY&list=PLlEIANnLzI5ON2bbw9e2v0X4HyeX3eZd-&index=1",
+            url: "https://youtu.be/pv2RgznaHgY&list=PLlEIANnLzI5ON2bbw9e2v0X4HyeX3eZd-",
             type: "video",
             credit: "- Oxzowachi",
             path: "ox",
@@ -431,7 +415,7 @@ const RESOURCES = {
             featured: true
           },
           {
-            title: "OBL Trainer",
+            title: "SquanGo OBL Trainer",
             url: "https://squan-go.web.app/oblpbl/",
             type: "trainer",
             credit: "- Matt & Abid & Le Kit",
@@ -507,7 +491,7 @@ const RESOURCES = {
             featured: true
           },
           {
-            title: "PBL Trainer",
+            title: "SquanGo PBL Trainer",
             url: "https://squan-go.web.app/oblpbl/",
             type: "trainer",
             credit: "- Matt & Abid & Le Kit",
@@ -549,7 +533,7 @@ const RESOURCES = {
             url: "https://docs.google.com/spreadsheets/d/1VQNYNwdOLqqBkacHcfYtEBst22FOVhH9EAhTOYOZTgo/edit",
             type: "doc/sheet",
             credit: "- Daniel et al.",
-            path: "daniel",
+            path: "derpy",
             description: "An extensive community project of speed optimal algs. With no " +
               "explanations."
           },
@@ -576,13 +560,13 @@ const RESOURCES = {
             url: "https://youtu.be/ASyErFJ-O6Y",
             type: "video",
             credit: "- Oxzowachi",
-            path: "ox",
+            path: "oxv",
             description: "Very outdated in terms of resources it mentions, but good " +
               "explanation of what 2-alg PBL is."
           },
           {
             title: "PBL Tutorial",
-            url: "https://youtu.be/uPDbHQQwLtM&list=PLh8G8F13X7w8fvip0BX9gQ1vJPRRKR94k&index=1",
+            url: "https://youtu.be/uPDbHQQwLtM&list=PLh8G8F13X7w8fvip0BX9gQ1vJPRRKR94k",
             type: "video",
             credit: "- Chen Yen-An",
             path: "cya",
@@ -598,7 +582,7 @@ const RESOURCES = {
           },
           {
             title: "PBL Tutorial",
-            url: "https://youtu.be/vVN_eFiYB88&list=PLF0mfn_ogsH_ogg-ffsVVPvOMD6yRtBzf&index=1",
+            url: "https://youtu.be/vVN_eFiYB88&list=PLF0mfn_ogsH_ogg-ffsVVPvOMD6yRtBzf",
             type: "video",
             credit: "- Cube Master",
             path: "cm",
@@ -610,14 +594,15 @@ const RESOURCES = {
             type: "doc/sheet",
             credit: "- Rasmus",
             path: "rasmus",
-            description: "A spreadsheet version of Cube Master's videos."
+            description: "A spreadsheet version of Cube Master's videos. No makanaming " +
+              "and unconventional naming."
           },
           {
             title: "PBL Sheet",
             url: "https://docs.google.com/spreadsheets/d/11a1vnUpp-aiMmRuO7IiN78ZosQHhFi9E-zDBg8-qSSM/edit",
             type: "doc/sheet",
             credit: "- Oxzowachi",
-            path: "ox",
+            path: "oxs",
             description: "A really random list of algs."
           },
           {
@@ -625,8 +610,9 @@ const RESOURCES = {
             url: "https://docs.google.com/spreadsheets/d/1bLhYXaW1HGGTypOQGOJvnS2L40gKXHlbc8zJ3ZXYeTE/edit",
             type: "doc/sheet",
             credit: "- Cube Master",
-            path: "cmd",
-            description: "A really outdated spreadsheet version of Cube Master's videos."
+            path: "cms",
+            description: "A really outdated spreadsheet version of Cube Master's videos. " +
+              "No makanaming."
           },
           {
             title: "PBL Statistics",
@@ -658,12 +644,14 @@ const RESOURCES = {
         title: "OBLP",
         bait: "OBL Prediction. Predict OBL during inspection and 2 look every scramble.",
         description: "The most cutting-edge method right now. Requires strong foundation " +
-          "of CSP and fast tracing. You can also use the concepts from OBLP to do CO " +
-          "prediction (COP) or partial COP (PCOP).",
+          "of CSP and fast tracing. If you are trying to learn it, you almost certainly " +
+          "go off the major tutorials and tweak things to your liking at some point. " +
+          "You can also use the concepts from OBLP to do CO prediction (COP) or partial " +
+          "COP (PCOP).",
         resources: [
           {
             title: "OBLP Tutorial",
-            url: "https://youtu.be/Y5i1ZeHtrCY&list=PL8Izpzk-6ziyXXgFj8zuBfGFpduPSI2av&index=1",
+            url: "https://youtu.be/Y5i1ZeHtrCY&list=PL8Izpzk-6ziyXXgFj8zuBfGFpduPSI2av",
             type: "video",
             credit: "- Matt",
             path: "mattv",
@@ -717,15 +705,7 @@ const RESOURCES = {
             type: "doc/sheet",
             credit: "- Oxzowachi",
             path: "ox",
-            description: "The OG tutorial for OBLP, but a bit outdated."
-          },
-          {
-            title: "OBLP Sheet",
-            url: "https://docs.google.com/spreadsheets/d/10BNar8MbW8pQbAwmpMRi-STUiaAvjOy_As6DplPxrtg/edit",
-            type: "doc/sheet",
-            credit: "- Stepan",
-            path: "stepan",
-            description: "Outdated and incomplete."
+            description: "The OG tutorial for OBLP."
           }
         ]
       }
@@ -742,7 +722,7 @@ const RESOURCES = {
       resources: [
         {
           title: "FB Tutorial",
-          url: "https://youtu.be/6rLfvkKNG4U",
+          url: "https://youtu.be/6rLfvkKNG4U&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "riccifb",
@@ -751,7 +731,7 @@ const RESOURCES = {
         },
         {
           title: "SB Tutorial",
-          url: "https://youtu.be/JJPezT2rUMg",
+          url: "https://youtu.be/JJPezT2rUMg&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "riccisb",
@@ -766,8 +746,9 @@ const RESOURCES = {
           type: "video",
           credit: "- Helmer",
           path: "helmer",
-          description: "A very useful video with good tips on how to solve blocks efficiently. " +
-            "This talks about SBEC as well, and it is debatable how useful that is these days."
+          description: "A very useful video with good tips on how to solve blocks " +
+            "efficiently. This talks about SBEC as well, though it is debatable how " +
+            "useful that is these days."
         },
         {
           title: "Blockbuilding Trick",
@@ -776,10 +757,10 @@ const RESOURCES = {
           credit: "- Ricci",
           path: "riccit",
           description: "A trick that's touched upon in Ricci's SB video and Helmer's " +
-            "video, but expanded upon here. In my opinion this is a very, very important " +
-            "trick to learn and get used to, as it just makes your solves so much smoother " +
-            "without having to pause to recognize how to M2 your DB edge into its slot, and " +
-            "also getting used to it helps transition you into using OPLL+1 in your solves."
+            "video, but expanded upon here. This is a very, very important trick to learn " +
+            "and get used to, as it just makes your solves so much smoother without " +
+            "having to pause to recognize how to M2 your DB edge into its slot. Getting " +
+            "used to it also helps transition you into using OPLL+1 in your solves."
         },
         {
           title: "FB walkthrough",
@@ -811,7 +792,7 @@ const RESOURCES = {
           path: "sbec",
           description: "A useful resource for looking up optimal SB solutions when " +
             "you're struggling to come up with one yourself. The utility of SBEC these " +
-            "days is debatable, personally I would say it isn't useful at all."
+            "days is very debatable, perhaps not useful at all."
         }
       ]
     },
@@ -832,7 +813,7 @@ const RESOURCES = {
         },
         {
           title: "CP+DF Tutorial",
-          url: "https://youtu.be/432HNoTKLWg",
+          url: "https://youtu.be/432HNoTKLWg&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "riccicpdf",
@@ -841,22 +822,13 @@ const RESOURCES = {
         },
         {
           title: "EPLL Tutorial",
-          url: "https://youtu.be/NyUiDwjC0fo",
+          url: "https://youtu.be/NyUiDwjC0fo&list=PLDueljRn_QcuuyX1_F9XJRtZGkVbP45ZJ",
           type: "video",
           credit: "- Ricci",
           path: "ricciepll",
           description: "Perhaps a bit outdated, the only problems being that it shows " +
             "the 8 slice H perm and the shield/square U perm algs.",
           featured: true
-        },
-        {
-          title: "Lin Algs",
-          url: "https://docs.google.com/spreadsheets/d/1xdMMw402OPVOKW2cGhnz4wPgWWGo51pJlRQpKlNk4xY/edit",
-          type: "doc/sheet",
-          credit: "- Ben",
-          path: "ben",
-          description: "A good source of some alternative algs if you feel the ones " +
-            "from Adrien's Lin algs aren't to your liking."
         },
         {
           title: "PLL Algs",
@@ -877,22 +849,223 @@ const RESOURCES = {
             "Adrien and Ben's sheet to find algs that suit you."
         },
         {
-          title: "PLL, PLL+1, CP Trainer",
+          title: "Lin Algs",
+          url: "https://docs.google.com/spreadsheets/d/1xdMMw402OPVOKW2cGhnz4wPgWWGo51pJlRQpKlNk4xY/edit",
+          type: "doc/sheet",
+          credit: "- Ben",
+          path: "ben",
+          description: "A good source of some alternative algs if you feel the ones " +
+            "from Adrien's Lin algs aren't to your liking."
+        },
+        {
+          title: "EPLL, PLL, PLL+1, CP Trainer",
           url: "https://squanmate.cuber.pro/#/algorithm-trainer",
           type: "trainer",
           credit: "- Squanmate",
           path: "squanmate",
-          description: "The only lin trainer out there I think, and serves its purpose " +
-            "well with just a few kinks here and there. The PLL+1 trainer gives you the " +
-            "wrong D layer angle, which you have to adjust every time, and the cases " +
-            "are all in the weird naming scheme that nobody uses anymore. Adrien's " +
-            "sheet has numbers next to each PLL+1 case, which tells you which case in " +
-            "this trainer it is. There are also numbers for the OPLL+1 cases as well, " +
-            "which tell you the equivalent PLL+1 cases that you can turn into OPLL+1 " +
-            "cases by M2ing the top edge into the DB.",
+          description: "The only lin trainer out there, and serves its purpose well with " +
+            "just a few kinks here and there. The PLL+1 trainer gives you the wrong D " +
+            "layer angle, which you have to adjust every time, and the cases are all in a " +
+            "weird naming scheme that nobody uses anymore. Adrien's sheet has numbers " +
+            "next to each PLL+1 case, which tells you which case in this trainer it is. " +
+            "There are also numbers for the OPLL+1 cases as well, which tell you the " +
+            "equivalent PLL+1 cases that you can turn into OPLL+1 cases by M2ing the top " +
+            "edge into the DB.",
           featured: true
         }
       ]
     }
+  },
+  "karn": {
+    title: "Notation",
+    bait: "makes learning algs SO much easier",
+    description: "Learn karnotation, which will help you A LOT with memorizing algs. " +
+      "It's like the difference between \"sexy move\" and \"turn the right layer " +
+      "90°, top 90°, right -90°, top -90°\".",
+    resources: [
+      {
+        title: "Karn sheet",
+        url: "https://docs.google.com/spreadsheets/d/11WRdlUpMJMd2vMloNvz2pp_AYKO1XFeCErpmx5wUKvQ/edit",
+        type: "doc/sheet",
+        credit: "- Matt",
+        path: "sheet",
+        description: "the most up-to-date information",
+        featured: true
+      }
+    ]
+  },
+  "misc": {
+    gridLayout: true,
+    title: "Miscellaneous Resources",
+    bait: "Solvers, image genners, and more!",
+    "alg": {
+      gridLayout: true,
+      title: "Alg Genners",
+      bait: "Generate your own algs!",
+      description: "All the alg genners and helpers out there.",
+      resources: [
+        {
+          title: "Sq1Optim v2",
+          url: "https://github.com/Mattttttttttttttttttttttttttttttt/sq1opt",
+          type: "code",
+          credit: "- Matt & Abid & Michael & Jaap",
+          path: "v2",
+          description: "Best solver currently.",
+          featured: true
+        },
+        {
+          title: "Alg Genner Library",
+          url: "https://github.com/Abid-speedcuber/sq1-scramble-genner",
+          type: "code",
+          credit: "- Abid & Matt & Shuang Chen",
+          path: "lib",
+          description: "A ton of tools for programmers."
+        },
+        {
+          title: "Alg Normalizer",
+          url: "https://github.com/Mattttttttttttttttttttttttttttttt/rubiks-cube-tools/blob/main/sq1normalizer.py",
+          type: "code",
+          credit: "- Matt",
+          path: "norm",
+          description: "honestly useless, will be making a better one soon",
+        },
+        {
+          title: "Sq1Optim v1",
+          url: "https://www.jaapsch.net/puzzles/square1.htm#progs",
+          type: "code",
+          credit: "- Jaap",
+          path: "v1",
+          description: "DO NOT USE. Use the v2 instead.",
+        }
+      ]
+    },
+    "draw": {
+      gridLayout: true,
+      title: "Image Genners",
+      bait: "Generate squan images!",
+      resources: [
+        {
+          title: "SquanGo Image Genner",
+          url: "https://squan-go.web.app/draw/",
+          type: "website",
+          credit: "- Abid & Matt",
+          path: "das",
+          description: "The best image genner, complete with two designs.",
+          featured: true
+        },
+        {
+          title: "Image Genner",
+          url: "https://sq1-img-gen-gold-grass.reflex.run/",
+          type: "website",
+          credit: "- Seby",
+          path: "seby",
+          description: "Has weird unresponsive glitches, but gets the job done most of the " +
+            "time."
+        },
+        {
+          title: "Image Genner 1",
+          url: "https://wol4rwwr5d.execute-api.us-east-1.amazonaws.com/default/get_image?alg=",
+          type: "website",
+          credit: "- Stepan",
+          path: "stepanh",
+          description: "This is where all the OG images came from. Edit URL to use."
+        },
+        {
+          title: "Image Genner 2",
+          url: "https://wol4rwwr5d.execute-api.us-east-1.amazonaws.com/default/get_image3?alg=",
+          type: "website",
+          credit: "- Stepan",
+          path: "stepanv",
+          description: "This is... another one. Edit URL to use."
+        }
+      ]
+    },
+    "mods": {
+      gridLayout: true,
+      title: "Squan Mods",
+      bait: "Mod your squan to make it better.",
+      description: "Some common mods you will hear mentioned (in order): maglev, slice " +
+        "mod, edge magnets, full U/D, DSR (Double Slice Repulsion), corner-to-edge.",
+      resources: [
+        {
+          title: "Paper Polishing Tutorial",
+          url: "https://youtu.be/N8A_WZMMEMk",
+          type: "video",
+          credit: "- Michal",
+          path: "polish",
+          description: "Polish your matte cubes to make them feel A LOT better!",
+          featured: true
+        },
+        {
+          title: "Maglev Tutorial",
+          url: "https://youtu.be/_Ew54m8614M",
+          type: "video",
+          credit: "- Cube Master",
+          path: "maglev",
+          description: "Maglev is an ABSOLUTE essential to high level solving.",
+          featured: true
+        },
+        {
+          title: "Slice Mod Tutorial",
+          url: "https://youtu.be/focj2OUFCF8",
+          type: "video",
+          credit: "- Oxzowachi",
+          path: "slice",
+          description: "Takes out ONE slice magnet to make slice magnets weaker, thereby " +
+            "making the slice feel smoother.",
+          featured: true
+        },
+        {
+          title: "Partial U/D & Edge Magnets Tutorial",
+          url: "https://youtu.be/5pbvZje4RH0",
+          type: "video",
+          credit: "- Isaac",
+          path: "isaac",
+          description: "Basically teaches you how to mod a /B squan. Includes polishing, " +
+            "partial U/D, and edge magnets."
+        },
+        {
+          title: "Full Mod Tutorial",
+          url: "https://youtu.be/X74OVvD8OYs",
+          type: "video",
+          credit: "- Jad",
+          path: "jad",
+          description: "Includes maglev, edge magnets, U/D repulsion, and slice repulsion."
+        }
+      ]
+    },
+    "lore": {
+      gridLayout: true,
+      title: "Squan Lore",
+      bait: "Are you ready to go down this rabbit hole?",
+      resources: [
+        {
+          title: "Squan Puzzle Page",
+          url: "https://www.jaapsch.net/puzzles/square1.htm",
+          type: "website",
+          credit: "- Jaap",
+          path: "og",
+          description: "In one word: lore."
+        },
+        {
+          title: "Podcase Episode with Lars Vandenbergh",
+          url: "https://youtu.be/qpvMovvSpTE",
+          type: "video",
+          credit: "- Jaap & Brandon",
+          path: "podcast",
+          description: "A hour-long podcast with the inventer of the VDB method."
+        }
+      ]
+    },
+    resources: [
+      {
+        title: "SquanGo Everything Trainer",
+        url: "https://squan-go.web.app/squanGo/",
+        type: "trainer",
+        credit: "- Abid",
+        path: "sqx",
+        description: "IN DEVELOPMENT"
+      }
+    ]
   }
 };

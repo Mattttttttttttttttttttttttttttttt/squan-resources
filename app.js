@@ -7,6 +7,51 @@ function getCurrentPath() {
     return params.get('path') || '';
 }
 
+let _historyIndex = 0;
+let _historyMaxIndex = 0;
+
+function initHistoryState() {
+    const state = window.history.state;
+    const baseState = state && typeof state === 'object' ? { ...state } : {};
+    if (typeof baseState.squanIndex === 'number') {
+        _historyIndex = baseState.squanIndex;
+        _historyMaxIndex = typeof baseState.squanMaxIndex === 'number' ? baseState.squanMaxIndex : baseState.squanIndex;
+    } else {
+        window.history.replaceState({ ...baseState, squanIndex: 0, squanMaxIndex: 0 }, '', window.location.href);
+        _historyIndex = 0;
+        _historyMaxIndex = 0;
+    }
+}
+
+function updateBreadcrumbNavState() {
+    const backBtn = document.querySelector('.bc-nav-btn[data-nav="back"]');
+    const forwardBtn = document.querySelector('.bc-nav-btn[data-nav="forward"]');
+    if (!backBtn || !forwardBtn) return;
+
+    const canBack = _historyIndex > 0;
+    const canForward = _historyIndex < _historyMaxIndex;
+
+    if (canBack) {
+        backBtn.classList.remove('disabled');
+        backBtn.disabled = false;
+        backBtn.setAttribute('aria-disabled', 'false');
+    } else {
+        backBtn.classList.add('disabled');
+        backBtn.disabled = true;
+        backBtn.setAttribute('aria-disabled', 'true');
+    }
+
+    if (canForward) {
+        forwardBtn.classList.remove('disabled');
+        forwardBtn.disabled = false;
+        forwardBtn.setAttribute('aria-disabled', 'false');
+    } else {
+        forwardBtn.classList.add('disabled');
+        forwardBtn.disabled = true;
+        forwardBtn.setAttribute('aria-disabled', 'true');
+    }
+}
+
 function navigate(path) {
     const url = new URL(window.location.href);
     if (!path) {
@@ -14,7 +59,18 @@ function navigate(path) {
     } else {
         url.searchParams.set('path', path);
     }
-    window.history.pushState({ path }, '', url.toString());
+
+    if (path === getCurrentPath()) {
+        return;
+    }
+
+    if (_historyIndex < _historyMaxIndex) {
+        _historyMaxIndex = _historyIndex;
+    }
+    _historyMaxIndex += 1;
+    _historyIndex = _historyMaxIndex;
+
+    window.history.pushState({ squanIndex: _historyIndex, squanMaxIndex: _historyMaxIndex, path }, '', url.toString());
     render(path);
 }
 
@@ -49,16 +105,9 @@ function getNodeChildren(node) {
     return Object.keys(node).filter(k => k !== 'resources' && node[k] !== null && typeof node[k] === 'object');
 }
 
-// Returns true if any ancestor (or the node itself) has gridLayout: true
+// Returns true if the current node has gridLayout: true
 function isGridLayout(path) {
-    if (!path) return !!(RESOURCES.gridLayout);
-    let node = RESOURCES;
-    for (const seg of path.split('~')) {
-        if (node.gridLayout) return true;
-        const key = findKey(node, seg);
-        if (key === undefined) return false;
-        node = node[key];
-    }
+    const node = getNode(path);
     return !!(node && node.gridLayout);
 }
 
@@ -100,7 +149,13 @@ function getVisualHtml(resource) {
     </div>`;
     }
 
-    if (type === 'doc/sheet' || type === 'website') {
+    if (type === 'doc/sheet' ||
+        type === 'website' ||
+        type === 'trainer' ||
+        type === 'code' ||
+        type === 'other' ||
+        (!type && getNode(_currentFolderPath)?.gridLayout)
+    ) {
         const parentFolder = _currentFolderPath.split('~').pop();
         const imgName = resource.path ? `${parentFolder}-${resource.path}` : encodeURIComponent(title);
         const imgPath = `./img/${imgName}.png`;
@@ -119,7 +174,7 @@ function getVisualHtml(resource) {
     </div>`;
     }
 
-    return ''; // trainer or unknown — no visual
+    return ''; // unknown — no visual
 }
 
 // Called when an image visual fails to load — collapses the modal layout
@@ -151,10 +206,12 @@ const TYPE_META = {
     'trainer': { label: 'Trainer', cls: 'type-trainer' },
     'image': { label: 'Image', cls: 'type-image' },
     'website': { label: 'Website', cls: 'type-website' },
+    'code': { label: 'Code', cls: 'type-website' },
+    'other': { label: 'Other', cls: 'type-other' },
 };
 
 function typeMeta(type) {
-    return TYPE_META[type] || { label: type, cls: 'type-unknown' };
+    return TYPE_META[type] || { label: type || '', cls: 'type-unknown' };
 }
 
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
@@ -163,7 +220,24 @@ function renderBreadcrumb(path) {
     const el = document.getElementById('breadcrumb');
     const segments = getPathSegments(path);
 
-    const parts = [`<span class="bc-item bc-link" data-path="">home</span>`];
+    const parts = [
+        `<div class="bc-nav-capsule">
+            <button class="bc-nav-btn" type="button" data-nav="back" aria-label="Go back">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <span class="bc-nav-inner-sep" aria-hidden="true"></span>
+            <button class="bc-nav-btn" type="button" data-nav="forward" aria-label="Go forward">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>`,
+        `<span class="bc-vdiv" aria-hidden="true"></span>`,
+        `<svg class="bc-folder-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+        `<span class="bc-item bc-link" data-path="">home</span>`
+    ];
     let node = RESOURCES;
     const builtSegs = [];
     for (const seg of segments) {
@@ -171,7 +245,7 @@ function renderBreadcrumb(path) {
         if (!key) break;
         builtSegs.push(key);
         const p = builtSegs.join('~');
-        parts.push(`<span class="bc-sep">›</span><span class="bc-item bc-link" data-path="${p}">${escHtml(key)}</span>`);
+        parts.push(`<span class="bc-sep">/</span><span class="bc-item bc-link" data-path="${p}">${escHtml(key)}</span>`);
         node = node[key];
     }
 
@@ -179,6 +253,14 @@ function renderBreadcrumb(path) {
     el.querySelectorAll('.bc-link').forEach(item => {
         item.addEventListener('click', () => navigate(item.dataset.path));
     });
+    el.querySelectorAll('.bc-nav-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            if (button.disabled) return;
+            if (button.dataset.nav === 'back') window.history.back();
+            else window.history.forward();
+        });
+    });
+    updateBreadcrumbNavState();
 }
 
 // ─── Node page (folder view) ──────────────────────────────────────────────────
@@ -202,12 +284,16 @@ function renderNode(node, path) {
         </div>
         <div class="folder-card-meta">
           <span class="folder-count">${count} resource${count !== 1 ? 's' : ''}</span>
-          <span class="folder-arrow">→</span>
+          <span class="folder-arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </div>
       </div>`;
     }).join('');
 
-    area.innerHTML = `<div class="folder-grid">${cards}</div>`;
+    area.innerHTML = `<div class="card-grid">${cards}</div>`;
 
     area.querySelectorAll('.folder-card').forEach(card => {
         const go = () => navigate(card.dataset.path);
@@ -218,7 +304,7 @@ function renderNode(node, path) {
 
 // ─── Resource card HTML ───────────────────────────────────────────────────────
 
-function resourceCardHtml(resource, globalIndex, col) {
+function resourceCardHtml(resource, globalIndex, col, hideBadge = false) {
     const { label, cls } = typeMeta(resource.type);
     const featuredAttr = resource.featured ? ' data-featured="true"' : '';
     const derivedCol = col ?? (resource.type === 'trainer' ? 'train' : 'learn');
@@ -230,25 +316,35 @@ function resourceCardHtml(resource, globalIndex, col) {
             ${resource.credit ? `<div class="resource-credit">${formatCredit(resource.credit)}</div>` : ''}
             <div class="resource-desc">${resource.description || ''}</div>
         </div>
-        <div class="resource-card-foot">
+        ${hideBadge || !resource.type ? '' : `<div class="resource-card-foot">
             <span class="type-badge ${cls}">${label}</span>
-        </div>
+        </div>`}
     </div>`;
 }
 
 // ─── Leaf page ────────────────────────────────────────────────────────────────
 
-function renderLeaf(resources, gridLayout, folderPath, node) {
+function renderLeaf(resources, gridLayout, folderPath, node, append = false) {
     _currentResources = resources; // store for resource path auto-open
     _currentFolderPath = folderPath ?? '';
     const area = document.getElementById('content-area');
-    const descHtml = (node && node.description)
+    const descHtml = (!append && node && node.description)
         ? `<div class="leaf-description">${node.description}</div>` : '';
 
     if (gridLayout) {
         // ── Misc-style unified grid ───────────────────────────────────────────
-        const cards = resources.map((r, i) => resourceCardHtml(r, i)).join('');
-        area.innerHTML = descHtml + `<div class="resource-grid">${cards}</div>`;
+        const cards = resources.map((r, i) => resourceCardHtml(r, i, undefined, false)).join('');
+        if (append) {
+            const grid = area.querySelector('.card-grid');
+            if (grid) {
+                grid.insertAdjacentHTML('beforeend', cards);
+            } else {
+                area.insertAdjacentHTML('beforeend', `<div class="card-grid">${cards}</div>`);
+            }
+        } else {
+            const html = descHtml + `<div class="card-grid">${cards}</div>`;
+            area.innerHTML = html;
+        }
     } else {
         // ── Learn / Train interleaved flat grid ───────────────────────────────
         // Interleaving lets CSS grid equalize row heights across both columns
@@ -320,6 +416,9 @@ function renderLeaf(resources, gridLayout, folderPath, node) {
 // Tracks the resources array currently displayed, for auto-opening by resource path segment
 let _currentResources = [];
 let _currentFolderPath = '';
+let _modalOpen = false;
+let _modalHistoryPushed = false;
+let _ignoreNextPopstate = false;
 
 // Builds a ?path= URL with literal ~ instead of %7E
 function buildUrl(folderPath, resourcePath) {
@@ -341,14 +440,17 @@ function openModal(resource, updateUrl = true) {
     const hasVisual = visualHtml !== '';
 
     // Append resource path as ~segment to ?path= for shareability
-    if (updateUrl && resource.path) {
-        window.history.replaceState({}, '', buildUrl(_currentFolderPath, resource.path));
+    if (resource.path && updateUrl) {
+        const url = buildUrl(_currentFolderPath, resource.path);
+        window.history.pushState({ squan: 'modal', squanIndex: _historyIndex, squanMaxIndex: _historyMaxIndex }, '', url);
+        _modalHistoryPushed = true;
     }
 
+    _modalOpen = true;
     inner.innerHTML = `
     <div class="modal-header">
       <a class="modal-title" href="${resource.url}" target="_blank" rel="noopener">${escHtml(resource.title)}</a>
-      <span class="type-badge ${cls}">${label}</span>
+      ${resource.type ? `<span class="type-badge ${cls}">${label}</span>` : ''}
     </div>
     ${resource.credit ? `<div class="modal-credit">${formatCredit(resource.credit)}</div>` : ''}
     <div class="modal-sep"></div>
@@ -359,48 +461,115 @@ function openModal(resource, updateUrl = true) {
     </div>
     <div class="modal-actions">
       <a class="modal-visit-btn" href="${resource.url}" target="_blank" rel="noopener">Open ↗</a>
-      ${resource.path ? `<button class="modal-share-btn" id="modal-share-btn" title="Copy link to this resource">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-          <path d="M16 6l-4-4-4 4"/>
-          <line x1="12" y1="2" x2="12" y2="15"/>
-        </svg>
-        <span id="share-label">Share</span>
-      </button>` : ''}
+            <button class="modal-copy-btn" id="modal-copy-btn" title="Copy the link of this resource">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="9" height="11" rx="2"/>
+                    <rect x="3" y="5" width="9" height="11" rx="2"/>
+                </svg>
+                <span id="copy-label">Copy Link</span>
+            </button>
+            ${resource.path ? `<button class="modal-share-btn" id="modal-share-btn" title="Copy link to this page in the website">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    <path d="M16 6l-4-4-4 4"/>
+                    <line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+                <span id="share-label">Share</span>
+            </button>` : ''}
     </div>`;
 
-    // Share button logic
+    const copyBtn = inner.querySelector('#modal-copy-btn');
     const shareBtn = inner.querySelector('#modal-share-btn');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', () => {
-            const shareUrl = window.location.href; // already has ~resourcePath appended
-            const lbl = shareBtn.querySelector('#share-label');
-            const reset = () => setTimeout(() => { lbl.textContent = 'Share'; }, 2000);
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                lbl.textContent = 'Copied!'; reset();
-            }).catch(() => {
+
+    // Shared flash duration (ms)
+    const FLASH_DURATION = 2000;
+
+    const copyLabel = copyBtn ? copyBtn.querySelector('#copy-label') : null;
+    const defaultCopy = copyLabel ? copyLabel.textContent : 'Copy Link';
+    const shareLabel = shareBtn ? shareBtn.querySelector('#share-label') : null;
+    const defaultShare = shareLabel ? shareLabel.textContent : 'Share';
+
+    function clearAllFlashes() {
+        [copyBtn, shareBtn].forEach(b => {
+            if (!b) return;
+            b.classList.remove('copied-flash');
+            const lbl = b.querySelector('#copy-label') || b.querySelector('#share-label');
+            if (lbl) {
+                lbl.textContent = b === copyBtn ? defaultCopy : defaultShare;
+            }
+        });
+    }
+
+    function doCopy(text, btn, labelEl, defaultText) {
+        if (!btn || !labelEl) return;
+
+        // Stop other flashes immediately so they don't overlap
+        clearAllFlashes();
+
+        const reset = () => setTimeout(() => {
+            labelEl.textContent = defaultText;
+            btn.classList.remove('copied-flash');
+        }, FLASH_DURATION);
+
+        const succeed = () => {
+            labelEl.textContent = 'Copied!';
+            btn.classList.add('copied-flash');
+            // blur to remove persistent focus (helps mobile/devtools behavior)
+            try { btn.blur(); } catch (e) { /* ignore */ }
+            reset();
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(succeed).catch(() => {
+                // fallback
                 const tmp = document.createElement('input');
-                tmp.value = shareUrl;
+                tmp.value = text;
                 document.body.appendChild(tmp);
                 tmp.select();
-                document.execCommand('copy');
+                try { document.execCommand('copy'); succeed(); } catch (e) { /* no-op */ }
                 document.body.removeChild(tmp);
-                lbl.textContent = 'Copied!'; reset();
             });
-        });
+        } else {
+            const tmp = document.createElement('input');
+            tmp.value = text;
+            document.body.appendChild(tmp);
+            tmp.select();
+            try { document.execCommand('copy'); succeed(); } catch (e) { /* no-op */ }
+            document.body.removeChild(tmp);
+        }
+    }
+
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => doCopy(resource.url || '', copyBtn, copyLabel, defaultCopy));
+    }
+
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => doCopy(window.location.href, shareBtn, shareLabel, defaultShare));
     }
 
     backdrop.classList.add('active');
     document.body.classList.add('modal-open');
 }
 
-function closeModal() {
+function closeModal({ ignoreHistory = false } = {}) {
+    if (!_modalOpen) return;
     document.getElementById('modal-backdrop').classList.remove('active');
     document.body.classList.remove('modal-open');
-    // Restore URL to folder path (strip the ~resourcePath segment)
-    window.history.replaceState({}, '', buildUrl(_currentFolderPath, ''));
+    _modalOpen = false;
+
     // Stop iframe / image loading
     document.querySelectorAll('#modal-inner iframe').forEach(f => { f.src = f.src; });
+
+    if (_modalHistoryPushed && !ignoreHistory) {
+        _modalHistoryPushed = false;
+        _ignoreNextPopstate = true;
+        window.history.back();
+        return;
+    }
+
+    if (!ignoreHistory) {
+        window.history.replaceState({}, '', buildUrl(_currentFolderPath, ''));
+    }
 }
 
 // ─── Root render ──────────────────────────────────────────────────────────────
@@ -433,7 +602,11 @@ function render(path) {
     renderBreadcrumb(path);
     document.getElementById('content-area').innerHTML = '';
 
-    if (Array.isArray(node.resources)) {
+    if (isGridLayout(path) && Array.isArray(node.resources) && getNodeChildren(node).length > 0) {
+        renderNode(node, path);
+        renderLeaf(node.resources, true, path, node, true);
+        if (autoOpenResource) openModal(autoOpenResource, false);
+    } else if (Array.isArray(node.resources)) {
         renderLeaf(node.resources, isGridLayout(path), path, node);
         if (autoOpenResource) openModal(autoOpenResource, false);
     } else {
@@ -450,11 +623,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('modal-close').addEventListener('click', closeModal);
+
+    const feedbackBtn = document.getElementById('feedback-btn');
+    const feedbackBackdrop = document.getElementById('feedback-backdrop');
+    const feedbackClose = document.getElementById('feedback-close');
+    function openFeedback() { feedbackBackdrop.classList.add('active'); }
+    function closeFeedback() { feedbackBackdrop.classList.remove('active'); }
+    feedbackBtn.addEventListener('click', openFeedback);
+    feedbackClose.addEventListener('click', closeFeedback);
+    feedbackBackdrop.addEventListener('click', e => { if (e.target === feedbackBackdrop) closeFeedback(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFeedback(); });
     document.getElementById('modal-backdrop').addEventListener('click', e => {
         if (e.target === document.getElementById('modal-backdrop')) closeModal();
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    window.addEventListener('popstate', () => render(getCurrentPath()));
+    window.addEventListener('popstate', event => {
+        if (_ignoreNextPopstate) {
+            _ignoreNextPopstate = false;
+            return;
+        }
+
+        if (_modalOpen) {
+            closeModal({ ignoreHistory: true });
+            return;
+        }
+
+        const state = event.state;
+        if (state && typeof state.squanIndex === 'number') {
+            _historyIndex = state.squanIndex;
+            if (typeof state.squanMaxIndex === 'number') {
+                _historyMaxIndex = Math.max(_historyMaxIndex, state.squanMaxIndex);
+            }
+        }
+
+        render(getCurrentPath());
+    });
+
+    initHistoryState();
     render(getCurrentPath());
+
+    const mobileTab = document.getElementById('mobile-page-tab');
+    if (mobileTab) {
+        new IntersectionObserver(
+            ([entry]) => mobileTab.classList.toggle('visible', entry.isIntersecting),
+            { threshold: 1.0 }
+        ).observe(mobileTab);
+    }
 });

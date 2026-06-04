@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0c0e12" />
   <meta name="description" content="Square-1 progression roadmap." />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -19,6 +20,7 @@
   <!-- Roadmap-specific styles -->
   <link rel="stylesheet" href="roadmap.css" />
 </head>
+
 <body>
 
   <header class="topbar">
@@ -29,22 +31,39 @@
     <a href=".." class="topbar-link">resources</a>
   </header>
 
+  <a href=".." class="roadmap-nudge roadmap-nudge--left" aria-label="Go to resources">
+    <svg class="roadmap-nudge-arrow" viewBox="-4 0 52 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M28 6 L8 22 L28 38" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M8 22 H46" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span class="roadmap-nudge-label" style="transform: translateX(8px)">resources</span>
+  </a>
+
   <main class="roadmap-main">
     <h1 class="main-title roadmap-title" id="main-title">
       <a href=".." class="roadmap-title-link">Squan Resources</a>
     </h1>
     <p class="roadmap-subtitle">Progression Roadmap</p>
 
+    <!-- Tab description — populated by JS from first string element of tab array -->
+    <p class="roadmap-tab-desc" id="roadmap-tab-desc" hidden></p>
+
     <!-- Tab switcher — populated by JS -->
     <div class="tab-switcher" id="tab-switcher" role="tablist" aria-label="Select method"></div>
 
     <!-- Roadmap steps — populated by JS -->
     <div class="roadmap-container" id="roadmap-container" role="main"></div>
+    <a href=".." class="mobile-page-tab" id="mobile-page-tab" aria-label="Go to resources">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8H2M7 3L2 8l5 5"/></svg>
+      go to resources
+    </a>
   </main>
+  <footer class="site-footer">Made &amp; Maintained by Matt</footer>
 
   <!-- Load resources for featured-resource lookup -->
   <script src="../resources.js"></script>
   <script src="roadmap.js"></script>
   <script src="roadmap-app.js"></script>
 </body>
+
 </html>

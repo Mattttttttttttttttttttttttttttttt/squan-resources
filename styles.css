@@ -75,6 +75,8 @@ body {
     font-family: var(--font-body);
     min-height: 100dvh;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 body.modal-open {
@@ -177,11 +179,138 @@ main,
     color: var(--text);
 }
 
+/* ── Roadmap nudge (desktop only) ────────────────────────────────────────── */
+.roadmap-nudge {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 6px 12px 10px;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: color 0.2s, transform 0.2s;
+    opacity: 0.8;
+    transition: color 0.2s, transform 0.2s, opacity 0.2s;
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.3) 100%);
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.roadmap-nudge:hover {
+    color: var(--text);
+    opacity: 1;
+    transform: translateY(-50%) translateX(-4px);
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.roadmap-nudge--left {
+    right: auto;
+    left: 0;
+    padding: 12px 10px 12px 6px;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.3) 100%);
+    mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.roadmap-nudge--left:hover {
+    opacity: 1;
+    transform: translateY(-50%) translateX(4px);
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.roadmap-nudge-arrow {
+    width: 56px;
+    height: 44px;
+    transition: transform 0.2s ease;
+}
+
+.roadmap-nudge-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+}
+
+.roadmap-nudge:hover .roadmap-nudge-label {
+    opacity: 1;
+}
+
+@media (min-width: 700px) {
+    .roadmap-nudge {
+        display: flex;
+    }
+}
+
+/* ── Mobile page-switch tab ───────────────────────────────────────────────── */
+.mobile-page-tab {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .mobile-page-tab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: fit-content;
+        margin: 28px auto;
+        padding: 10px 22px;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-family: var(--font-body);
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: color 0.15s, opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.1, 0.64, 1);
+    }
+
+    .mobile-page-tab.visible {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+    }
+
+    .mobile-page-tab:hover {
+        color: var(--text);
+    }
+
+    .mobile-page-tab svg {
+        flex-shrink: 0;
+        color: var(--accent);
+    }
+}
+
 /* ── Main Layout ──────────────────────────────────────────────────────────── */
 main {
     max-width: var(--max-w);
     margin: 0 auto;
-    padding: 56px 28px 90px;
+    /*
+     * Reserve space for the fixed left nudge (~96px wide). When the page's natural
+     * auto-centering margin already clears the nudge, padding returns to the base 28px.
+     * Half of --max-w (1200px) = 600px → that's where auto-centering kicks in.
+     */
+    --_side-pad: clamp(28px, calc(96px - max(0px, calc(50vw - 600px))), 96px);
+    padding: 56px var(--_side-pad) 50px;
+    flex: 1;
+    width: 100%;
 }
 
 /* ── Page Title ───────────────────────────────────────────────────────────── */
@@ -205,19 +334,100 @@ main {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1px;
-    margin-top: 16px;
-    margin-bottom: 44px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    gap: 10px;
+    margin-top: 18px;
+    margin-bottom: 42px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Shared capsule wrapping both nav buttons */
+.bc-nav-capsule {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: calc(var(--radius-sm) + 2px);
+    overflow: hidden;
+}
+
+.bc-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: rgba(233, 239, 245, 0.92);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+
+.bc-nav-btn:hover {
+    background: rgba(117, 179, 240, 0.18);
+    color: var(--link);
+}
+
+.bc-nav-btn.disabled,
+.bc-nav-btn[disabled] {
+    color: rgba(131, 148, 167, 0.85);
+    background: transparent;
+    cursor: default;
+}
+
+.bc-nav-btn.disabled:hover,
+.bc-nav-btn[disabled]:hover {
+    background: transparent;
+    color: rgba(131, 148, 167, 0.85);
+}
+
+.bc-nav-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.bc-nav-btn svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+
+/* Thin divider between the two nav buttons inside the capsule */
+.bc-nav-inner-sep {
+    width: 1px;
+    align-self: stretch;
+    background: rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+}
+
+/* Vertical rule separating capsule from path */
+.bc-vdiv {
+    width: 1px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+}
+
+/* Folder icon anchoring the path section */
+.bc-folder-icon {
+    display: flex;
+    align-items: center;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
 }
 
 .bc-link {
     color: var(--link);
     cursor: pointer;
     border-radius: var(--radius-sm);
-    padding: 2px 5px;
-    margin: -2px -5px;
+    padding: 4px 7px;
+    margin: -4px -7px;
     transition: color 0.15s, background 0.15s;
 }
 
@@ -226,19 +436,22 @@ main {
     background: rgba(117, 179, 240, 0.10);
 }
 
+/* Slash separator — visually distinct from nav chevrons */
 .bc-sep {
-    color: var(--text-muted);
-    padding: 0 6px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    color: var(--text-dim);
+    padding: 0 2px;
+    font-size: 0.9rem;
+    font-weight: 400;
     user-select: none;
     line-height: 1;
 }
 
-/* ── Folder Grid (Node pages) ─────────────────────────────────────────────── */
-.folder-grid {
+/* ── Unified card grid for folders and resources ─────────────────────────── */
+.card-grid,
+.folder-grid,
+.resource-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
 }
 
@@ -293,15 +506,23 @@ main {
 }
 
 .folder-arrow {
-    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
     color: var(--text-dim);
-    transition: color 0.15s, transform 0.15s;
+    transition: color 0.12s, transform 0.12s;
+}
+
+.folder-arrow svg {
+    display: block;
 }
 
 .folder-card:hover .folder-arrow,
 .folder-card:focus-visible .folder-arrow {
-    color: var(--accent);
-    transform: translateX(4px);
+    color: var(--text-muted);
+    transform: translateX(3px);
 }
 
 /* ── Resource flat grid (Leaf pages — Learn / Train) ─────────────────────── */
@@ -380,6 +601,8 @@ main {
 }
 
 /* ── Misc unified grid ────────────────────────────────────────────────────── */
+.card-grid,
+.folder-grid,
 .resource-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -530,6 +753,11 @@ main {
 .type-website {
     color: var(--type-website);
     background: var(--type-website-bg);
+}
+
+.type-other {
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.07);
 }
 
 /* ── Modal ────────────────────────────────────────────────────────────────── */
@@ -697,6 +925,25 @@ main {
     border-radius: var(--radius-md);
 }
 
+/* On desktop, prevent a tall image from making the modal scroll on its own.
+   Cap height to fit within the modal's 90dvh max, minus fixed chrome
+   (padding-top 36 + header ~52 + sep ~41 + actions ~68 + padding-bottom 30 ≈ 227px).
+   Use contain so the full image is visible rather than cropped. */
+@media (min-width: 701px) {
+    .modal-visual-desktop .modal-img-wrap {
+        display: flex;
+        justify-content: center;
+        border: none;
+    }
+
+    .modal-visual-desktop .modal-img-wrap img {
+        max-height: calc(90dvh - 235px);
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+    }
+}
+
 /* Visit button */
 .modal-actions {
     display: flex;
@@ -748,6 +995,118 @@ main {
     color: var(--text);
     border-color: var(--text-dim);
     background: var(--surface-card);
+}
+
+/* Copy button: visually matches share button */
+.modal-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s, background 0.12s, box-shadow 0.12s;
+}
+
+.modal-copy-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+    background: var(--surface-card);
+}
+
+/* Flash state for successful copy/share */
+.copied-flash {
+    background: var(--type-doc-bg);
+    border-color: rgba(77, 217, 160, 0.36);
+    color: var(--type-doc);
+    box-shadow: 0 6px 20px rgba(77, 217, 160, 0.08);
+}
+
+/* ── Feedback button (topbar) ─────────────────────────────────────────────── */
+.topbar-feedback-btn {
+    margin-left: auto;
+    padding: 0.5em 0.9em;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.topbar-feedback-btn:hover {
+    background: rgba(255, 255, 255, 0.11);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Feedback modal ────────────────────────────────────────────────────────── */
+.feedback-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(6, 8, 12, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+}
+
+.feedback-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.feedback-backdrop .modal {
+    max-width: 400px;
+}
+
+.feedback-backdrop.active .modal {
+    transform: translateY(0) scale(1);
+}
+
+.feedback-body {
+    color: var(--text-muted);
+    font-size: 0.97rem;
+    line-height: 1.65;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-body b {
+    font-weight: 700;
+    color: #c4d3e8;
+}
+
+.feedback-link {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(117, 179, 240, 0.45);
+    transition: color 0.14s;
+}
+
+.feedback-link:hover {
+    color: var(--link-hover);
 }
 
 /* ── Not Found ────────────────────────────────────────────────────────────── */
@@ -813,6 +1172,18 @@ main {
     }
 }
 
+/* ── Site footer credit ───────────────────────────────────────────────────── */
+.site-footer {
+    margin-top: auto;
+    padding-top: 24px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
 /* ── Mobile tab bar (hidden on desktop) ───────────────────────────────────── */
 .mobile-tab-bar {
     display: none;
@@ -821,7 +1192,7 @@ main {
 /* ── Mobile ───────────────────────────────────────────────────────────────── */
 @media (max-width: 700px) {
     main {
-        padding: 36px 18px 64px;
+        padding: 36px 18px 0;
     }
 
     /* ── Tab bar ── */
@@ -942,10 +1313,30 @@ main {
         font-size: 0.95rem;
     }
 
-    .folder-grid {
-        grid-template-columns: 1fr;
+    /* Allow modal action buttons to wrap naturally on small screens */
+    .modal-actions {
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
+    /* Ensure copied flash styling wins even when hovered */
+    .modal-share-btn.copied-flash,
+    .modal-copy-btn.copied-flash {
+        background: var(--type-doc-bg);
+        border-color: rgba(77, 217, 160, 0.36);
+        color: var(--type-doc);
+        box-shadow: 0 6px 20px rgba(77, 217, 160, 0.08);
+    }
+
+    .modal-share-btn.copied-flash:hover,
+    .modal-copy-btn.copied-flash:hover {
+        background: var(--type-doc-bg);
+        border-color: rgba(77, 217, 160, 0.36);
+        color: var(--type-doc);
+    }
+
+    .card-grid,
+    .folder-grid,
     .resource-grid {
         grid-template-columns: 1fr;
     }
