@@ -182,7 +182,7 @@ const RESOURCES = {
           url: "https://www.youtube.com/watch?v=GNmrLHw86ss&list=PL8Izpzk-6zizm3E5icawyJ637EJyaIwrB",
           type: "video",
           credit: "- Matt",
-          path: "matt",
+          path: "mattv",
           description: "Shapes sorted by frequency. Includes a full tutorial and explains " +
             "the algs.",
           featured: true
@@ -220,7 +220,7 @@ const RESOURCES = {
           url: "https://docs.google.com/spreadsheets/d/1eB4gjEUYEOWKnMvimfReXuzsWBPhLqbMp_tgWrFO3DA/edit",
           type: "doc/sheet",
           credit: "- Matt",
-          path: "matt2",
+          path: "matts",
           description: "Shapes sorted by frequency. A probably outdated version of the " +
             "CSP tutorials. Includes everything apart from tracing."
         },
