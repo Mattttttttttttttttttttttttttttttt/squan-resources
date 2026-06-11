@@ -318,7 +318,7 @@ const RESOURCES = {
             path: "stepan",
             description: "Contains optimal algs that are probably not needed for starters, " +
               "but worth getting into if you want to get faster. But it's also pretty " +
-              "outdated 2for those optimal algs."
+              "outdated for those optimal algs."
           },
           {
             title: "EO video",
