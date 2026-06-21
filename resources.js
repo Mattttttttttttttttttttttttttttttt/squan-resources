@@ -547,6 +547,15 @@ const RESOURCES = {
               "but more optimal than Matt. With no explanations."
           },
           {
+            title: "3-sided PBL Trainer",
+            url: "https://discord.com/channels/795860600139153408/795860600139153411/1415707947492966623",
+            type: "trainer",
+            credit: "- Matt",
+            path: "matt3",
+            description: "The only 3-sided PBL trainer right now. Based on Anki, the " +
+              "flashcard app. The link is to a Discord message."
+          },
+          {
             title: "2-Alg PBL Cheat Sheet",
             url: "https://drive.google.com/file/d/1jZBtssPGyn5uGRpSHVmF-qFNepyHW3-Y/view",
             type: "doc/sheet",
