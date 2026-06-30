@@ -964,12 +964,11 @@ const RESOURCES = {
         },
         {
           title: "Image Genner",
-          url: "https://sq1-img-gen-gold-grass.reflex.run/",
+          url: "https://sq1-img-gen-blue-sun.reflex.run/",
           type: "website",
           credit: "- Seby",
           path: "seby",
-          description: "Has weird unresponsive glitches, but gets the job done most of the " +
-            "time."
+          description: "Updated recently."
         },
         {
           title: "Image Genner 1",
