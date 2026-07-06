@@ -587,6 +587,19 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '..';
     });
 
+    // Feedback modal
+    const feedbackBtn = document.getElementById('feedback-btn');
+    const feedbackBackdrop = document.getElementById('feedback-backdrop');
+    const feedbackClose = document.getElementById('feedback-close');
+    if (feedbackBtn && feedbackBackdrop && feedbackClose) {
+        const openFeedback = () => feedbackBackdrop.classList.add('active');
+        const closeFeedback = () => feedbackBackdrop.classList.remove('active');
+        feedbackBtn.addEventListener('click', openFeedback);
+        feedbackClose.addEventListener('click', closeFeedback);
+        feedbackBackdrop.addEventListener('click', e => { if (e.target === feedbackBackdrop) closeFeedback(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFeedback(); });
+    }
+
     const mobileTab = document.getElementById('mobile-page-tab');
     if (mobileTab) {
         new IntersectionObserver(
