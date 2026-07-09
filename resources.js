@@ -377,7 +377,7 @@ const RESOURCES = {
             type: "trainer",
             credit: "- Abid",
             path: "squanx",
-            description: "SquanGo Everything Trainer: IN DEVELOPMENT"
+            description: "Part of the SquanGo Everything Trainer."
           }
         ]
       },
@@ -904,7 +904,7 @@ const RESOURCES = {
           type: "trainer",
           credit: "- Abid",
           path: "squanx",
-          description: "SquanGo Everything Trainer: IN DEVELOPMENT"
+          description: "Part of the SquanGo Everything Trainer."
         }
       ]
     }
@@ -1096,7 +1096,8 @@ const RESOURCES = {
         type: "trainer",
         credit: "- Abid",
         path: "sqx",
-        description: "IN DEVELOPMENT"
+        description: "Create your own algset and practice, or contribute to the project " +
+          "by making your awesome algset trainer public!"
       }
     ]
   }
