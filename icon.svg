@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Squan Resources</title>
+
+  <!-- Learn column (left) and Train column (right). The seams sit at wildly
+       different heights (y=27 vs y=41) so the two tracks read as running at
+       different rates rather than as a 2x2 grid. -->
+  <rect x="3"  y="3"  width="26" height="21" rx="5" fill="#75b3f0"/>
+  <rect x="3"  y="30" width="26" height="31" rx="5" fill="#75b3f0" opacity="0.62"/>
+
+  <rect x="35" y="3"  width="26" height="35" rx="5" fill="#f5a44e" opacity="0.62"/>
+  <rect x="35" y="44" width="26" height="17" rx="5" fill="#f5a44e"/>
+</svg>
