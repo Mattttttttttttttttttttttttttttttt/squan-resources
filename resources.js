@@ -362,6 +362,22 @@ const RESOURCES = {
             path: "sarah",
             description: "Could be useful if you decides you want to learn CP parity, but " +
               "otherwise, no."
+          },
+          {
+            title: "EOCP Algs",
+            url: "https://docs.google.com/spreadsheets/d/1zID-_o2oaqPwfLHNqvh9jEkasxSZlmKuqGpot1himuE/edit",
+            type: "doc/sheet",
+            credit: "- Jouda",
+            path: "jouda",
+            description: "Could be useful if you plan on optimizing CO EO, but otherwise, no."
+          },
+          {
+            title: "EOCP Trainer",
+            url: "https://squan-go.web.app/squanx",
+            type: "trainer",
+            credit: "- Abid",
+            path: "squanx",
+            description: "SquanGo Everything Trainer: IN DEVELOPMENT"
           }
         ]
       },
@@ -881,6 +897,14 @@ const RESOURCES = {
             "equivalent PLL+1 cases that you can turn into OPLL+1 cases by M2ing the top " +
             "edge into the DB.",
           featured: true
+        },
+        {
+          title: "PLL, PLL+1 Trainer",
+          url: "https://squan-go.web.app/squanx",
+          type: "trainer",
+          credit: "- Abid",
+          path: "squanx",
+          description: "SquanGo Everything Trainer: IN DEVELOPMENT"
         }
       ]
     }
@@ -1059,7 +1083,7 @@ const RESOURCES = {
           title: "Podcase Episode with Lars Vandenbergh",
           url: "https://youtu.be/qpvMovvSpTE",
           type: "video",
-          credit: "- Jaap & Brandon",
+          credit: "- Lars & Brandon True",
           path: "podcast",
           description: "A hour-long podcast with the inventer of the VDB method."
         }

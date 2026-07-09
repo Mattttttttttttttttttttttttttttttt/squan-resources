@@ -234,6 +234,12 @@ function renderBreadcrumb(path) {
                 </svg>
             </button>
         </div>`,
+        `<button class="bc-search-btn" type="button" id="bc-search-btn" aria-label="Search folders and resources" title="Search (Ctrl+F)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M21 21l-4.3-4.3"/>
+            </svg>
+        </button>`,
         `<span class="bc-vdiv" aria-hidden="true"></span>`,
         `<svg class="bc-folder-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
         `<span class="bc-item bc-link" data-path="">home</span>`
@@ -260,6 +266,8 @@ function renderBreadcrumb(path) {
             else window.history.forward();
         });
     });
+    const searchBtn = el.querySelector('#bc-search-btn');
+    if (searchBtn) searchBtn.addEventListener('click', openSearch);
     updateBreadcrumbNavState();
 }
 
@@ -572,6 +580,157 @@ function closeModal({ ignoreHistory = false } = {}) {
     }
 }
 
+// ─── Search ───────────────────────────────────────────────────────────────────
+
+let _searchIndex = null;
+let _searchActiveIndex = -1;
+
+// Walks the resource tree once, flattening every folder and resource into a
+// searchable list. Folders carry their nav path; resources carry their parent
+// folder path so they can be navigated to and opened.
+function buildSearchIndex() {
+    const index = [];
+
+    function walk(node, path) {
+        for (const key of getNodeChildren(node)) {
+            const child = node[key];
+            const childPath = path ? `${path}~${key}` : key;
+            index.push({
+                kind: 'folder',
+                title: child.title || key,
+                desc: child.bait || child.description || '',
+                path: childPath,
+            });
+            walk(child, childPath);
+        }
+        if (Array.isArray(node.resources)) {
+            for (const r of node.resources) {
+                index.push({
+                    kind: 'resource',
+                    title: r.title || '',
+                    desc: [r.description, r.credit].filter(Boolean).join(' '),
+                    folderPath: path,
+                    resource: r,
+                });
+            }
+        }
+    }
+
+    walk(RESOURCES, '');
+    return index;
+}
+
+// Strips HTML tags so descriptions (which may contain markup) match on text.
+function stripTags(str) {
+    return String(str).replace(/<[^>]*>/g, ' ');
+}
+
+// Scores an entry against a lowercased query. Returns -1 for no match.
+// Folders get a large base bonus so any matching folder outranks resources.
+function scoreEntry(entry, q) {
+    const title = entry.title.toLowerCase();
+    const desc = stripTags(entry.desc).toLowerCase();
+    let score = -1;
+
+    if (title.includes(q)) {
+        score = title === q ? 100 : (title.startsWith(q) ? 70 : 45);
+    } else if (desc.includes(q)) {
+        score = 15;
+    }
+    if (score < 0) return -1;
+    if (entry.kind === 'folder') score += 1000;
+    return score;
+}
+
+function runSearch(query) {
+    const resultsEl = document.getElementById('search-results');
+    const q = query.trim().toLowerCase();
+    _searchActiveIndex = -1;
+
+    if (!q) {
+        resultsEl.innerHTML = `<div class="search-empty">Type to search all folders and resources.</div>`;
+        resultsEl.dataset.count = '0';
+        return;
+    }
+
+    const matches = _searchIndex
+        .map(entry => ({ entry, score: scoreEntry(entry, q) }))
+        .filter(m => m.score >= 0)
+        .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title))
+        .slice(0, 30);
+
+    if (!matches.length) {
+        resultsEl.innerHTML = `<div class="search-empty">No results for “${escHtml(query.trim())}”.</div>`;
+        resultsEl.dataset.count = '0';
+        return;
+    }
+
+    const folderIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`;
+    const fileIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`;
+
+    resultsEl.innerHTML = matches.map((m, i) => {
+        const e = m.entry;
+        const isFolder = e.kind === 'folder';
+        const descText = stripTags(e.desc).trim();
+        return `<button class="search-result${isFolder ? ' is-folder' : ''}" type="button" data-i="${i}" role="option">
+            <span class="search-result-icon">${isFolder ? folderIcon : fileIcon}</span>
+            <span class="search-result-text">
+                <span class="search-result-title">${escHtml(e.title)}${isFolder ? '<span class="search-result-tag">folder</span>' : ''}</span>
+                ${descText ? `<span class="search-result-crumb">${escHtml(descText.slice(0, 90))}</span>` : ''}
+            </span>
+        </button>`;
+    }).join('');
+    resultsEl.dataset.count = String(matches.length);
+
+    resultsEl.querySelectorAll('.search-result').forEach(btn => {
+        btn.addEventListener('click', () => selectSearchResult(matches[parseInt(btn.dataset.i, 10)].entry));
+    });
+}
+
+function selectSearchResult(entry) {
+    closeSearch();
+    if (entry.kind === 'folder') {
+        navigate(entry.path);
+    } else {
+        // Navigate to the parent folder so _currentFolderPath / resources are set,
+        // then open the resource modal.
+        navigate(entry.folderPath);
+        openModal(entry.resource);
+    }
+}
+
+function openSearch() {
+    if (!_searchIndex) _searchIndex = buildSearchIndex();
+    const backdrop = document.getElementById('search-backdrop');
+    const input = document.getElementById('search-input');
+    backdrop.classList.add('active');
+    document.body.classList.add('modal-open');
+    input.value = '';
+    runSearch('');
+    setTimeout(() => input.focus(), 30);
+}
+
+function closeSearch() {
+    const backdrop = document.getElementById('search-backdrop');
+    if (!backdrop.classList.contains('active')) return;
+    backdrop.classList.remove('active');
+    if (!_modalOpen) document.body.classList.remove('modal-open');
+}
+
+function isSearchOpen() {
+    return document.getElementById('search-backdrop').classList.contains('active');
+}
+
+// Keyboard navigation within the results list (arrow keys + Enter).
+function moveSearchActive(delta) {
+    const resultsEl = document.getElementById('search-results');
+    const items = resultsEl.querySelectorAll('.search-result');
+    if (!items.length) return;
+    _searchActiveIndex = (_searchActiveIndex + delta + items.length) % items.length;
+    items.forEach((el, i) => el.classList.toggle('active', i === _searchActiveIndex));
+    items[_searchActiveIndex].scrollIntoView({ block: 'nearest' });
+}
+
 // ─── Root render ──────────────────────────────────────────────────────────────
 
 function render(path) {
@@ -637,6 +796,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === document.getElementById('modal-backdrop')) closeModal();
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Search wiring ──────────────────────────────────────────────────────────
+    const searchBackdrop = document.getElementById('search-backdrop');
+    const searchInput = document.getElementById('search-input');
+    document.getElementById('search-close').addEventListener('click', closeSearch);
+    searchBackdrop.addEventListener('click', e => { if (e.target === searchBackdrop) closeSearch(); });
+    searchInput.addEventListener('input', () => runSearch(searchInput.value));
+    searchInput.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown') { e.preventDefault(); moveSearchActive(1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); moveSearchActive(-1); }
+        else if (e.key === 'Enter') {
+            const items = document.querySelectorAll('#search-results .search-result');
+            const target = items[_searchActiveIndex] || items[0];
+            if (target) target.click();
+        }
+    });
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')) {
+            e.preventDefault();
+            if (isSearchOpen()) closeSearch(); else openSearch();
+        } else if (e.key === 'Escape' && isSearchOpen()) {
+            closeSearch();
+        }
+    });
 
     window.addEventListener('popstate', event => {
         if (_ignoreNextPopstate) {
