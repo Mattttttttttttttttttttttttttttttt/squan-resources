@@ -883,28 +883,27 @@ const RESOURCES = {
             "from Adrien's Lin algs aren't to your liking."
         },
         {
-          title: "EPLL, PLL, PLL+1, CP Trainer",
-          url: "https://squanmate.cuber.pro/#/algorithm-trainer",
-          type: "trainer",
-          credit: "- Squanmate",
-          path: "squanmate",
-          description: "The only lin trainer out there, and serves its purpose well with " +
-            "just a few kinks here and there. The PLL+1 trainer gives you the wrong D " +
-            "layer angle, which you have to adjust every time, and the cases are all in a " +
-            "weird naming scheme that nobody uses anymore. Adrien's sheet has numbers " +
-            "next to each PLL+1 case, which tells you which case in this trainer it is. " +
-            "There are also numbers for the OPLL+1 cases as well, which tell you the " +
-            "equivalent PLL+1 cases that you can turn into OPLL+1 cases by M2ing the top " +
-            "edge into the DB.",
-          featured: true
-        },
-        {
           title: "PLL, PLL+1 Trainer",
           url: "https://squan-go.web.app/squanx",
           type: "trainer",
           credit: "- Abid",
           path: "squanx",
-          description: "Part of the SquanGo Everything Trainer."
+          description: "Part of the SquanGo Everything Trainer.",
+          featured: true
+        },
+        {
+          title: "EPLL, PLL, PLL+1, CP Trainer",
+          url: "https://squanmate.cuber.pro/#/algorithm-trainer",
+          type: "trainer",
+          credit: "- Squanmate",
+          path: "squanmate",
+          description: "Has a few kinks here and there. The PLL+1 trainer gives you the " +
+            "wrong D layer angle, which you have to adjust every time, and the cases are " +
+            "all in a weird naming scheme that nobody uses anymore. Adrien's sheet has " +
+            "numbers next to each PLL+1 case, which tells you which case in this trainer " +
+            "it is. There are also numbers for the OPLL+1 cases as well, which tell you " +
+            "the equivalent PLL+1 cases that you can turn into OPLL+1 cases by M2ing " +
+            "the top edge into the DB."
         }
       ]
     }
