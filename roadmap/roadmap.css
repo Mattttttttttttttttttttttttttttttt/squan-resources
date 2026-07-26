@@ -212,6 +212,7 @@ main.roadmap-main {
     font-size: 0.865rem;
     color: var(--text-muted);
     line-height: 1.56;
+    white-space: pre-line;
 }
 
 .step-card-desc b {
@@ -552,6 +553,7 @@ main.roadmap-main {
     max-width: 540px;
     margin-top: -20px;
     margin-bottom: 28px;
+    white-space: pre-line;
 }
 
 /* ── Path selector modal ──────────────────────────────────────────────────── */
