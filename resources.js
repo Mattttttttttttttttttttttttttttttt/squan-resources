@@ -926,6 +926,105 @@ const RESOURCES = {
       }
     ]
   },
+  "hardware": {
+    gridLayout: true,
+    title: "Squan Hardware",
+    bait: "A comprehensive review of squans on the market.",
+    description: "These are the most popular squans. If you are considering buying a " +
+      "squan, you are most likely to buy something listed here.",
+    "gan": {
+      gridLayout: true,
+      title: "Gan",
+      bait: "best squan on the market",
+      resources: [
+        {
+          title: "Gan",
+          url: "#",
+          type: "website",
+          path: "gan",
+          description: "Best squan on the market, especially after mods. Light both in " +
+            "weight and layer speed, and it's very difficult to slow down. Edge magnets " +
+            "come with the cube. The dual adjustment system is bad, however: it's both " +
+            "not as customizable as a screw, and very difficult to take apart.\nafter " +
+            "mods like the core mod, corner cutting is as good as the mgc, and it has a " +
+            "better slice."
+        }
+      ]
+    },
+    "mgcv1": {
+      gridLayout: true,
+      title: "MGC v1",
+      bait: "best value for the price",
+      resources: [
+        {
+          title: "MGC v1",
+          url: "#",
+          type: "website",
+          path: "mgcv1",
+          description: "Best value for the price. Maglev improves the tensioning " +
+            "experience by a lot. However, there are core breaking issues if your " +
+            "turning is consistently too aggressive."
+        },
+        {
+          title: "MGC v1 — Ivan",
+          url: "#",
+          type: "website",
+          path: "mgcv1-ivan",
+          description: "Modding quality varies. Some report it being a little " +
+            "uncontrollable, too blocky, and having bad corner cutting. Others say its " +
+            "almost as good as the Gan."
+        },
+        {
+          title: "MGC v1 — Ben",
+          url: "#",
+          type: "website",
+          path: "mgcv1-ben",
+          description: "Better modding consistency than Ivan, and with stronger U/D magnets."
+        }
+      ]
+    },
+    "mgcv2": {
+      gridLayout: true,
+      title: "MGC v2",
+      bait: "good for people who like snappy cubes",
+      resources: [
+        {
+          title: "MGC v2",
+          url: "#",
+          type: "website",
+          path: "mgcv2",
+          description: "Very snappy slice. Only good for people who can stand the strong " +
+            "magnets. Not good for people who spam SPS. There are core/edge breaking " +
+            "issues if your turning is consistently too aggressive."
+        },
+        {
+          title: "MGC v2 — Pro Shop",
+          url: "https://www.thecubicle.com/products/cubicle-pro-shop-mgc-sq-1-v2-fully-magnetic-se",
+          type: "website",
+          path: "mgcv2-ps",
+          description: "Corner cutting is pretty great. The modified slice magnet feels " +
+            "perfect. Overall very controllable and smooth."
+        },
+      ]
+    },
+    resources: [
+      {
+        title: "Yuxin Little Magic (YLM)",
+        url: "#",
+        type: "website",
+        path: "ylm",
+        description: "Cheap, but basically no corner cutting. Clicky and slow. Layers " +
+          "feel heavy to turn despite being lightweight. After mods it may be good."
+      },
+      {
+        title: "Volt v1",
+        url: "#",
+        type: "website",
+        path: "voltv1",
+        description: "Great slice, but U/D layers are way too slow."
+      }
+    ]
+  },
   "misc": {
     gridLayout: true,
     title: "Miscellaneous Resources",
@@ -1062,102 +1161,6 @@ const RESOURCES = {
           credit: "- Jad",
           path: "jad",
           description: "Includes maglev, edge magnets, U/D repulsion, and slice repulsion."
-        }
-      ]
-    },
-    "hardware": {
-      gridLayout: true,
-      title: "Squan Hardware",
-      bait: "A comprehensive review of squans on the market.",
-      description: "These are the most popular squans. If you are considering buying a " +
-        "squan, you are most likely to buy something listed here.",
-      "gan": {
-        title: "Gan",
-        bait: "best squan on the market",
-        resources: [
-          {
-            title: "Gan",
-            url: "#",
-            type: "website",
-            path: "gan",
-            description: "Best squan on the market, especially after mods. Light both in " +
-              "weight and layer speed, and it's very difficult to slow down. Edge magnets " +
-              "come with the cube. The dual adjustment system is bad, however: it's both " +
-              "not as customizable as a screw, and very difficult to take apart.\nafter " +
-              "mods like the core mod, corner cutting is as good as the mgc, and it has a " +
-              "better slice."
-          }
-        ]
-      },
-      "mgcv1": {
-        title: "MGC v1",
-        bait: "best value for the price",
-        resources: [
-          {
-            title: "MGC v1",
-            url: "#",
-            type: "website",
-            path: "mgcv1",
-            description: "Best value for the price. Maglev improves the tensioning " +
-              "experience by a lot. However, there are core breaking issues if your " +
-              "turning is consistently too aggressive."
-          },
-          {
-            title: "MGC v1 — Ivan",
-            url: "#",
-            type: "website",
-            path: "mgcv1-ivan",
-            description: "Modding quality varies. Some report it being a little " +
-              "uncontrollable, too blocky, and having bad corner cutting. Others say its " +
-              "almost as good as the Gan."
-          },
-          {
-            title: "MGC v1 — Ben",
-            url: "#",
-            type: "website",
-            path: "mgcv1-ben",
-            description: "Better modding consistency than Ivan, and with stronger U/D magnets."
-          }
-        ]
-      },
-      "mgcv2": {
-        title: "MGC v2",
-        bait: "good for people who like snappy cubes",
-        resources: [
-          {
-            title: "MGC v2",
-            url: "#",
-            type: "website",
-            path: "mgcv2",
-            description: "Very snappy slice. Only good for people who can stand the strong " +
-              "magnets. Not good for people who spam SPS. There are core/edge breaking " +
-              "issues if your turning is consistently too aggressive."
-          },
-          {
-            title: "MGC v2 — Pro Shop",
-            url: "https://www.thecubicle.com/products/cubicle-pro-shop-mgc-sq-1-v2-fully-magnetic-se",
-            type: "website",
-            path: "mgcv2-ps",
-            description: "Corner cutting is pretty great. The modified slice magnet feels " +
-              "perfect. Overall very controllable and smooth."
-          },
-        ]
-      },
-      resources: [
-        {
-          title: "Yuxin Little Magic (YLM)",
-          url: "#",
-          type: "website",
-          path: "ylm",
-          description: "Cheap, but basically no corner cutting. Clicky and slow. Layers " +
-            "feel heavy to turn despite being lightweight. After mods it may be good."
-        },
-        {
-          title: "Volt v1",
-          url: "#",
-          type: "website",
-          path: "voltv1",
-          description: "Great slice, but U/D layers are way too slow."
         }
       ]
     },
