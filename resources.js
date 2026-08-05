@@ -1036,13 +1036,24 @@ const RESOURCES = {
       description: "All the alg genners and helpers out there.",
       resources: [
         {
+          title: "Croissant",
+          url: "https://squan-go.web.app/croissant/download",
+          type: "website",
+          credit: "- Matt & Abid & Michael & Jaap",
+          path: "v3",
+          description: "Best solver currently. Integrated graphical interface, and new " +
+            "features and improvements from the v2, including: rank algs by relative " +
+            "ergonomics, search and filter solutions, and store algs you like for later. " +
+            "Improved from Sq1Optim v2.",
+          featured: true
+        },
+        {
           title: "Sq1Optim v2",
           url: "https://github.com/Mattttttttttttttttttttttttttttttt/sq1opt",
           type: "code",
-          credit: "- Matt & Abid & Michael & Jaap",
+          credit: "- Michael & Jaap",
           path: "v2",
-          description: "Best solver currently.",
-          featured: true
+          description: "An improvement from the v1."
         },
         {
           title: "Alg Genner Library",
@@ -1066,7 +1077,7 @@ const RESOURCES = {
           type: "code",
           credit: "- Jaap",
           path: "v1",
-          description: "DO NOT USE. Use the v2 instead.",
+          description: "DO NOT USE.",
         }
       ]
     },
