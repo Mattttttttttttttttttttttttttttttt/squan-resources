@@ -766,6 +766,15 @@ const RESOURCES = {
           featured: true
         },
         {
+          title: "SB, RSB Trainer",
+          url: "https://squan-go.web.app/squanx",
+          type: "trainer",
+          credit: "- Amalogu",
+          path: "squanx",
+          description: "Part of the SquanGo Everything Trainer.",
+          featured: true
+        },
+        {
           title: "Blockbuilding Tips",
           url: "https://youtu.be/vFUJsh98SMI",
           type: "video",
@@ -886,7 +895,7 @@ const RESOURCES = {
           title: "PLL, PLL+1 Trainer",
           url: "https://squan-go.web.app/squanx",
           type: "trainer",
-          credit: "- Abid",
+          credit: "- Amalogu",
           path: "squanx",
           description: "Part of the SquanGo Everything Trainer.",
           featured: true
