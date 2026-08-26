@@ -247,6 +247,13 @@ const ROADMAP = {
       ]
     ],
     {
+      timestamp: "anytime after CSP",
+      title: "Learn RSB",
+      description: "RSB, or Ricci's Second Block, allows you to solve the DB edge along with SB, " +
+        "and you should learn this ASAP.",
+      path: "lin~f2b"
+    },
+    {
       timestamp: "for sub 12",
       title: "Learn PLL",
       description: ""
